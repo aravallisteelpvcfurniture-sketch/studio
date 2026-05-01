@@ -2,14 +2,21 @@
 "use client"
 
 import * as React from "react"
-import Link from "next/image"
 import { useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { Sparkles, ArrowRight, CheckCircle2 } from "lucide-react"
 import Image from "next/image"
+import { useUser } from "@/firebase"
 
 export default function WelcomePage() {
   const router = useRouter()
+  const { user, loading } = useUser()
+
+  React.useEffect(() => {
+    if (!loading && user) {
+      router.push("/")
+    }
+  }, [user, loading, router])
 
   return (
     <div className="min-h-screen bg-primary flex flex-col relative overflow-hidden">

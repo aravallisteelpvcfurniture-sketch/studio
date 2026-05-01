@@ -4,10 +4,10 @@
 import * as React from "react"
 import Image from "next/image"
 import Link from "next/link"
+import { useRouter } from "next/navigation"
 import { 
   Download, 
   Calculator, 
-  View, 
   MapPin, 
   ChevronRight,
   Sparkles,
@@ -15,7 +15,8 @@ import {
   Phone,
   Award,
   ArrowRight,
-  ClipboardList
+  ClipboardList,
+  Loader2
 } from "lucide-react"
 import { TopBar } from "@/components/TopBar"
 import { Button } from "@/components/ui/button"
@@ -27,9 +28,18 @@ import {
 } from "@/components/ui/carousel"
 import { PlaceHolderImages } from "@/lib/placeholder-images"
 import Autoplay from "embla-carousel-autoplay"
+import { useUser } from "@/firebase"
 
 export default function Home() {
+  const { user, loading } = useUser()
+  const router = useRouter()
   const [isMenuOpen, setIsMenuOpen] = React.useState(false)
+
+  React.useEffect(() => {
+    if (!loading && !user) {
+      router.push("/welcome")
+    }
+  }, [user, loading, router])
 
   const quickActions = [
     { icon: <Download />, label: "Catalog", color: "bg-blue-50 text-blue-600", href: "#" },
@@ -39,6 +49,16 @@ export default function Home() {
   ]
 
   const heroImages = PlaceHolderImages.filter(img => img.id.startsWith('hero'))
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-background">
+        <Loader2 className="w-10 h-10 animate-spin text-accent" />
+      </div>
+    )
+  }
+
+  if (!user) return null
 
   return (
     <main className="relative min-h-screen bg-background pt-16 flex flex-col">
