@@ -26,6 +26,50 @@
         }
       },
       "required": ["displayName", "email"]
+    },
+    "ServiceRequest": {
+      "title": "Service Request",
+      "description": "Details of a customer consultation or service request.",
+      "type": "object",
+      "properties": {
+        "userId": {
+          "type": "string",
+          "description": "The UID of the user who made the request (optional if guest)."
+        },
+        "name": {
+          "type": "string",
+          "description": "Customer name."
+        },
+        "email": {
+          "type": "string",
+          "format": "email",
+          "description": "Customer email."
+        },
+        "phone": {
+          "type": "string",
+          "description": "Customer contact number."
+        },
+        "serviceType": {
+          "type": "string",
+          "enum": ["Kitchen", "Wardrobe", "Wall Paneling", "Full Interior"],
+          "description": "Type of service required."
+        },
+        "message": {
+          "type": "string",
+          "description": "Additional details or requirements."
+        },
+        "status": {
+          "type": "string",
+          "enum": ["pending", "contacted", "closed"],
+          "description": "Current status of the request."
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Timestamp when requested."
+        }
+      },
+      "required": ["name", "email", "phone", "serviceType"]
     }
   },
   "auth": {
@@ -35,6 +79,10 @@
     "/users/{userId}": {
       "schema": "#/backend/entities/UserProfile",
       "description": "User profile document."
+    },
+    "/serviceRequests/{requestId}": {
+      "schema": "#/backend/entities/ServiceRequest",
+      "description": "Collection of customer service requests and consultation bookings."
     }
   }
 }

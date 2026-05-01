@@ -11,13 +11,11 @@ import {
   MapPin, 
   ChevronRight,
   Sparkles,
-  MoreVertical,
   X,
   Phone,
-  Info,
-  Images,
   Award,
-  ArrowRight
+  ArrowRight,
+  ClipboardList
 } from "lucide-react"
 import { TopBar } from "@/components/TopBar"
 import { Button } from "@/components/ui/button"
@@ -36,7 +34,7 @@ export default function Home() {
   const quickActions = [
     { icon: <Download />, label: "Catalog", color: "bg-blue-50 text-blue-600", href: "#" },
     { icon: <Calculator />, label: "Price Est.", color: "bg-cyan-50 text-accent", href: "/estimator" },
-    { icon: <View />, label: "360 Tour", color: "bg-purple-50 text-purple-600", href: "#" },
+    { icon: <ClipboardList />, label: "Book Appt", color: "bg-orange-50 text-orange-600", href: "/book-consultation" },
     { icon: <MapPin />, label: "Dealers", color: "bg-green-50 text-green-600", href: "#" },
   ]
 
@@ -127,6 +125,9 @@ export default function Home() {
             </Link>
             <Link href="/categories" onClick={() => setIsMenuOpen(false)} className="flex items-center justify-between group">
               <span>Categories</span> <ArrowRight className="opacity-0 group-hover:opacity-100 transition-opacity" />
+            </Link>
+            <Link href="/book-consultation" onClick={() => setIsMenuOpen(false)} className="flex items-center justify-between group text-accent font-bold">
+              <span>Book Consultation</span> <ArrowRight className="opacity-100" />
             </Link>
             <Link href="/estimator" onClick={() => setIsMenuOpen(false)} className="flex items-center justify-between group">
               <span>Price Estimator</span> <ArrowRight className="opacity-0 group-hover:opacity-100 transition-opacity" />
