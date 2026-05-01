@@ -10,7 +10,6 @@ import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
 import { Sparkles, ArrowLeft, Loader2 } from "lucide-react"
 import Link from "next/link"
-import Image from "next/image"
 
 export default function LoginPage() {
   const { auth } = useAuth()
@@ -33,7 +32,6 @@ export default function LoginPage() {
       const result = await signInWithPopup(auth, provider)
       const user = result.user
 
-      // Initialize user profile in Firestore if it doesn't exist
       const userRef = doc(db, "users", user.uid)
       setDoc(userRef, {
         displayName: user.displayName,
@@ -52,11 +50,10 @@ export default function LoginPage() {
 
   return (
     <div className="min-h-screen bg-background flex flex-col items-center justify-center p-6 relative overflow-hidden">
-      {/* Background Decor */}
       <div className="absolute top-[-10%] right-[-10%] w-[400px] h-[400px] bg-accent/10 rounded-full blur-[100px] -z-10" />
       <div className="absolute bottom-[-10%] left-[-10%] w-[300px] h-[300px] bg-primary/10 rounded-full blur-[80px] -z-10" />
 
-      <Link href="/" className="absolute top-8 left-8">
+      <Link href="/welcome" className="absolute top-8 left-8">
         <Button variant="ghost" size="icon" className="rounded-full">
           <ArrowLeft className="w-6 h-6" />
         </Button>
