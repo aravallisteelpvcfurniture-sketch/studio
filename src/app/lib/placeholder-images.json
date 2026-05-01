@@ -1,0 +1,47 @@
+
+{
+  "placeholderImages": [
+    {
+      "id": "hero-kitchen",
+      "description": "Modern Minimalist Modular Kitchen",
+      "imageUrl": "https://picsum.photos/seed/kitchen1/1200/800",
+      "imageHint": "modern kitchen"
+    },
+    {
+      "id": "hero-wardrobe",
+      "description": "Luxury Wardrobe System",
+      "imageUrl": "https://picsum.photos/seed/wardrobe1/1200/800",
+      "imageHint": "luxury wardrobe"
+    },
+    {
+      "id": "hero-paneling",
+      "description": "Premium Wall Paneling",
+      "imageUrl": "https://picsum.photos/seed/wall1/1200/800",
+      "imageHint": "wall paneling"
+    },
+    {
+      "id": "cat-kitchen",
+      "description": "Modular Kitchens Category",
+      "imageUrl": "https://picsum.photos/seed/kitchencat/800/1200",
+      "imageHint": "modular kitchen"
+    },
+    {
+      "id": "cat-wardrobe",
+      "description": "Wardrobe Systems Category",
+      "imageUrl": "https://picsum.photos/seed/wardrobecat/800/1200",
+      "imageHint": "wardrobe system"
+    },
+    {
+      "id": "cat-paneling",
+      "description": "Wall Paneling & Ceiling Category",
+      "imageUrl": "https://picsum.photos/seed/panelcat/800/1200",
+      "imageHint": "wall paneling"
+    },
+    {
+      "id": "cat-hardware",
+      "description": "Hardware & Accessories Category",
+      "imageUrl": "https://picsum.photos/seed/hardwarecat/800/1200",
+      "imageHint": "kitchen hardware"
+    }
+  ]
+}
