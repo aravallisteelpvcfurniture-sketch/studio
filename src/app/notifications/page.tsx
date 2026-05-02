@@ -3,7 +3,7 @@
 
 import * as React from "react"
 import Link from "next/link"
-import { ChevronLeft, Bell, Star, Percent, Settings, Sparkles, User, Clock, MessageCircle } from "lucide-react"
+import { ChevronLeft, Bell, Sparkles, User, Clock, MessageCircle, Mail, Phone, ExternalLink } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
 import { ScrollArea } from "@/components/ui/scroll-area"
@@ -15,7 +15,7 @@ export default function NotificationsPage() {
   const db = useFirestore()
   const { user } = useUser()
 
-  // Fetching real-time quote requests to act as notifications for the owner/staff
+  // Fetching real-time quote requests to act as notifications
   const notificationsQuery = useMemoFirebase(() => {
     if (!db) return null
     return query(
@@ -27,6 +27,20 @@ export default function NotificationsPage() {
 
   const { data: requests, isLoading } = useCollection(notificationsQuery)
 
+  const sendEmail = (req: any) => {
+    const subject = encodeURIComponent(`New Inquiry: ${req.serviceType} from ${req.name}`)
+    const body = encodeURIComponent(
+      `Hello Admin,\n\nA new inquiry has been received:\n\n` +
+      `Customer Name: ${req.name}\n` +
+      `Service: ${req.serviceType}\n` +
+      `Phone: ${req.phone}\n` +
+      `Email: ${req.email}\n` +
+      `Message: ${req.message || "No message provided"}\n\n` +
+      `Please contact the customer as soon as possible.`
+    )
+    window.location.href = `mailto:admin@aravallisteel.com?subject=${subject}&body=${body}`
+  }
+
   return (
     <div className="min-h-screen bg-background flex flex-col">
       <div className="p-6 flex items-center justify-between bg-white border-b sticky top-0 z-50">
@@ -36,55 +50,73 @@ export default function NotificationsPage() {
               <ChevronLeft className="w-6 h-6" />
             </Button>
           </Link>
-          <h1 className="text-xl font-bold text-primary">Notifications</h1>
+          <h1 className="text-xl font-bold text-primary">Inquiry Manager</h1>
         </div>
-        <Button variant="ghost" size="icon">
-          <Settings className="w-5 h-5 text-muted-foreground" />
-        </Button>
       </div>
 
       <ScrollArea className="flex-1">
-        <div className="p-6 space-y-4">
+        <div className="p-6 space-y-6">
+          <div className="flex items-center justify-between">
+            <h2 className="text-sm font-black text-muted-foreground uppercase tracking-widest">Recent Activity</h2>
+            <span className="bg-accent/10 text-accent text-[10px] font-bold px-3 py-1 rounded-full">
+              {requests?.length || 0} Total
+            </span>
+          </div>
+
           {isLoading ? (
-            <div className="flex justify-center py-20">
-              <div className="w-8 h-8 border-4 border-accent border-t-transparent rounded-full animate-spin" />
+            <div className="flex flex-col items-center justify-center py-20 gap-4">
+              <div className="w-10 h-10 border-4 border-accent border-t-transparent rounded-full animate-spin" />
+              <p className="text-sm font-bold text-muted-foreground">Checking for new inquiries...</p>
             </div>
           ) : requests && requests.length > 0 ? (
             requests.map((req: any) => (
-              <Card key={req.id} className="p-5 border-none shadow-sm bg-white rounded-3xl flex gap-4 items-start animate-in fade-in slide-in-from-right-4">
-                <div className={`p-3 rounded-2xl bg-accent/10 shrink-0`}>
-                  <Sparkles className="w-5 h-5 text-accent" />
-                </div>
-                <div className="flex-1 space-y-2">
+              <Card key={req.id} className="p-0 border-none shadow-xl bg-white rounded-[2rem] overflow-hidden animate-in fade-in slide-in-from-bottom-4">
+                <div className="p-6 space-y-4">
                   <div className="flex justify-between items-start">
-                    <div>
-                      <h3 className="text-sm font-black text-primary">New Consultation Request</h3>
-                      <p className="text-[10px] text-muted-foreground font-bold flex items-center gap-1 mt-1">
-                        <Clock className="w-3 h-3" />
-                        {req.createdAt?.toDate ? formatDistanceToNow(req.createdAt.toDate(), { addSuffix: true }) : "Just now"}
-                      </p>
+                    <div className="flex gap-4">
+                      <div className="p-4 bg-accent/10 rounded-2xl shrink-0">
+                        <User className="w-6 h-6 text-accent" />
+                      </div>
+                      <div>
+                        <h3 className="text-lg font-black text-primary">{req.name}</h3>
+                        <p className="text-xs text-muted-foreground font-bold flex items-center gap-1">
+                          <Clock className="w-3 h-3" />
+                          {req.createdAt?.toDate ? formatDistanceToNow(req.createdAt.toDate(), { addSuffix: true }) : "Just now"}
+                        </p>
+                      </div>
                     </div>
-                    <div className="bg-green-100 text-green-600 text-[10px] font-bold px-2 py-1 rounded-lg uppercase">
+                    <div className="bg-green-100 text-green-600 text-[10px] font-black px-3 py-1 rounded-full uppercase">
                       {req.status || "Pending"}
                     </div>
                   </div>
                   
-                  <div className="space-y-1 py-2 border-y border-dashed my-2">
-                    <p className="text-xs font-bold text-primary/80 flex items-center gap-2">
-                      <User className="w-3 h-3" /> {req.name}
-                    </p>
-                    <p className="text-xs text-muted-foreground flex items-center gap-2">
-                      <MessageCircle className="w-3 h-3" /> {req.serviceType}
-                    </p>
+                  <div className="grid grid-cols-2 gap-3 py-4 border-y border-dashed">
+                    <div className="space-y-1">
+                      <span className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">Service</span>
+                      <p className="text-sm font-bold text-primary flex items-center gap-2">
+                        <MessageCircle className="w-3 h-3 text-accent" /> {req.serviceType}
+                      </p>
+                    </div>
+                    <div className="space-y-1">
+                      <span className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">Contact</span>
+                      <p className="text-sm font-bold text-primary flex items-center gap-2">
+                        <Phone className="w-3 h-3 text-accent" /> {req.phone}
+                      </p>
+                    </div>
                   </div>
 
-                  <div className="flex gap-2 pt-1">
-                    <Button variant="outline" size="sm" className="rounded-xl h-8 text-[10px] font-bold border-accent text-accent hover:bg-accent hover:text-white transition-all">
-                      View Details
+                  <div className="flex gap-3 pt-2">
+                    <Button 
+                      onClick={() => sendEmail(req)}
+                      className="flex-1 h-12 rounded-xl bg-primary text-white font-bold flex gap-2"
+                    >
+                      <Mail className="w-4 h-4" />
+                      Forward to Email
                     </Button>
                     <a href={`tel:${req.phone}`} className="flex-1">
-                      <Button className="w-full h-8 rounded-xl bg-primary text-white text-[10px] font-bold">
-                        Call Customer
+                      <Button variant="outline" className="w-full h-12 rounded-xl border-accent text-accent font-bold flex gap-2">
+                        <Phone className="w-4 h-4" />
+                        Call Now
                       </Button>
                     </a>
                   </div>
@@ -92,9 +124,14 @@ export default function NotificationsPage() {
               </Card>
             ))
           ) : (
-            <div className="flex flex-col items-center justify-center py-20 text-center space-y-4 opacity-40">
-              <Bell className="w-16 h-16" />
-              <p className="text-lg font-bold">No new notifications</p>
+            <div className="flex flex-col items-center justify-center py-32 text-center space-y-6 opacity-40">
+              <div className="w-24 h-24 bg-muted rounded-full flex items-center justify-center">
+                <Bell className="w-12 h-12" />
+              </div>
+              <div className="space-y-2">
+                <p className="text-xl font-black">No inquiries found</p>
+                <p className="text-sm">When customers fill the form, they will appear here.</p>
+              </div>
             </div>
           )}
         </div>

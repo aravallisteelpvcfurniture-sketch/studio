@@ -1,6 +1,7 @@
 
 "use client"
 
+import * as React from "react"
 import { Bell, Menu, User, Sparkles } from "lucide-react"
 import Link from "next/link"
 import { Button } from "./ui/button"
@@ -16,22 +17,46 @@ import {
 } from "@/components/ui/dropdown-menu"
 import { signOut } from "firebase/auth"
 import { useRouter } from "next/navigation"
-import { collection, query, where, limit } from "firebase/firestore"
+import { collection, query, where, limit, orderBy } from "firebase/firestore"
+import { useToast } from "@/hooks/use-toast"
 
 export function TopBar({ onMenuClick }: { onMenuClick: () => void }) {
   const { user } = useUser()
   const { auth } = useAuth()
   const db = useFirestore()
   const router = useRouter()
+  const { toast } = useToast()
 
-  // Checking for new pending requests to show a red dot on the bell icon
+  // Checking for any pending requests
   const pendingQuery = useMemoFirebase(() => {
     if (!db) return null
-    return query(collection(db, "quoteRequests"), where("status", "==", "pending"), limit(1))
+    return query(
+      collection(db, "quoteRequests"), 
+      where("status", "==", "pending"), 
+      orderBy("createdAt", "desc"),
+      limit(5)
+    )
   }, [db])
 
   const { data: pending } = useCollection(pendingQuery)
   const hasNotifications = pending && pending.length > 0
+  const prevCount = React.useRef(0)
+
+  // Show a toast when a NEW inquiry arrives
+  React.useEffect(() => {
+    if (pending && pending.length > prevCount.current) {
+      toast({
+        title: "New Customer Inquiry!",
+        description: `Someone just requested a ${pending[0].serviceType} consultation.`,
+        action: (
+          <Button variant="outline" size="sm" onClick={() => router.push("/notifications")}>
+            View
+          </Button>
+        ),
+      })
+    }
+    prevCount.current = pending?.length || 0
+  }, [pending, toast, router])
 
   const handleSignOut = () => {
     if (auth) signOut(auth)
@@ -54,7 +79,7 @@ export function TopBar({ onMenuClick }: { onMenuClick: () => void }) {
           <Button variant="ghost" size="icon" className="relative">
             <Bell className="w-6 h-6 text-primary" />
             {hasNotifications && (
-              <span className="absolute top-2.5 right-2.5 w-2.5 h-2.5 bg-destructive rounded-full border-2 border-white animate-pulse" />
+              <span className="absolute top-2 right-2 w-3 h-3 bg-accent rounded-full border-2 border-white animate-pulse" />
             )}
           </Button>
         </Link>
@@ -80,7 +105,7 @@ export function TopBar({ onMenuClick }: { onMenuClick: () => void }) {
               </DropdownMenuLabel>
               <DropdownMenuSeparator />
               <DropdownMenuItem asChild className="rounded-xl cursor-pointer">
-                <Link href="/ai-designer">My Design Ideas</Link>
+                <Link href="/notifications">Inquiry Dashboard</Link>
               </DropdownMenuItem>
               <DropdownMenuItem className="rounded-xl cursor-pointer text-destructive focus:text-destructive" onClick={handleSignOut}>
                 Log out
