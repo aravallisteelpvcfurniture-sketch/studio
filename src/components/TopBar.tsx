@@ -18,45 +18,26 @@ import {
 import { signOut } from "firebase/auth"
 import { useRouter } from "next/navigation"
 import { collection, query, where, limit, orderBy } from "firebase/firestore"
-import { useToast } from "@/hooks/use-toast"
 
 export function TopBar({ onMenuClick }: { onMenuClick: () => void }) {
   const { user } = useUser()
   const { auth } = useAuth()
   const db = useFirestore()
   const router = useRouter()
-  const { toast } = useToast()
 
-  // Checking for any pending requests
+  // Checking for any pending requests to show the red dot
   const pendingQuery = useMemoFirebase(() => {
     if (!db) return null
     return query(
       collection(db, "quoteRequests"), 
       where("status", "==", "pending"), 
       orderBy("createdAt", "desc"),
-      limit(5)
+      limit(1)
     )
   }, [db])
 
   const { data: pending } = useCollection(pendingQuery)
   const hasNotifications = pending && pending.length > 0
-  const prevCount = React.useRef(0)
-
-  // Show a toast when a NEW inquiry arrives
-  React.useEffect(() => {
-    if (pending && pending.length > prevCount.current) {
-      toast({
-        title: "New Customer Inquiry!",
-        description: `Someone just requested a ${pending[0].serviceType} consultation.`,
-        action: (
-          <Button variant="outline" size="sm" onClick={() => router.push("/notifications")}>
-            View
-          </Button>
-        ),
-      })
-    }
-    prevCount.current = pending?.length || 0
-  }, [pending, toast, router])
 
   const handleSignOut = () => {
     if (auth) signOut(auth)
