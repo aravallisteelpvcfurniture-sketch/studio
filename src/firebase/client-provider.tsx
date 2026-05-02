@@ -4,27 +4,16 @@
 import React, { useEffect, useState, ReactNode } from 'react';
 import { initializeFirebase } from './index';
 import { FirebaseProvider } from './provider';
-import { FirebaseApp } from 'firebase/app';
-import { Firestore } from 'firebase/firestore';
-import { Auth } from 'firebase/auth';
 
 export function FirebaseClientProvider({ children }: { children: ReactNode }) {
-  const [instances, setInstances] = useState<{
-    app: FirebaseApp | null;
-    db: Firestore | null;
-    auth: Auth | null;
-  } | null>(null);
+  const [instances, setInstances] = useState(() => initializeFirebase());
 
+  // Re-initialize only if needed, but the initial state is already set
   useEffect(() => {
-    // Immediate initialization for faster loading
-    const firebaseInstances = initializeFirebase();
-    setInstances(firebaseInstances);
-  }, []);
-
-  if (!instances) {
-    // Very minimal loader to reduce "blank" feeling
-    return null;
-  }
+    if (!instances.app) {
+      setInstances(initializeFirebase());
+    }
+  }, [instances.app]);
 
   return (
     <FirebaseProvider

@@ -3,11 +3,10 @@
 
 import * as React from "react"
 import { useRouter } from "next/navigation"
-import { useUser } from "@/firebase"
-import { Loader2, LogOut, LayoutDashboard, ShoppingCart, Calendar } from "lucide-react"
+import { useUser, useAuth } from "@/firebase"
+import { Loader2, LogOut, LayoutDashboard, ShoppingCart, Calendar, Sparkles } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { signOut } from "firebase/auth"
-import { useAuth } from "@/firebase"
 
 export default function Home() {
   const { user, loading } = useUser()
@@ -54,32 +53,32 @@ export default function Home() {
       {/* Hero Section */}
       <div className="p-8 space-y-8 flex-1">
         <div className="space-y-2">
-          <h2 className="text-3xl font-black text-primary">Welcome, {user.displayName?.split(' ')[0]}!</h2>
-          <p className="text-muted-foreground">Aapka account taiyar hai. Chaliye kaam shuru karte hain.</p>
+          <h2 className="text-3xl font-black text-primary">Namaste, {user.displayName?.split(' ')[0]}!</h2>
+          <p className="text-muted-foreground">Aapka premium steel dashboard taiyar hai.</p>
         </div>
 
         <div className="grid grid-cols-1 gap-4">
           <div className="bg-accent/10 p-6 rounded-[2rem] border border-accent/20 space-y-4">
             <div className="w-12 h-12 bg-accent rounded-2xl flex items-center justify-center shadow-lg">
-              <LayoutDashboard className="text-white w-6 h-6" />
+              <Sparkles className="text-white w-6 h-6" />
             </div>
             <div>
-              <h3 className="text-lg font-bold text-primary">Your Dashboard</h3>
-              <p className="text-sm text-muted-foreground">Manage your orders and service requests here.</p>
+              <h3 className="text-lg font-bold text-primary">AI Design Assistant</h3>
+              <p className="text-sm text-muted-foreground">Apne ghar ke liye behtareen designs banwayein.</p>
             </div>
-            <Button className="w-full rounded-xl bg-accent hover:bg-accent/90">Go to Dashboard</Button>
+            <Button className="w-full rounded-xl bg-accent hover:bg-accent/90 font-bold h-12">Start Designing</Button>
           </div>
 
           <div className="grid grid-cols-2 gap-4">
             <div className="bg-white p-6 rounded-[2rem] shadow-sm border space-y-3">
               <ShoppingCart className="text-primary w-6 h-6" />
               <h3 className="font-bold text-primary">Shop</h3>
-              <p className="text-[10px] text-muted-foreground">Order steel furniture.</p>
+              <p className="text-[10px] text-muted-foreground">Order Furniture.</p>
             </div>
             <div className="bg-white p-6 rounded-[2rem] shadow-sm border space-y-3">
               <Calendar className="text-primary w-6 h-6" />
-              <h3 className="font-bold text-primary">Schedule</h3>
-              <p className="text-[10px] text-muted-foreground">Book site visits.</p>
+              <h3 className="font-bold text-primary">Visit</h3>
+              <p className="text-[10px] text-muted-foreground">Book Site Visit.</p>
             </div>
           </div>
         </div>
