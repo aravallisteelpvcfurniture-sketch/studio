@@ -8,17 +8,17 @@ import { ChevronLeft, ShoppingCart, Plus, Loader2 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
-import { useFirestore, useCollection, useUser } from "@/firebase"
+import { useFirestore, useCollection, useUser, useMemoFirebase } from "@/firebase"
 import { collection, query, doc, setDoc, serverTimestamp } from "firebase/firestore"
 import { useToast } from "@/hooks/use-toast"
 
 export default function ShopPage() {
-  const { db } = useFirestore()
+  const db = useFirestore()
   const { user } = useUser()
   const { toast } = useToast()
   
-  const productsQuery = React.useMemo(() => db ? collection(db, "products") : null, [db])
-  const { data: products, loading } = useCollection(productsQuery)
+  const productsQuery = useMemoFirebase(() => db ? collection(db, "products") : null, [db])
+  const { data: products, isLoading: loading } = useCollection(productsQuery)
 
   const addToCart = (product: any) => {
     if (!db || !user) {
@@ -63,7 +63,7 @@ export default function ShopPage() {
           <div className="col-span-2 flex justify-center py-20">
             <Loader2 className="w-8 h-8 animate-spin text-accent" />
           </div>
-        ) : products.length > 0 ? (
+        ) : products && products.length > 0 ? (
           products.map((product: any) => (
             <Card key={product.id} className="overflow-hidden border-none shadow-md bg-white rounded-2xl flex flex-col">
               <div className="relative aspect-square">

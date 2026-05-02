@@ -40,7 +40,7 @@ const formSchema = z.object({
 })
 
 export default function BookConsultation() {
-  const { db } = useFirestore()
+  const db = useFirestore()
   const { user } = useUser()
   const { toast } = useToast()
   const router = useRouter()

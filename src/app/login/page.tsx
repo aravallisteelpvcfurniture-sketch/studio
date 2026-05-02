@@ -14,8 +14,8 @@ import { PlaceHolderImages } from "@/lib/placeholder-images"
 import { useToast } from "@/hooks/use-toast"
 
 export default function LoginPage() {
-  const { auth } = useAuth()
-  const { db } = useFirestore()
+  const auth = useAuth()
+  const db = useFirestore()
   const { user, isUserLoading } = useUser()
   const router = useRouter()
   const { toast } = useToast()
@@ -53,7 +53,7 @@ export default function LoginPage() {
         email: loggedUser.email,
         photoURL: loggedUser.photoURL,
         lastLogin: serverTimestamp(),
-        createdAt: serverTimestamp(),
+        updatedAt: serverTimestamp(),
       }, { merge: true })
 
       toast({
@@ -111,7 +111,7 @@ export default function LoginPage() {
         <div className="w-full space-y-6">
           <Button 
             onClick={handleGoogleLogin} 
-            disabled={loading}
+            disabled={loading || isUserLoading}
             className="w-full h-16 bg-white hover:bg-gray-50 text-primary border-2 border-gray-100 rounded-2xl font-bold flex items-center justify-center gap-4 transition-all active:scale-95 shadow-sm"
           >
             {loading ? (
