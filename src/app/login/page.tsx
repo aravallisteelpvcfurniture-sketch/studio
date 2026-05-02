@@ -8,8 +8,7 @@ import { doc, setDoc, serverTimestamp } from "firebase/firestore"
 import { useAuth, useFirestore, useUser } from "@/firebase"
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
-import { ArrowLeft, Loader2, Sparkles } from "lucide-react"
-import Link from "next/link"
+import { Loader2, Sparkles } from "lucide-react"
 
 export default function LoginPage() {
   const { auth } = useAuth()
@@ -48,19 +47,15 @@ export default function LoginPage() {
     }
   }
 
+  if (userLoading) return null;
+
   return (
     <div className="min-h-screen bg-background flex flex-col items-center justify-center p-6 relative overflow-hidden">
-      {/* Abstract Background */}
-      <div className="absolute top-[-5%] left-[-5%] w-[300px] h-[300px] bg-accent/5 rounded-full blur-[80px]" />
+      {/* Abstract Background Decor */}
+      <div className="absolute top-[-5%] left-[-5%] w-[300px] h-[300px] bg-accent/10 rounded-full blur-[80px]" />
       <div className="absolute bottom-[-10%] right-[-10%] w-[400px] h-[400px] bg-primary/5 rounded-full blur-[100px]" />
 
-      <Link href="/welcome" className="absolute top-8 left-8">
-        <Button variant="ghost" size="icon" className="rounded-full hover:bg-accent/10 hover:text-accent transition-colors">
-          <ArrowLeft className="w-6 h-6" />
-        </Button>
-      </Link>
-
-      <Card className="w-full max-w-md p-10 border-none shadow-[0_30px_60px_-15px_rgba(0,0,0,0.1)] bg-white/80 backdrop-blur-xl rounded-[3rem] flex flex-col items-center text-center space-y-10 animate-in zoom-in-95 duration-500">
+      <Card className="w-full max-w-md p-10 border-none shadow-[0_30px_60px_-15px_rgba(0,0,0,0.1)] bg-white/90 backdrop-blur-xl rounded-[3rem] flex flex-col items-center text-center space-y-10 animate-in fade-in zoom-in-95 duration-300">
         <div className="space-y-4">
           <div className="w-20 h-20 bg-primary rounded-3xl flex items-center justify-center mx-auto shadow-xl">
             <Sparkles className="w-10 h-10 text-accent" />
@@ -70,7 +65,7 @@ export default function LoginPage() {
               WELCOME<span className="text-accent"> BACK</span>
             </h1>
             <p className="text-muted-foreground text-sm font-medium">
-              Login to access your premium designs.
+              Aravalli Steel mein aapka swagat hai.
             </p>
           </div>
         </div>
@@ -100,13 +95,9 @@ export default function LoginPage() {
 
           <div className="flex items-center gap-4 py-4">
             <div className="h-px bg-gray-100 flex-1" />
-            <span className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">Aravalli Steel</span>
+            <span className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">Premium Steel Solutions</span>
             <div className="h-px bg-gray-100 flex-1" />
           </div>
-
-          <p className="text-[10px] text-muted-foreground leading-relaxed px-4">
-            By joining, you agree to our <span className="text-accent font-bold cursor-pointer">Terms of Service</span> and <span className="text-accent font-bold cursor-pointer">Privacy Policy</span>.
-          </p>
         </div>
       </Card>
     </div>

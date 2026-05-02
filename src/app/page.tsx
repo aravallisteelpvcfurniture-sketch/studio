@@ -16,13 +16,13 @@ export default function Home() {
 
   React.useEffect(() => {
     if (!loading && !user) {
-      router.push("/welcome")
+      router.push("/login")
     }
   }, [user, loading, router])
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
+      <div className="min-h-screen flex items-center justify-center bg-background">
         <Loader2 className="w-8 h-8 animate-spin text-accent" />
       </div>
     )
@@ -55,7 +55,7 @@ export default function Home() {
       <div className="p-8 space-y-8 flex-1">
         <div className="space-y-2">
           <h2 className="text-3xl font-black text-primary">Welcome, {user.displayName?.split(' ')[0]}!</h2>
-          <p className="text-muted-foreground">App ab bilkul ready hai. Kaam shuru karte hain.</p>
+          <p className="text-muted-foreground">Aapka account taiyar hai. Chaliye kaam shuru karte hain.</p>
         </div>
 
         <div className="grid grid-cols-1 gap-4">
@@ -64,8 +64,8 @@ export default function Home() {
               <LayoutDashboard className="text-white w-6 h-6" />
             </div>
             <div>
-              <h3 className="text-lg font-bold text-primary">Dashboard Setup</h3>
-              <p className="text-sm text-muted-foreground">Yahan aapke saare orders aur requests dikhenge.</p>
+              <h3 className="text-lg font-bold text-primary">Your Dashboard</h3>
+              <p className="text-sm text-muted-foreground">Manage your orders and service requests here.</p>
             </div>
             <Button className="w-full rounded-xl bg-accent hover:bg-accent/90">Go to Dashboard</Button>
           </div>
@@ -74,12 +74,12 @@ export default function Home() {
             <div className="bg-white p-6 rounded-[2rem] shadow-sm border space-y-3">
               <ShoppingCart className="text-primary w-6 h-6" />
               <h3 className="font-bold text-primary">Shop</h3>
-              <p className="text-[10px] text-muted-foreground">Order premium steel furniture.</p>
+              <p className="text-[10px] text-muted-foreground">Order steel furniture.</p>
             </div>
             <div className="bg-white p-6 rounded-[2rem] shadow-sm border space-y-3">
               <Calendar className="text-primary w-6 h-6" />
               <h3 className="font-bold text-primary">Schedule</h3>
-              <p className="text-[10px] text-muted-foreground">Book site visits easily.</p>
+              <p className="text-[10px] text-muted-foreground">Book site visits.</p>
             </div>
           </div>
         </div>
