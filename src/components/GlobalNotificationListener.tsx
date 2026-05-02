@@ -13,24 +13,29 @@ import { useRouter } from "next/navigation"
  */
 export function GlobalNotificationListener() {
   const db = useFirestore()
-  const { user } = useUser()
+  const { user, isUserLoading } = useUser()
   const { toast } = useToast()
   const router = useRouter()
   const isInitialLoad = React.useRef(true)
   const prevCount = React.useRef(0)
 
-  // Only run query for the admin user to prevent permission errors for regular customers
-  const isAdmin = user?.email === "aravallisteelpvcfurniture@gmail.com" || user?.uid === "Qmcch2NXxmg47Zf28Wh0KTp9Njt1";
+  // Explicit admin check
+  const isAdmin = React.useMemo(() => {
+    if (!user) return false;
+    return user.email === "aravallisteelpvcfurniture@gmail.com" || user.uid === "Qmcch2NXxmg47Zf28Wh0KTp9Njt1";
+  }, [user]);
 
   const pendingQuery = useMemoFirebase(() => {
-    if (!db || !user || !isAdmin) return null
+    // CRITICAL: Only attempt the query if we are SURE the user is an admin
+    if (!db || !user || !isAdmin || isUserLoading) return null
+    
     return query(
       collection(db, "quoteRequests"),
       where("status", "==", "pending"),
       orderBy("createdAt", "desc"),
       limit(5)
     )
-  }, [db, user, isAdmin])
+  }, [db, user, isAdmin, isUserLoading])
 
   const { data: pending } = useCollection(pendingQuery)
 

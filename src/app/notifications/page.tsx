@@ -1,4 +1,3 @@
-
 "use client"
 
 import * as React from "react"
@@ -15,15 +14,21 @@ export default function NotificationsPage() {
   const db = useFirestore()
   const { user, isUserLoading } = useUser()
 
-  // Fetching real-time quote requests - only if user is logged in
+  // Explicit admin check
+  const isAdmin = React.useMemo(() => {
+    if (!user) return false;
+    return user.email === "aravallisteelpvcfurniture@gmail.com" || user.uid === "Qmcch2NXxmg47Zf28Wh0KTp9Njt1";
+  }, [user]);
+
+  // Fetching real-time quote requests - only if user is confirmed admin
   const notificationsQuery = useMemoFirebase(() => {
-    if (!db || !user) return null
+    if (!db || !user || !isAdmin || isUserLoading) return null
     return query(
       collection(db, "quoteRequests"),
       orderBy("createdAt", "desc"),
       limit(20)
     )
-  }, [db, user])
+  }, [db, user, isAdmin, isUserLoading])
 
   const { data: requests, isLoading } = useCollection(notificationsQuery)
 
@@ -49,12 +54,16 @@ export default function NotificationsPage() {
     )
   }
 
-  if (!user) {
+  if (!user || !isAdmin) {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center p-6 text-center">
-        <h2 className="text-xl font-bold mb-4">Please login to access this page</h2>
+        <div className="w-20 h-20 bg-muted rounded-full flex items-center justify-center mb-6">
+          <Bell className="w-10 h-10 text-muted-foreground" />
+        </div>
+        <h2 className="text-2xl font-black mb-4">Admin Access Required</h2>
+        <p className="text-muted-foreground mb-8 text-sm">Please login with the administrator account to view inquiries.</p>
         <Link href="/login">
-          <Button className="rounded-xl">Go to Login</Button>
+          <Button className="rounded-xl px-8 h-12 bg-primary">Switch Account</Button>
         </Link>
       </div>
     )
