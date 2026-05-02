@@ -4,7 +4,7 @@
 import { Bell, Menu, User, Sparkles } from "lucide-react"
 import Link from "next/link"
 import { Button } from "./ui/button"
-import { useUser, useAuth } from "@/firebase"
+import { useUser, useAuth, useFirestore, useCollection, useMemoFirebase } from "@/firebase"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import {
   DropdownMenu,
@@ -16,11 +16,22 @@ import {
 } from "@/components/ui/dropdown-menu"
 import { signOut } from "firebase/auth"
 import { useRouter } from "next/navigation"
+import { collection, query, where, limit } from "firebase/firestore"
 
 export function TopBar({ onMenuClick }: { onMenuClick: () => void }) {
   const { user } = useUser()
   const { auth } = useAuth()
+  const db = useFirestore()
   const router = useRouter()
+
+  // Checking for new pending requests to show a red dot on the bell icon
+  const pendingQuery = useMemoFirebase(() => {
+    if (!db) return null
+    return query(collection(db, "quoteRequests"), where("status", "==", "pending"), limit(1))
+  }, [db])
+
+  const { data: pending } = useCollection(pendingQuery)
+  const hasNotifications = pending && pending.length > 0
 
   const handleSignOut = () => {
     if (auth) signOut(auth)
@@ -42,7 +53,9 @@ export function TopBar({ onMenuClick }: { onMenuClick: () => void }) {
         <Link href="/notifications">
           <Button variant="ghost" size="icon" className="relative">
             <Bell className="w-6 h-6 text-primary" />
-            <span className="absolute top-2 right-2 w-2 h-2 bg-accent rounded-full border-2 border-white" />
+            {hasNotifications && (
+              <span className="absolute top-2.5 right-2.5 w-2.5 h-2.5 bg-destructive rounded-full border-2 border-white animate-pulse" />
+            )}
           </Button>
         </Link>
 
@@ -75,7 +88,7 @@ export function TopBar({ onMenuClick }: { onMenuClick: () => void }) {
             </DropdownMenuContent>
           </DropdownMenu>
         ) : (
-          <Link href="/welcome">
+          <Link href="/login">
             <Button variant="ghost" size="icon" className="rounded-full">
               <User className="w-6 h-6 text-muted-foreground" />
             </Button>
