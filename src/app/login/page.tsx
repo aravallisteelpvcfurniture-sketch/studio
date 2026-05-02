@@ -8,7 +8,9 @@ import { doc, setDoc, serverTimestamp } from "firebase/firestore"
 import { useAuth, useFirestore, useUser } from "@/firebase"
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
-import { Loader2, Sparkles } from "lucide-react"
+import { Loader2 } from "lucide-react"
+import Image from "next/image"
+import { PlaceHolderImages } from "@/lib/placeholder-images"
 
 export default function LoginPage() {
   const { auth } = useAuth()
@@ -16,6 +18,8 @@ export default function LoginPage() {
   const { user, loading: userLoading } = useUser()
   const router = useRouter()
   const [loading, setLoading] = React.useState(false)
+
+  const logoImg = PlaceHolderImages.find(i => i.id === "company-logo")
 
   React.useEffect(() => {
     if (user && !userLoading) {
@@ -47,18 +51,30 @@ export default function LoginPage() {
     }
   }
 
-  if (userLoading) return null;
+  if (userLoading) return (
+    <div className="min-h-screen flex items-center justify-center bg-background">
+      <Loader2 className="w-8 h-8 animate-spin text-accent" />
+    </div>
+  )
 
   return (
     <div className="min-h-screen bg-background flex flex-col items-center justify-center p-6 relative overflow-hidden">
-      {/* Abstract Background Decor */}
       <div className="absolute top-[-5%] left-[-5%] w-[300px] h-[300px] bg-accent/10 rounded-full blur-[80px]" />
       <div className="absolute bottom-[-10%] right-[-10%] w-[400px] h-[400px] bg-primary/5 rounded-full blur-[100px]" />
 
       <Card className="w-full max-w-md p-10 border-none shadow-[0_30px_60px_-15px_rgba(0,0,0,0.1)] bg-white/90 backdrop-blur-xl rounded-[3rem] flex flex-col items-center text-center space-y-10 animate-in fade-in zoom-in-95 duration-300">
-        <div className="space-y-4">
-          <div className="w-20 h-20 bg-primary rounded-3xl flex items-center justify-center mx-auto shadow-xl">
-            <Sparkles className="w-10 h-10 text-accent" />
+        <div className="space-y-6">
+          <div className="w-24 h-24 bg-white rounded-3xl flex items-center justify-center mx-auto shadow-xl overflow-hidden p-2 border border-gray-100">
+            {logoImg && (
+              <Image 
+                src={logoImg.imageUrl} 
+                alt="Aravalli Steel Logo" 
+                width={80} 
+                height={80} 
+                className="object-contain"
+                data-ai-hint={logoImg.imageHint}
+              />
+            )}
           </div>
           <div className="space-y-1">
             <h1 className="text-4xl font-black text-primary tracking-tighter">

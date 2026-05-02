@@ -4,14 +4,18 @@
 import * as React from "react"
 import { useRouter } from "next/navigation"
 import { useUser, useAuth } from "@/firebase"
-import { Loader2, LogOut, LayoutDashboard, ShoppingCart, Calendar, Sparkles } from "lucide-react"
+import { Loader2, LogOut, ShoppingCart, Calendar, Sparkles } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { signOut } from "firebase/auth"
+import Image from "next/image"
+import { PlaceHolderImages } from "@/lib/placeholder-images"
 
 export default function Home() {
   const { user, loading } = useUser()
   const { auth } = useAuth()
   const router = useRouter()
+
+  const logoImg = PlaceHolderImages.find(i => i.id === "company-logo")
 
   React.useEffect(() => {
     if (!loading && !user) {
@@ -36,12 +40,21 @@ export default function Home() {
   return (
     <div className="min-h-screen bg-background flex flex-col">
       {/* Header */}
-      <div className="p-6 flex items-center justify-between bg-white/50 backdrop-blur-md sticky top-0 z-50 border-b">
-        <div className="flex items-center gap-2">
-          <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
-            <span className="text-white text-xs font-black">AS</span>
+      <div className="p-4 flex items-center justify-between bg-white/50 backdrop-blur-md sticky top-0 z-50 border-b">
+        <div className="flex items-center gap-3">
+          <div className="w-10 h-10 bg-white rounded-lg flex items-center justify-center shadow-sm overflow-hidden p-1 border">
+            {logoImg && (
+              <Image 
+                src={logoImg.imageUrl} 
+                alt="Logo" 
+                width={32} 
+                height={32} 
+                className="object-contain"
+                data-ai-hint={logoImg.imageHint}
+              />
+            )}
           </div>
-          <h1 className="text-xl font-black text-primary tracking-tighter">
+          <h1 className="text-lg font-black text-primary tracking-tighter">
             ARAVALLI<span className="text-accent">STEEL</span>
           </h1>
         </div>
@@ -53,8 +66,8 @@ export default function Home() {
       {/* Hero Section */}
       <div className="p-8 space-y-8 flex-1">
         <div className="space-y-2">
-          <h2 className="text-3xl font-black text-primary">Namaste, {user.displayName?.split(' ')[0]}!</h2>
-          <p className="text-muted-foreground">Aapka premium steel dashboard taiyar hai.</p>
+          <h2 className="text-3xl font-black text-primary leading-tight">Namaste, {user.displayName?.split(' ')[0]}!</h2>
+          <p className="text-muted-foreground font-medium">Aapka premium steel dashboard taiyar hai.</p>
         </div>
 
         <div className="grid grid-cols-1 gap-4">
@@ -66,19 +79,30 @@ export default function Home() {
               <h3 className="text-lg font-bold text-primary">AI Design Assistant</h3>
               <p className="text-sm text-muted-foreground">Apne ghar ke liye behtareen designs banwayein.</p>
             </div>
-            <Button className="w-full rounded-xl bg-accent hover:bg-accent/90 font-bold h-12">Start Designing</Button>
+            <Button 
+              onClick={() => router.push("/ai-designer")}
+              className="w-full rounded-xl bg-accent hover:bg-accent/90 font-bold h-12"
+            >
+              Start Designing
+            </Button>
           </div>
 
           <div className="grid grid-cols-2 gap-4">
-            <div className="bg-white p-6 rounded-[2rem] shadow-sm border space-y-3">
+            <div 
+              onClick={() => router.push("/shop")}
+              className="bg-white p-6 rounded-[2rem] shadow-sm border space-y-3 cursor-pointer hover:border-accent transition-all active:scale-95"
+            >
               <ShoppingCart className="text-primary w-6 h-6" />
               <h3 className="font-bold text-primary">Shop</h3>
-              <p className="text-[10px] text-muted-foreground">Order Furniture.</p>
+              <p className="text-[10px] text-muted-foreground font-medium uppercase tracking-widest">Order Now</p>
             </div>
-            <div className="bg-white p-6 rounded-[2rem] shadow-sm border space-y-3">
+            <div 
+              onClick={() => router.push("/book-consultation")}
+              className="bg-white p-6 rounded-[2rem] shadow-sm border space-y-3 cursor-pointer hover:border-accent transition-all active:scale-95"
+            >
               <Calendar className="text-primary w-6 h-6" />
               <h3 className="font-bold text-primary">Visit</h3>
-              <p className="text-[10px] text-muted-foreground">Book Site Visit.</p>
+              <p className="text-[10px] text-muted-foreground font-medium uppercase tracking-widest">Book Site Visit</p>
             </div>
           </div>
         </div>

@@ -2,6 +2,12 @@
 {
   "placeholderImages": [
     {
+      "id": "company-logo",
+      "description": "Aravalli Steel Official Logo",
+      "imageUrl": "https://picsum.photos/seed/aravalli-logo/200/200",
+      "imageHint": "industrial logo"
+    },
+    {
       "id": "hero-kitchen",
       "description": "Modern Minimalist Modular Kitchen",
       "imageUrl": "https://picsum.photos/seed/kitchen1/1200/800",
@@ -18,30 +24,6 @@
       "description": "Premium Wall Paneling",
       "imageUrl": "https://picsum.photos/seed/wall1/1200/800",
       "imageHint": "wall paneling"
-    },
-    {
-      "id": "cat-kitchen",
-      "description": "Modular Kitchens Category",
-      "imageUrl": "https://picsum.photos/seed/kitchencat/800/1200",
-      "imageHint": "modular kitchen"
-    },
-    {
-      "id": "cat-wardrobe",
-      "description": "Wardrobe Systems Category",
-      "imageUrl": "https://picsum.photos/seed/wardrobecat/800/1200",
-      "imageHint": "wardrobe system"
-    },
-    {
-      "id": "cat-paneling",
-      "description": "Wall Paneling & Ceiling Category",
-      "imageUrl": "https://picsum.photos/seed/panelcat/800/1200",
-      "imageHint": "wall paneling"
-    },
-    {
-      "id": "cat-hardware",
-      "description": "Hardware & Accessories Category",
-      "imageUrl": "https://picsum.photos/seed/hardwarecat/800/1200",
-      "imageHint": "kitchen hardware"
     }
   ]
 }
