@@ -27,7 +27,7 @@ import {
   SelectValue,
 } from "@/components/ui/select"
 import { Card } from "@/components/ui/card"
-import { ChevronLeft, Send, CheckCircle2, Loader2 } from "lucide-react"
+import { ChevronLeft, Send, CheckCircle2, Loader2, MessageSquare, Mail } from "lucide-react"
 import Link from "next/link"
 
 const formSchema = z.object({
@@ -43,6 +43,7 @@ export default function BookConsultation() {
   const { user } = useUser()
   const [loading, setLoading] = React.useState(false)
   const [submitted, setSubmitted] = React.useState(false)
+  const [formData, setFormData] = React.useState<any>(null)
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -69,6 +70,7 @@ export default function BookConsultation() {
 
     addDoc(colRef, submissionData)
       .then(() => {
+        setFormData(values)
         setSubmitted(true)
         setLoading(false)
       })
@@ -83,16 +85,51 @@ export default function BookConsultation() {
       });
   }
 
+  const sendWhatsApp = () => {
+    if (!formData) return
+    const adminPhone = "919999999999" // TODO: Change to your actual WhatsApp number
+    const text = `*New Inquiry Received!*\n\n*Name:* ${formData.name}\n*Phone:* ${formData.phone}\n*Service:* ${formData.serviceType}\n*Email:* ${formData.email}\n*Message:* ${formData.message || "No message"}`
+    window.open(`https://wa.me/${adminPhone}?text=${encodeURIComponent(text)}`, "_blank")
+  }
+
+  const sendEmail = () => {
+    if (!formData) return
+    const adminEmail = "aravallisteelpvcfurniture@gmail.com"
+    const subject = `New Inquiry from ${formData.name}`
+    const body = `Hello Admin,\n\nYou have a new inquiry:\n\nName: ${formData.name}\nPhone: ${formData.phone}\nService: ${formData.serviceType}\nEmail: ${formData.email}\nMessage: ${formData.message || "No message"}`
+    window.location.href = `mailto:${adminEmail}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`
+  }
+
   if (submitted) {
     return (
       <div className="min-h-screen bg-background flex flex-col items-center justify-center p-6 text-center">
-        <div className="w-20 h-20 bg-accent/20 rounded-full flex items-center justify-center mb-6 animate-in zoom-in">
-          <CheckCircle2 className="w-10 h-10 text-accent" />
+        <div className="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mb-6 animate-in zoom-in">
+          <CheckCircle2 className="w-10 h-10 text-green-600" />
         </div>
-        <h1 className="text-3xl font-black text-primary mb-2">Request Received!</h1>
-        <p className="text-muted-foreground mb-8 text-sm max-w-[250px]">Our expert designers will contact you within 24 hours.</p>
+        <h1 className="text-3xl font-black text-primary mb-2">Request Saved!</h1>
+        <p className="text-muted-foreground mb-8 text-sm max-w-[300px]">Ab Admin ko turant alert bhejne ke liye niche diye gaye button par click karein:</p>
+        
+        <div className="w-full max-w-xs space-y-4 mb-8">
+          <Button 
+            onClick={sendWhatsApp}
+            className="w-full h-14 bg-[#25D366] hover:bg-[#128C7E] text-white rounded-2xl font-bold flex gap-2 shadow-lg"
+          >
+            <MessageSquare className="w-5 h-5 fill-white" />
+            WhatsApp Admin
+          </Button>
+          
+          <Button 
+            onClick={sendEmail}
+            variant="outline"
+            className="w-full h-14 border-primary text-primary rounded-2xl font-bold flex gap-2"
+          >
+            <Mail className="w-5 h-5" />
+            Email Admin
+          </Button>
+        </div>
+
         <Link href="/">
-          <Button className="rounded-2xl h-14 px-8 bg-primary text-white font-bold">Back to Home</Button>
+          <Button variant="ghost" className="text-muted-foreground font-bold">Back to Home</Button>
         </Link>
       </div>
     )
