@@ -2,10 +2,10 @@
 "use client"
 
 import * as React from "react"
-import { Bell, Menu, User, Sparkles } from "lucide-react"
+import { Menu, User, Sparkles } from "lucide-react"
 import Link from "next/link"
 import { Button } from "./ui/button"
-import { useUser, useAuth, useFirestore, useCollection, useMemoFirebase } from "@/firebase"
+import { useUser, useAuth } from "@/firebase"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import {
   DropdownMenu,
@@ -16,28 +16,10 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { signOut } from "firebase/auth"
-import { useRouter } from "next/navigation"
-import { collection, query, where, limit, orderBy } from "firebase/firestore"
 
 export function TopBar({ onMenuClick }: { onMenuClick: () => void }) {
   const { user } = useUser()
   const { auth } = useAuth()
-  const db = useFirestore()
-  const router = useRouter()
-
-  // Checking for any pending requests only if user is logged in
-  const pendingQuery = useMemoFirebase(() => {
-    if (!db || !user) return null
-    return query(
-      collection(db, "quoteRequests"), 
-      where("status", "==", "pending"), 
-      orderBy("createdAt", "desc"),
-      limit(1)
-    )
-  }, [db, user])
-
-  const { data: pending } = useCollection(pendingQuery)
-  const hasNotifications = pending && pending.length > 0
 
   const handleSignOut = () => {
     if (auth) signOut(auth)
@@ -56,15 +38,6 @@ export function TopBar({ onMenuClick }: { onMenuClick: () => void }) {
       </Link>
 
       <div className="flex items-center gap-2">
-        <Link href="/notifications">
-          <Button variant="ghost" size="icon" className="relative">
-            <Bell className="w-6 h-6 text-primary" />
-            {hasNotifications && (
-              <span className="absolute top-2 right-2 w-3 h-3 bg-accent rounded-full border-2 border-white animate-pulse" />
-            )}
-          </Button>
-        </Link>
-
         {user ? (
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
@@ -85,9 +58,6 @@ export function TopBar({ onMenuClick }: { onMenuClick: () => void }) {
                 </div>
               </DropdownMenuLabel>
               <DropdownMenuSeparator />
-              <DropdownMenuItem asChild className="rounded-xl cursor-pointer">
-                <Link href="/notifications">Inquiry Dashboard</Link>
-              </DropdownMenuItem>
               <DropdownMenuItem className="rounded-xl cursor-pointer text-destructive focus:text-destructive" onClick={handleSignOut}>
                 Log out
               </DropdownMenuItem>

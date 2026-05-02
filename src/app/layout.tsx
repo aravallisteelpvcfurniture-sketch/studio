@@ -3,7 +3,6 @@ import type {Metadata} from 'next';
 import './globals.css';
 import { Toaster } from "@/components/ui/toaster";
 import { FirebaseClientProvider } from "@/firebase";
-import { GlobalNotificationListener } from "@/components/GlobalNotificationListener";
 import { Roboto } from 'next/font/google';
 
 const roboto = Roboto({
@@ -27,7 +26,6 @@ export default function RootLayout({
     <html lang="en" className={`${roboto.variable}`}>
       <body className="font-body antialiased selection:bg-accent/30 overflow-x-hidden bg-background">
         <FirebaseClientProvider>
-          <GlobalNotificationListener />
           {children}
           <Toaster />
         </FirebaseClientProvider>
