@@ -1,3 +1,4 @@
+
 import type {Metadata} from 'next';
 import './globals.css';
 import { Toaster } from "@/components/ui/toaster";
@@ -12,8 +13,8 @@ const roboto = Roboto({
 });
 
 export const metadata: Metadata = {
-  title: 'Aravalli Steel | Premium Modular Solutions',
-  description: 'High-quality modular kitchens, wardrobes, and interior paneling solutions.',
+  title: 'Aravalli Steel | Ready to Build',
+  description: 'Project reset. Ready for new instructions.',
 };
 
 export default function RootLayout({
@@ -23,7 +24,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className={`${roboto.variable}`}>
-      <body className="font-body antialiased selection:bg-accent/30 overflow-x-hidden">
+      <body className="font-body antialiased selection:bg-accent/30 overflow-x-hidden bg-background">
         <FirebaseClientProvider>
           {children}
           <Toaster />
