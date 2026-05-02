@@ -1,4 +1,3 @@
-
 "use client"
 
 import * as React from "react"
@@ -6,7 +5,6 @@ import Image from "next/image"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { 
-  Download, 
   Calculator, 
   MapPin, 
   ChevronRight,
@@ -53,8 +51,9 @@ export default function Home() {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-background">
+      <div className="min-h-screen flex flex-col items-center justify-center bg-background gap-4">
         <Loader2 className="w-10 h-10 animate-spin text-accent" />
+        <p className="text-xs font-bold text-muted-foreground uppercase tracking-widest">Checking your profile...</p>
       </div>
     )
   }
@@ -80,7 +79,7 @@ export default function Home() {
                   alt={img.description}
                   fill
                   className="object-cover"
-                  priority
+                  priority={img.id === 'hero-kitchen'}
                   data-ai-hint={img.imageHint}
                 />
                 <div className="absolute inset-0 bg-black/30" />

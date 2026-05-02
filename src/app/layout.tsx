@@ -2,6 +2,14 @@ import type {Metadata} from 'next';
 import './globals.css';
 import { Toaster } from "@/components/ui/toaster";
 import { FirebaseClientProvider } from "@/firebase";
+import { Roboto } from 'next/font/google';
+
+const roboto = Roboto({
+  weight: ['300', '400', '500', '700'],
+  subsets: ['latin'],
+  display: 'swap',
+  variable: '--font-roboto',
+});
 
 export const metadata: Metadata = {
   title: 'Aravalli Steel | Premium Modular Solutions',
@@ -14,12 +22,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
-      <head>
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
-        <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet" />
-      </head>
+    <html lang="en" className={`${roboto.variable}`}>
       <body className="font-body antialiased selection:bg-accent/30 overflow-x-hidden">
         <FirebaseClientProvider>
           {children}
