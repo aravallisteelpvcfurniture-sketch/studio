@@ -25,16 +25,16 @@ export function TopBar({ onMenuClick }: { onMenuClick: () => void }) {
   const db = useFirestore()
   const router = useRouter()
 
-  // Checking for any pending requests to show the red dot
+  // Checking for any pending requests only if user is logged in
   const pendingQuery = useMemoFirebase(() => {
-    if (!db) return null
+    if (!db || !user) return null
     return query(
       collection(db, "quoteRequests"), 
       where("status", "==", "pending"), 
       orderBy("createdAt", "desc"),
       limit(1)
     )
-  }, [db])
+  }, [db, user])
 
   const { data: pending } = useCollection(pendingQuery)
   const hasNotifications = pending && pending.length > 0

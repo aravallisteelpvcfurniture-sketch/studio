@@ -13,17 +13,17 @@ import { formatDistanceToNow } from "date-fns"
 
 export default function NotificationsPage() {
   const db = useFirestore()
-  const { user } = useUser()
+  const { user, isUserLoading } = useUser()
 
-  // Fetching real-time quote requests to act as notifications
+  // Fetching real-time quote requests - only if user is logged in
   const notificationsQuery = useMemoFirebase(() => {
-    if (!db) return null
+    if (!db || !user) return null
     return query(
       collection(db, "quoteRequests"),
       orderBy("createdAt", "desc"),
       limit(20)
     )
-  }, [db])
+  }, [db, user])
 
   const { data: requests, isLoading } = useCollection(notificationsQuery)
 
@@ -38,7 +38,26 @@ export default function NotificationsPage() {
       `Message: ${req.message || "No message provided"}\n\n` +
       `Please contact the customer as soon as possible.`
     )
-    window.location.href = `mailto:admin@aravallisteel.com?subject=${subject}&body=${body}`
+    window.location.href = `mailto:aravallisteelpvcfurniture@gmail.com?subject=${subject}&body=${body}`
+  }
+
+  if (isUserLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-background">
+        <div className="w-10 h-10 border-4 border-accent border-t-transparent rounded-full animate-spin" />
+      </div>
+    )
+  }
+
+  if (!user) {
+    return (
+      <div className="min-h-screen flex flex-col items-center justify-center p-6 text-center">
+        <h2 className="text-xl font-bold mb-4">Please login to access this page</h2>
+        <Link href="/login">
+          <Button className="rounded-xl">Go to Login</Button>
+        </Link>
+      </div>
+    )
   }
 
   return (
