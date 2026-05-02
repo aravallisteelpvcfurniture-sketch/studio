@@ -19,28 +19,29 @@ export function GlobalNotificationListener() {
   const isInitialLoad = React.useRef(true)
   const prevCount = React.useRef(0)
 
-  // Explicit admin check
+  // Strict Admin Check
   const isAdmin = React.useMemo(() => {
-    if (!user) return false;
+    if (!user || isUserLoading) return false;
     return user.email === "aravallisteelpvcfurniture@gmail.com" || user.uid === "Qmcch2NXxmg47Zf28Wh0KTp9Njt1";
-  }, [user]);
+  }, [user, isUserLoading]);
 
+  // Query is ONLY created if isAdmin is explicitly true
   const pendingQuery = useMemoFirebase(() => {
-    // CRITICAL: Only attempt the query if we are SURE the user is an admin
-    if (!db || !user || !isAdmin || isUserLoading) return null
+    if (!db || !isAdmin) return null
     
+    // Safety check to ensure we don't query prematurely
     return query(
       collection(db, "quoteRequests"),
       where("status", "==", "pending"),
       orderBy("createdAt", "desc"),
       limit(5)
     )
-  }, [db, user, isAdmin, isUserLoading])
+  }, [db, isAdmin])
 
   const { data: pending } = useCollection(pendingQuery)
 
   React.useEffect(() => {
-    if (!pending || !isAdmin) return
+    if (!pending || !isAdmin || pending.length === 0) return
 
     if (isInitialLoad.current) {
       prevCount.current = pending.length
