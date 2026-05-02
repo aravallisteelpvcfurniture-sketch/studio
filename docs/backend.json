@@ -19,6 +19,14 @@
           "type": "string",
           "description": "The URL to the user's profile picture."
         },
+        "shippingAddress": {
+          "type": "string",
+          "description": "User's default shipping address."
+        },
+        "billingAddress": {
+          "type": "string",
+          "description": "User's default billing address."
+        },
         "createdAt": {
           "type": "string",
           "format": "date-time",
@@ -27,47 +35,81 @@
       },
       "required": ["displayName", "email"]
     },
+    "Product": {
+      "title": "Product",
+      "description": "Modular products available for purchase.",
+      "type": "object",
+      "properties": {
+        "name": { "type": "string" },
+        "price": { "type": "number" },
+        "stockQuantity": { "type": "integer" },
+        "description": { "type": "string" },
+        "imageUrl": { "type": "string" },
+        "category": { "type": "string" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["name", "price", "stockQuantity"]
+    },
+    "Cart": {
+      "title": "Cart",
+      "description": "A user's shopping cart.",
+      "type": "object",
+      "properties": {
+        "userId": { "type": "string" },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["userId"]
+    },
+    "CartItem": {
+      "title": "Cart Item",
+      "description": "An item within a shopping cart.",
+      "type": "object",
+      "properties": {
+        "productId": { "type": "string" },
+        "quantity": { "type": "integer" },
+        "priceAtAddition": { "type": "number" }
+      },
+      "required": ["productId", "quantity"]
+    },
+    "Order": {
+      "title": "Order",
+      "description": "A customer order.",
+      "type": "object",
+      "properties": {
+        "userId": { "type": "string" },
+        "orderDate": { "type": "string", "format": "date-time" },
+        "totalAmount": { "type": "number" },
+        "status": { "type": "string", "enum": ["pending", "shipped", "delivered", "cancelled"] },
+        "shippingAddress": { "type": "string" },
+        "billingAddress": { "type": "string" }
+      },
+      "required": ["userId", "totalAmount", "status"]
+    },
+    "OrderItem": {
+      "title": "Order Item",
+      "description": "An item within an order.",
+      "type": "object",
+      "properties": {
+        "productId": { "type": "string" },
+        "quantity": { "type": "integer" },
+        "priceAtPurchase": { "type": "number" }
+      },
+      "required": ["productId", "quantity", "priceAtPurchase"]
+    },
     "ServiceRequest": {
       "title": "Service Request",
       "description": "Details of a customer consultation or service request.",
       "type": "object",
       "properties": {
-        "userId": {
-          "type": "string",
-          "description": "The UID of the user who made the request (optional if guest)."
-        },
-        "name": {
-          "type": "string",
-          "description": "Customer name."
-        },
-        "email": {
-          "type": "string",
-          "format": "email",
-          "description": "Customer email."
-        },
-        "phone": {
-          "type": "string",
-          "description": "Customer contact number."
-        },
-        "serviceType": {
-          "type": "string",
-          "enum": ["Kitchen", "Wardrobe", "Wall Paneling", "Full Interior"],
-          "description": "Type of service required."
-        },
-        "message": {
-          "type": "string",
-          "description": "Additional details or requirements."
-        },
-        "status": {
-          "type": "string",
-          "enum": ["pending", "contacted", "closed"],
-          "description": "Current status of the request."
-        },
-        "createdAt": {
-          "type": "string",
-          "format": "date-time",
-          "description": "Timestamp when requested."
-        }
+        "userId": { "type": "string" },
+        "name": { "type": "string" },
+        "email": { "type": "string", "format": "email" },
+        "phone": { "type": "string" },
+        "serviceType": { "type": "string", "enum": ["Kitchen", "Wardrobe", "Wall Paneling", "Full Interior"] },
+        "message": { "type": "string" },
+        "status": { "type": "string", "enum": ["pending", "contacted", "closed"] },
+        "createdAt": { "type": "string", "format": "date-time" }
       },
       "required": ["name", "email", "phone", "serviceType"]
     }
@@ -80,9 +122,29 @@
       "schema": "#/backend/entities/UserProfile",
       "description": "User profile document."
     },
+    "/products/{productId}": {
+      "schema": "#/backend/entities/Product",
+      "description": "Collection of products."
+    },
+    "/carts/{userId}": {
+      "schema": "#/backend/entities/Cart",
+      "description": "User cart document."
+    },
+    "/carts/{userId}/items/{productId}": {
+      "schema": "#/backend/entities/CartItem",
+      "description": "Items in the user's cart."
+    },
+    "/orders/{orderId}": {
+      "schema": "#/backend/entities/Order",
+      "description": "Customer orders."
+    },
+    "/orders/{orderId}/items/{productId}": {
+      "schema": "#/backend/entities/OrderItem",
+      "description": "Items in an order."
+    },
     "/serviceRequests/{requestId}": {
       "schema": "#/backend/entities/ServiceRequest",
-      "description": "Collection of customer service requests and consultation bookings."
+      "description": "Collection of customer service requests."
     }
   }
 }

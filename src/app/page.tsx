@@ -16,7 +16,8 @@ import {
   Award,
   ArrowRight,
   ClipboardList,
-  Loader2
+  Loader2,
+  ShoppingBag
 } from "lucide-react"
 import { TopBar } from "@/components/TopBar"
 import { Button } from "@/components/ui/button"
@@ -42,7 +43,7 @@ export default function Home() {
   }, [user, loading, router])
 
   const quickActions = [
-    { icon: <Download />, label: "Catalog", color: "bg-blue-50 text-blue-600", href: "#" },
+    { icon: <ShoppingBag />, label: "Shop", color: "bg-purple-50 text-purple-600", href: "/shop" },
     { icon: <Calculator />, label: "Price Est.", color: "bg-cyan-50 text-accent", href: "/estimator" },
     { icon: <ClipboardList />, label: "Book Appt", color: "bg-orange-50 text-orange-600", href: "/book-consultation" },
     { icon: <MapPin />, label: "Dealers", color: "bg-green-50 text-green-600", href: "#" },
@@ -111,8 +112,8 @@ export default function Home() {
       <section className="px-6 py-8 flex-1">
         <div className="flex items-center justify-between mb-6">
           <h3 className="text-xl font-bold text-primary">Discover Design</h3>
-          <Link href="/categories" className="text-accent text-sm font-bold flex items-center">
-            View All <ChevronRight className="w-4 h-4 ml-1" />
+          <Link href="/shop" className="text-accent text-sm font-bold flex items-center">
+            Shop Products <ChevronRight className="w-4 h-4 ml-1" />
           </Link>
         </div>
         
@@ -143,17 +144,17 @@ export default function Home() {
             <Link href="/" onClick={() => setIsMenuOpen(false)} className="flex items-center justify-between group">
               <span>Home</span> <ArrowRight className="opacity-0 group-hover:opacity-100 transition-opacity" />
             </Link>
-            <Link href="/categories" onClick={() => setIsMenuOpen(false)} className="flex items-center justify-between group">
-              <span>Categories</span> <ArrowRight className="opacity-0 group-hover:opacity-100 transition-opacity" />
+            <Link href="/shop" onClick={() => setIsMenuOpen(false)} className="flex items-center justify-between group text-accent font-bold">
+              <span>Shop Products</span> <ArrowRight className="opacity-100" />
             </Link>
-            <Link href="/book-consultation" onClick={() => setIsMenuOpen(false)} className="flex items-center justify-between group text-accent font-bold">
-              <span>Book Consultation</span> <ArrowRight className="opacity-100" />
+            <Link href="/cart" onClick={() => setIsMenuOpen(false)} className="flex items-center justify-between group">
+              <span>My Cart</span> <ArrowRight className="opacity-0 group-hover:opacity-100 transition-opacity" />
+            </Link>
+            <Link href="/book-consultation" onClick={() => setIsMenuOpen(false)} className="flex items-center justify-between group">
+              <span>Book Consultation</span> <ArrowRight className="opacity-0 group-hover:opacity-100 transition-opacity" />
             </Link>
             <Link href="/estimator" onClick={() => setIsMenuOpen(false)} className="flex items-center justify-between group">
               <span>Price Estimator</span> <ArrowRight className="opacity-0 group-hover:opacity-100 transition-opacity" />
-            </Link>
-            <Link href="/ai-designer" onClick={() => setIsMenuOpen(false)} className="flex items-center justify-between group">
-              <span>AI Design Ideas</span> <ArrowRight className="opacity-0 group-hover:opacity-100 transition-opacity" />
             </Link>
           </nav>
 
