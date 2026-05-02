@@ -1,11 +1,6 @@
 /**
- * Firestore Security Rules for the Product Catalog and Inquiry System.
- *
- * Core Philosophy:
- * This ruleset implements a Hybrid Public-Access and Role-Based Access Control (RBAC) model.
- * 1. Public Content: High-level product data, categories, and media are publicly accessible for read operations.
- * 2. RBAC (Staff): Staff privileges are managed via a dedicated 'roles_staff' collection.
- * 3. User Ownership: Customer inquiries (QuoteRequests) are secured using a 'customerUid' field.
+ * Firestore Security Rules for Aravalli Steel.
+ * Updated: Forces redeploy to fix listing permissions for Admin.
  */
 
 rules_version = '2';
@@ -23,15 +18,11 @@ service cloud.firestore {
     }
 
     function isStaff() {
-      // For the prototype: We also allow the shop's admin email to act as staff
+      // Direct email check for the shop owner/admin
       return isSignedIn() && (
-        exists(/databases/$(database)/documents/roles_staff/$(request.auth.uid)) ||
-        request.auth.token.email == "aravallisteelpvcfurniture@gmail.com"
+        request.auth.token.email == "aravallisteelpvcfurniture@gmail.com" ||
+        exists(/databases/$(database)/documents/roles_staff/$(request.auth.uid))
       );
-    }
-
-    function isDocOwner(resourceData) {
-      return isSignedIn() && resourceData.customerUid == request.auth.uid;
     }
 
     // --- Collection Rules ---
@@ -51,14 +42,15 @@ service cloud.firestore {
     }
 
     /**
-     * @description Controls access to customer quote requests.
-     * Updated to allow the Admin (signed in) to list requests for the dashboard.
+     * @description Customer quote requests.
+     * Staff/Admin can list and manage all.
+     * Customers can only see their own (via customerUid).
      */
     match /quoteRequests/{requestId} {
-      allow get: if isSignedIn(); // Simplified for admin/customer access
-      allow list: if isSignedIn(); // Allow listing inquiries for signed-in users (Admin view)
-      allow create: if true; 
-      allow update: if isSignedIn();
+      allow list: if isStaff(); 
+      allow get: if isStaff() || (isSignedIn() && resource.data.customerUid == request.auth.uid);
+      allow create: if true; // Allow anyone to submit an inquiry
+      allow update: if isStaff();
       allow delete: if isStaff();
     }
 
