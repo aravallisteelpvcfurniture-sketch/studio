@@ -29,7 +29,6 @@ import {
 import { Card } from "@/components/ui/card"
 import { ChevronLeft, Send, CheckCircle2, Loader2 } from "lucide-react"
 import Link from "next/link"
-import { useToast } from "@/hooks/use-toast"
 
 const formSchema = z.object({
   name: z.string().min(2, "Name is too short"),
@@ -42,7 +41,6 @@ const formSchema = z.object({
 export default function BookConsultation() {
   const db = useFirestore()
   const { user } = useUser()
-  const { toast } = useToast()
   const [loading, setLoading] = React.useState(false)
   const [submitted, setSubmitted] = React.useState(false)
 
@@ -61,18 +59,21 @@ export default function BookConsultation() {
     if (!db) return
     setLoading(true)
     
-    // Path matched to firestore.rules: /quoteRequests/{requestId}
     const colRef = collection(db, "quoteRequests")
     const submissionData = {
       ...values,
-      customerUid: user?.uid || "anonymous", // Matched to 'customerUid' in security rules
+      customerUid: user?.uid || "anonymous",
       status: "pending",
       createdAt: serverTimestamp(),
     }
 
-    // Using non-blocking pattern for better UX and contextual error handling
     addDoc(colRef, submissionData)
+      .then(() => {
+        setSubmitted(true)
+        setLoading(false)
+      })
       .catch(async (error) => {
+        setLoading(false)
         const permissionError = new FirestorePermissionError({
           path: colRef.path,
           operation: 'create',
@@ -80,10 +81,6 @@ export default function BookConsultation() {
         });
         errorEmitter.emit('permission-error', permissionError);
       });
-
-    // Optimistically show success as per mutation guidelines
-    setSubmitted(true)
-    setLoading(false)
   }
 
   if (submitted) {
@@ -93,9 +90,9 @@ export default function BookConsultation() {
           <CheckCircle2 className="w-10 h-10 text-accent" />
         </div>
         <h1 className="text-3xl font-black text-primary mb-2">Request Received!</h1>
-        <p className="text-muted-foreground mb-8">Our expert designers will contact you within 24 hours.</p>
+        <p className="text-muted-foreground mb-8 text-sm max-w-[250px]">Our expert designers will contact you within 24 hours.</p>
         <Link href="/">
-          <Button className="rounded-2xl h-14 px-8 bg-primary font-bold">Back to Home</Button>
+          <Button className="rounded-2xl h-14 px-8 bg-primary text-white font-bold">Back to Home</Button>
         </Link>
       </div>
     )
@@ -130,7 +127,7 @@ export default function BookConsultation() {
                 )}
               />
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="grid grid-cols-1 gap-6">
                 <FormField
                   control={form.control}
                   name="email"
@@ -151,7 +148,7 @@ export default function BookConsultation() {
                     <FormItem>
                       <FormLabel className="text-xs font-bold uppercase tracking-widest text-muted-foreground">Phone Number</FormLabel>
                       <FormControl>
-                        <Input placeholder="9574514191" {...field} className="h-12 rounded-xl" />
+                        <Input placeholder="9999999999" {...field} className="h-12 rounded-xl" />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -193,7 +190,7 @@ export default function BookConsultation() {
                       <Textarea 
                         placeholder="Tell us about your space..." 
                         {...field} 
-                        className="min-h-[120px] rounded-xl resize-none"
+                        className="min-h-[100px] rounded-xl resize-none"
                       />
                     </FormControl>
                     <FormMessage />
@@ -204,7 +201,7 @@ export default function BookConsultation() {
               <Button 
                 type="submit" 
                 disabled={loading}
-                className="w-full h-14 bg-accent hover:bg-accent/90 text-white rounded-2xl font-bold text-lg flex gap-2 transition-all"
+                className="w-full h-14 bg-accent hover:bg-accent/90 text-white rounded-2xl font-bold text-lg flex gap-2 transition-all shadow-lg shadow-accent/20"
               >
                 {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : <Send className="w-5 h-5" />}
                 Submit Request
