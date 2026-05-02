@@ -6,8 +6,8 @@ import { useRouter } from "next/navigation"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import * as z from "zod"
-import { collection, addDoc, serverTimestamp } from "firebase/firestore"
-import { useFirestore, useUser } from "@/firebase"
+import { collection, serverTimestamp, addDoc } from "firebase/firestore"
+import { useFirestore, useUser, errorEmitter, FirestorePermissionError } from "@/firebase"
 import { Button } from "@/components/ui/button"
 import {
   Form,
@@ -43,7 +43,6 @@ export default function BookConsultation() {
   const db = useFirestore()
   const { user } = useUser()
   const { toast } = useToast()
-  const router = useRouter()
   const [loading, setLoading] = React.useState(false)
   const [submitted, setSubmitted] = React.useState(false)
 
@@ -58,27 +57,33 @@ export default function BookConsultation() {
     },
   })
 
-  const onSubmit = async (values: z.infer<typeof formSchema>) => {
+  const onSubmit = (values: z.infer<typeof formSchema>) => {
     if (!db) return
     setLoading(true)
-    try {
-      await addDoc(collection(db, "serviceRequests"), {
-        ...values,
-        userId: user?.uid || "guest",
-        status: "pending",
-        createdAt: serverTimestamp(),
-      })
-      setSubmitted(true)
-    } catch (error) {
-      console.error("Submission error:", error)
-      toast({
-        variant: "destructive",
-        title: "Submission failed",
-        description: "Please try again later.",
-      })
-    } finally {
-      setLoading(false)
+    
+    // Path matched to firestore.rules: /quoteRequests/{requestId}
+    const colRef = collection(db, "quoteRequests")
+    const submissionData = {
+      ...values,
+      customerUid: user?.uid || "anonymous", // Matched to 'customerUid' in security rules
+      status: "pending",
+      createdAt: serverTimestamp(),
     }
+
+    // Using non-blocking pattern for better UX and contextual error handling
+    addDoc(colRef, submissionData)
+      .catch(async (error) => {
+        const permissionError = new FirestorePermissionError({
+          path: colRef.path,
+          operation: 'create',
+          requestResourceData: submissionData,
+        });
+        errorEmitter.emit('permission-error', permissionError);
+      });
+
+    // Optimistically show success as per mutation guidelines
+    setSubmitted(true)
+    setLoading(false)
   }
 
   if (submitted) {
@@ -146,7 +151,7 @@ export default function BookConsultation() {
                     <FormItem>
                       <FormLabel className="text-xs font-bold uppercase tracking-widest text-muted-foreground">Phone Number</FormLabel>
                       <FormControl>
-                        <Input placeholder="+91 98765 43210" {...field} className="h-12 rounded-xl" />
+                        <Input placeholder="9574514191" {...field} className="h-12 rounded-xl" />
                       </FormControl>
                       <FormMessage />
                     </FormItem>

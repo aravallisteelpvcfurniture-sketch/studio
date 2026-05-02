@@ -54,6 +54,22 @@
         "billingAddress": { "type": "string" }
       },
       "required": ["userId", "totalAmount", "status"]
+    },
+    "QuoteRequest": {
+      "title": "Quote Request",
+      "type": "object",
+      "description": "A consultation or quote request from a customer.",
+      "properties": {
+        "name": { "type": "string" },
+        "email": { "type": "string", "format": "email" },
+        "phone": { "type": "string" },
+        "serviceType": { "type": "string" },
+        "message": { "type": "string" },
+        "customerUid": { "type": "string" },
+        "status": { "type": "string" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["name", "email", "phone", "customerUid"]
     }
   },
   "auth": {
@@ -91,6 +107,14 @@
           "entityName": "Order",
           "schema": { "$ref": "#/backend/entities/Order" },
           "description": "Customer orders."
+        }
+      },
+      {
+        "path": "/quoteRequests/{requestId}",
+        "definition": {
+          "entityName": "QuoteRequest",
+          "schema": { "$ref": "#/backend/entities/QuoteRequest" },
+          "description": "Customer inquiries and consultation requests."
         }
       }
     ]
