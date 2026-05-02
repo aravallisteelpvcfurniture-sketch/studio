@@ -1,150 +1,560 @@
-
 {
   "entities": {
-    "UserProfile": {
-      "title": "User Profile",
-      "description": "Stores extended information about the user.",
+    "Category": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "Category",
       "type": "object",
+      "description": "Represents a broad category of products offered by the company, such as 'Modular Kitchens' or 'Wardrobe Systems'.",
       "properties": {
-        "displayName": {
+        "id": {
           "type": "string",
-          "description": "The user's full name."
+          "description": "Unique identifier for the Category entity."
+        },
+        "name": {
+          "type": "string",
+          "description": "The name of the product category."
+        },
+        "description": {
+          "type": "string",
+          "description": "A brief description of the product category."
+        },
+        "thumbnailImageUrl": {
+          "type": "string",
+          "description": "URL to an image representing the category, used for display in the Category Explorer.",
+          "format": "uri"
+        }
+      },
+      "required": [
+        "id",
+        "name",
+        "description",
+        "thumbnailImageUrl"
+      ]
+    },
+    "Product": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "Product",
+      "type": "object",
+      "description": "Represents a specific product design or item, such as a particular modular kitchen design.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the Product entity."
+        },
+        "name": {
+          "type": "string",
+          "description": "The name of the product design."
+        },
+        "description": {
+          "type": "string",
+          "description": "A detailed description of the product, including its features and benefits."
+        },
+        "mainImageUrl": {
+          "type": "string",
+          "description": "URL to the primary image of the product, displayed prominently on the product detail screen.",
+          "format": "uri"
+        },
+        "galleryImageUrls": {
+          "type": "array",
+          "description": "An array of URLs to additional gallery images of the product.",
+          "items": {
+            "type": "string"
+          }
+        },
+        "warrantyDetails": {
+          "type": "string",
+          "description": "Text detailing the warranty information for the product (e.g., '10 Years Warranty')."
+        },
+        "categoryId": {
+          "type": "string",
+          "description": "Reference to the Category this product belongs to. (Relationship: Category 1:N Product)"
+        },
+        "materialIds": {
+          "type": "array",
+          "description": "References to Materials used in this product. (Relationship: Product N:N Material)",
+          "items": {
+            "type": "string"
+          }
+        },
+        "colorIds": {
+          "type": "array",
+          "description": "References to Colors available for this product. (Relationship: Product N:N Color)",
+          "items": {
+            "type": "string"
+          }
+        },
+        "virtualTourId": {
+          "type": "string",
+          "description": "Reference to a VirtualTour associated with this product, if available. (Relationship: Product 1:0/1 VirtualTour)"
+        }
+      },
+      "required": [
+        "id",
+        "name",
+        "description",
+        "mainImageUrl",
+        "galleryImageUrls",
+        "warrantyDetails",
+        "categoryId"
+      ]
+    },
+    "Material": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "Material",
+      "type": "object",
+      "description": "Defines various materials used in products, including their properties and base pricing for the estimator.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the Material entity."
+        },
+        "name": {
+          "type": "string",
+          "description": "The name of the material (e.g., 'PVC', 'Acrylic', 'Plywood')."
+        },
+        "description": {
+          "type": "string",
+          "description": "A short description of the material."
+        },
+        "properties": {
+          "type": "array",
+          "description": "An array of key properties or attributes of the material (e.g., 'Waterproof', 'Termite proof').",
+          "items": {
+            "type": "string"
+          }
+        },
+        "basePricePerSqFt": {
+          "type": "number",
+          "description": "The base price per square foot for this material, used in the price estimator tool."
+        }
+      },
+      "required": [
+        "id",
+        "name",
+        "description",
+        "properties",
+        "basePricePerSqFt"
+      ]
+    },
+    "Color": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "Color",
+      "type": "object",
+      "description": "Represents an available color option for products.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the Color entity."
+        },
+        "name": {
+          "type": "string",
+          "description": "The name of the color (e.g., 'Crimson Red', 'Ocean Blue')."
+        },
+        "hexCode": {
+          "type": "string",
+          "description": "The hexadecimal color code (e.g., '#DC143C') for display."
+        }
+      },
+      "required": [
+        "id",
+        "name",
+        "hexCode"
+      ]
+    },
+    "VirtualTour": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "VirtualTour",
+      "type": "object",
+      "description": "Contains details for a 360° virtual tour of a product or space.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the VirtualTour entity."
+        },
+        "title": {
+          "type": "string",
+          "description": "The title of the virtual tour."
+        },
+        "description": {
+          "type": "string",
+          "description": "A brief description of what the virtual tour showcases."
+        },
+        "tourUrl": {
+          "type": "string",
+          "description": "The URL to the embedded 360° virtual tour content.",
+          "format": "uri"
+        }
+      },
+      "required": [
+        "id",
+        "title",
+        "description",
+        "tourUrl"
+      ]
+    },
+    "Dealer": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "Dealer",
+      "type": "object",
+      "description": "Information about a company dealer location.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the Dealer entity."
+        },
+        "name": {
+          "type": "string",
+          "description": "The name of the dealer."
+        },
+        "address": {
+          "type": "string",
+          "description": "The street address of the dealer location."
+        },
+        "city": {
+          "type": "string",
+          "description": "The city where the dealer is located."
+        },
+        "state": {
+          "type": "string",
+          "description": "The state or province where the dealer is located."
+        },
+        "zipCode": {
+          "type": "string",
+          "description": "The postal or ZIP code of the dealer location."
+        },
+        "latitude": {
+          "type": "number",
+          "description": "The latitude coordinate of the dealer for map integration."
+        },
+        "longitude": {
+          "type": "number",
+          "description": "The longitude coordinate of the dealer for map integration."
+        },
+        "contactNumber": {
+          "type": "string",
+          "description": "The primary contact phone number for the dealer."
         },
         "email": {
           "type": "string",
-          "format": "email",
-          "description": "The user's email address."
+          "description": "The email address for the dealer.",
+          "format": "email"
         },
-        "photoURL": {
+        "websiteUrl": {
           "type": "string",
-          "description": "The URL to the user's profile picture."
-        },
-        "shippingAddress": {
-          "type": "string",
-          "description": "User's default shipping address."
-        },
-        "billingAddress": {
-          "type": "string",
-          "description": "User's default billing address."
-        },
-        "createdAt": {
-          "type": "string",
-          "format": "date-time",
-          "description": "When the profile was created."
+          "description": "The website URL for the dealer.",
+          "format": "uri"
         }
       },
-      "required": ["displayName", "email"]
+      "required": [
+        "id",
+        "name",
+        "address",
+        "city",
+        "state",
+        "zipCode",
+        "contactNumber"
+      ]
     },
-    "Product": {
-      "title": "Product",
-      "description": "Modular products available for purchase.",
+    "GalleryImage": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "GalleryImage",
       "type": "object",
+      "description": "Represents an image in the customer project gallery, showcasing real installations.",
       "properties": {
-        "name": { "type": "string" },
-        "price": { "type": "number" },
-        "stockQuantity": { "type": "integer" },
-        "description": { "type": "string" },
-        "imageUrl": { "type": "string" },
-        "category": { "type": "string" },
-        "createdAt": { "type": "string", "format": "date-time" }
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the GalleryImage entity."
+        },
+        "title": {
+          "type": "string",
+          "description": "A title for the gallery image, often describing the project."
+        },
+        "description": {
+          "type": "string",
+          "description": "A brief description or context for the image."
+        },
+        "imageUrl": {
+          "type": "string",
+          "description": "URL to the gallery image.",
+          "format": "uri"
+        },
+        "uploadDate": {
+          "type": "string",
+          "description": "The date and time when the image was uploaded or added to the gallery.",
+          "format": "date-time"
+        },
+        "customerName": {
+          "type": "string",
+          "description": "Optional: The name of the customer whose project is featured."
+        },
+        "location": {
+          "type": "string",
+          "description": "Optional: The location where the project was installed (e.g., 'Mumbai Residence')."
+        }
       },
-      "required": ["name", "price", "stockQuantity"]
+      "required": [
+        "id",
+        "title",
+        "imageUrl",
+        "uploadDate"
+      ]
     },
-    "Cart": {
-      "title": "Cart",
-      "description": "A user's shopping cart.",
+    "QuoteRequest": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "QuoteRequest",
       "type": "object",
+      "description": "Records a user's request for a quote or inquiry about products.",
       "properties": {
-        "userId": { "type": "string" },
-        "createdAt": { "type": "string", "format": "date-time" },
-        "updatedAt": { "type": "string", "format": "date-time" }
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the QuoteRequest entity."
+        },
+        "customerName": {
+          "type": "string",
+          "description": "The name of the customer making the request."
+        },
+        "customerEmail": {
+          "type": "string",
+          "description": "The email address of the customer.",
+          "format": "email"
+        },
+        "customerPhoneNumber": {
+          "type": "string",
+          "description": "The phone number of the customer, potentially for WhatsApp inquiries."
+        },
+        "message": {
+          "type": "string",
+          "description": "The message or specific details provided by the customer in their inquiry."
+        },
+        "productId": {
+          "type": "string",
+          "description": "Reference to the Product the inquiry is about, if applicable. (Relationship: Product 1:N QuoteRequest)"
+        },
+        "requestDate": {
+          "type": "string",
+          "description": "The date and time when the quote request was submitted.",
+          "format": "date-time"
+        },
+        "status": {
+          "type": "string",
+          "description": "The current status of the quote request (e.g., 'New', 'In Progress', 'Completed')."
+        }
       },
-      "required": ["userId"]
+      "required": [
+        "id",
+        "customerName",
+        "customerEmail",
+        "customerPhoneNumber",
+        "message",
+        "requestDate",
+        "status"
+      ]
     },
-    "CartItem": {
-      "title": "Cart Item",
-      "description": "An item within a shopping cart.",
+    "HeroSliderItem": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "HeroSliderItem",
       "type": "object",
+      "description": "Represents an individual item or slide displayed in the auto-scrolling hero slider on the home screen.",
       "properties": {
-        "productId": { "type": "string" },
-        "quantity": { "type": "integer" },
-        "priceAtAddition": { "type": "number" }
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the HeroSliderItem entity."
+        },
+        "imageUrl": {
+          "type": "string",
+          "description": "URL to the high-definition image for the slider item.",
+          "format": "uri"
+        },
+        "caption": {
+          "type": "string",
+          "description": "A short caption or title to display with the slider image."
+        },
+        "linkToProductId": {
+          "type": "string",
+          "description": "Optional: Reference to a Product that this slider item promotes. (Relationship: Product 1:N HeroSliderItem)"
+        },
+        "displayOrder": {
+          "type": "number",
+          "description": "The order in which this item should appear in the hero slider."
+        }
       },
-      "required": ["productId", "quantity"]
-    },
-    "Order": {
-      "title": "Order",
-      "description": "A customer order.",
-      "type": "object",
-      "properties": {
-        "userId": { "type": "string" },
-        "orderDate": { "type": "string", "format": "date-time" },
-        "totalAmount": { "type": "number" },
-        "status": { "type": "string", "enum": ["pending", "shipped", "delivered", "cancelled"] },
-        "shippingAddress": { "type": "string" },
-        "billingAddress": { "type": "string" }
-      },
-      "required": ["userId", "totalAmount", "status"]
-    },
-    "OrderItem": {
-      "title": "Order Item",
-      "description": "An item within an order.",
-      "type": "object",
-      "properties": {
-        "productId": { "type": "string" },
-        "quantity": { "type": "integer" },
-        "priceAtPurchase": { "type": "number" }
-      },
-      "required": ["productId", "quantity", "priceAtPurchase"]
-    },
-    "ServiceRequest": {
-      "title": "Service Request",
-      "description": "Details of a customer consultation or service request.",
-      "type": "object",
-      "properties": {
-        "userId": { "type": "string" },
-        "name": { "type": "string" },
-        "email": { "type": "string", "format": "email" },
-        "phone": { "type": "string" },
-        "serviceType": { "type": "string", "enum": ["Kitchen", "Wardrobe", "Wall Paneling", "Full Interior"] },
-        "message": { "type": "string" },
-        "status": { "type": "string", "enum": ["pending", "contacted", "closed"] },
-        "createdAt": { "type": "string", "format": "date-time" }
-      },
-      "required": ["name", "email", "phone", "serviceType"]
+      "required": [
+        "id",
+        "imageUrl",
+        "caption",
+        "displayOrder"
+      ]
     }
   },
   "auth": {
-    "providers": ["google.com"]
+    "providers": [
+      "password",
+      "anonymous"
+    ]
   },
   "firestore": {
-    "/users/{userId}": {
-      "schema": "#/backend/entities/UserProfile",
-      "description": "User profile document."
-    },
-    "/products/{productId}": {
-      "schema": "#/backend/entities/Product",
-      "description": "Collection of products."
-    },
-    "/carts/{userId}": {
-      "schema": "#/backend/entities/Cart",
-      "description": "User cart document."
-    },
-    "/carts/{userId}/items/{productId}": {
-      "schema": "#/backend/entities/CartItem",
-      "description": "Items in the user's cart."
-    },
-    "/orders/{orderId}": {
-      "schema": "#/backend/entities/Order",
-      "description": "Customer orders."
-    },
-    "/orders/{orderId}/items/{productId}": {
-      "schema": "#/backend/entities/OrderItem",
-      "description": "Items in an order."
-    },
-    "/serviceRequests/{requestId}": {
-      "schema": "#/backend/entities/ServiceRequest",
-      "description": "Collection of customer service requests."
-    }
+    "structure": [
+      {
+        "path": "/categories/{categoryId}",
+        "definition": {
+          "entityName": "Category",
+          "schema": {
+            "$ref": "#/backend/entities/Category"
+          },
+          "description": "Stores details of product categories like 'Modular Kitchens'. All documents in this collection are publicly readable.",
+          "params": [
+            {
+              "name": "categoryId",
+              "description": "Unique identifier for the Category."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/products/{productId}",
+        "definition": {
+          "entityName": "Product",
+          "schema": {
+            "$ref": "#/backend/entities/Product"
+          },
+          "description": "Contains specific product designs and their details. All documents are publicly readable. Links to materials, colors, and virtual tours.",
+          "params": [
+            {
+              "name": "productId",
+              "description": "Unique identifier for the Product."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/materials/{materialId}",
+        "definition": {
+          "entityName": "Material",
+          "schema": {
+            "$ref": "#/backend/entities/Material"
+          },
+          "description": "Defines materials used in products, including pricing for the estimator. All documents are publicly readable.",
+          "params": [
+            {
+              "name": "materialId",
+              "description": "Unique identifier for the Material."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/colors/{colorId}",
+        "definition": {
+          "entityName": "Color",
+          "schema": {
+            "$ref": "#/backend/entities/Color"
+          },
+          "description": "Lists available color options for products. All documents are publicly readable.",
+          "params": [
+            {
+              "name": "colorId",
+              "description": "Unique identifier for the Color."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/virtualTours/{virtualTourId}",
+        "definition": {
+          "entityName": "VirtualTour",
+          "schema": {
+            "$ref": "#/backend/entities/VirtualTour"
+          },
+          "description": "Stores information and URLs for 360° virtual tours. All documents are publicly readable.",
+          "params": [
+            {
+              "name": "virtualTourId",
+              "description": "Unique identifier for the VirtualTour."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/dealers/{dealerId}",
+        "definition": {
+          "entityName": "Dealer",
+          "schema": {
+            "$ref": "#/backend/entities/Dealer"
+          },
+          "description": "Contains information about company dealer locations. All documents are publicly readable for the 'Locate Dealer' feature.",
+          "params": [
+            {
+              "name": "dealerId",
+              "description": "Unique identifier for the Dealer."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/galleryImages/{imageId}",
+        "definition": {
+          "entityName": "GalleryImage",
+          "schema": {
+            "$ref": "#/backend/entities/GalleryImage"
+          },
+          "description": "Showcases customer project gallery images. All documents are publicly readable.",
+          "params": [
+            {
+              "name": "imageId",
+              "description": "Unique identifier for the GalleryImage."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/heroSliderItems/{sliderItemId}",
+        "definition": {
+          "entityName": "HeroSliderItem",
+          "schema": {
+            "$ref": "#/backend/entities/HeroSliderItem"
+          },
+          "description": "Manages items displayed in the home screen's hero slider. All documents are publicly readable.",
+          "params": [
+            {
+              "name": "sliderItemId",
+              "description": "Unique identifier for the HeroSliderItem."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/quoteRequests/{quoteRequestId}",
+        "definition": {
+          "entityName": "QuoteRequest",
+          "schema": {
+            "$ref": "#/backend/entities/QuoteRequest"
+          },
+          "description": "Records customer inquiries and quote requests. Includes denormalized 'customerUid' (optional) for authorization independence, allowing users to access their own requests and staff to manage all requests.",
+          "params": [
+            {
+              "name": "quoteRequestId",
+              "description": "Unique identifier for the QuoteRequest."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/roles_staff/{staffUid}",
+        "definition": {
+          "entityName": "StaffRole",
+          "schema": {
+            "$ref": "#/backend/entities/StaffRole"
+          },
+          "description": "A dedicated collection for Database Access Control (DBAC). Each document's ID is the UID of a staff member, granting them specific permissions (e.g., managing quote requests). Only the existence of a document grants the role.",
+          "params": [
+            {
+              "name": "staffUid",
+              "description": "The Firebase Authentication UID of a staff member."
+            }
+          ]
+        }
+      }
+    ],
+    "reasoning": "The Firestore structure is meticulously designed to be highly secure, scalable, and debuggable, adhering strictly to the core design principles.Authorization Independence (CRITICAL) & Denormalization:For entities requiring access control, especially QuoteRequest, authorization context is denormalized directly into the document. Each quoteRequest document will include a 'customerUid' field (optional, populated with request.auth.uid if the user is authenticated, or null for anonymous requests). This eliminates the need for get() calls in security rules to check parent documents or user profiles, ensuring atomic operations and simplified rule logic. Staff access is granted by checking the existence of their UID in the /roles_staff/{staffUid} collection, which is also an atomic operation.Clarity of Intent & Structural Segregation (Homogeneous Security Posture):Collections are segregated based on their security posture:Public Read-Only Collections: 'categories', 'products', 'materials', 'colors', 'virtualTours', 'dealers', 'galleryImages', and 'heroSliderItems' are publicly accessible for all read operations. This simplifies rules to 'allow read: if true;'.User-Specific and Staff-Managed Collection: 'quoteRequests' is designed to allow individual users to read/update their own requests (via 'customerUid') and for authorized staff to manage all requests. This segregation ensures that all documents within these collections share common access requirements, making rules explicit and easy to debug.DBAC (No Custom Claims) & Global Roles:A dedicated collection, /roles_staff/{staffUid}, is introduced to manage staff privileges. Authorization for staff actions relies on the mere existence of a document in this collection matching request.auth.uid, eliminating the need for custom claims and simplifying rule evaluation.QAPs (Rules are not Filters):For all public collections, any list operation is inherently secure as all documents are publicly readable.For 'quoteRequests', staff members can securely list all documents. Authenticated users can securely list their own requests by querying where('customerUid', '==', request.auth.uid). The security rules will enforce that a user only sees their own data or data they are explicitly authorized to view (e.g., staff seeing all), thereby preventing unauthorized data leakage during list operations without relying on rules to filter results that weren't intended to be returned."
   }
 }
