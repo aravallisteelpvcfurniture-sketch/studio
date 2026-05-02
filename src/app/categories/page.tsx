@@ -13,28 +13,28 @@ const CATEGORIES = [
     id: "cat-kitchen",
     title: "Modular Kitchens",
     subtitle: "PVC & Acrylic Premium Finishes",
-    image: PlaceHolderImages.find(i => i.id === "cat-kitchen")?.imageUrl,
+    image: PlaceHolderImages.find(i => i.id === "cat-kitchen")?.imageUrl || "https://picsum.photos/seed/kitchen/800/1200",
     hint: "modular kitchen"
   },
   {
     id: "cat-wardrobe",
     title: "Wardrobe Systems",
     subtitle: "Ergonomic & Space Saving",
-    image: PlaceHolderImages.find(i => i.id === "cat-wardrobe")?.imageUrl,
+    image: PlaceHolderImages.find(i => i.id === "cat-wardrobe")?.imageUrl || "https://picsum.photos/seed/wardrobe/800/1200",
     hint: "luxury wardrobe"
   },
   {
     id: "cat-paneling",
     title: "Wall Paneling",
     subtitle: "Modern & Aesthetic Ceilings",
-    image: PlaceHolderImages.find(i => i.id === "cat-paneling")?.imageUrl,
+    image: PlaceHolderImages.find(i => i.id === "cat-paneling")?.imageUrl || "https://picsum.photos/seed/wall/800/1200",
     hint: "wall paneling"
   },
   {
     id: "cat-hardware",
     title: "Hardware",
     subtitle: "High Grade Stainless Steel",
-    image: PlaceHolderImages.find(i => i.id === "cat-hardware")?.imageUrl,
+    image: PlaceHolderImages.find(i => i.id === "cat-hardware")?.imageUrl || "https://picsum.photos/seed/hardware/800/1200",
     hint: "kitchen hardware"
   }
 ]
@@ -54,11 +54,12 @@ export default function CategoryExplorer() {
         {CATEGORIES.map((cat) => (
           <div key={cat.id} className="h-screen w-full snap-start relative flex flex-col justify-end p-8 pb-12">
             <Image
-              src={cat.image || ""}
+              src={cat.image}
               alt={cat.title}
               fill
               className="object-cover -z-10"
               data-ai-hint={cat.hint}
+              priority
             />
             <div className="absolute inset-0 bg-gradient-to-t from-primary/90 via-primary/20 to-transparent -z-10" />
             
