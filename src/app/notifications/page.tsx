@@ -1,3 +1,4 @@
+
 "use client"
 
 import * as React from "react"
@@ -20,15 +21,18 @@ export default function NotificationsPage() {
     return user.email === "aravallisteelpvcfurniture@gmail.com" || user.uid === "Qmcch2NXxmg47Zf28Wh0KTp9Njt1";
   }, [user, isUserLoading]);
 
-  // Query only starts if Admin is confirmed
+  // Simplified query for inquiries
   const notificationsQuery = useMemoFirebase(() => {
-    if (!db || !isAdmin) return null
+    if (!db) return null
+    // We only load this for the admin to keep the list clean
+    if (!isAdmin && !isUserLoading) return null
+    
     return query(
       collection(db, "quoteRequests"),
       orderBy("createdAt", "desc"),
       limit(30)
     )
-  }, [db, isAdmin])
+  }, [db, isAdmin, isUserLoading])
 
   const { data: requests, isLoading } = useCollection(notificationsQuery)
 
@@ -46,7 +50,6 @@ export default function NotificationsPage() {
     window.location.href = `mailto:aravallisteelpvcfurniture@gmail.com?subject=${subject}&body=${body}`
   }
 
-  // Show loading while checking user state
   if (isUserLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-background">
@@ -55,8 +58,8 @@ export default function NotificationsPage() {
     )
   }
 
-  // Direct check for unauthorized users
-  if (!user || !isAdmin) {
+  // If not admin, show unauthorized but don't crash
+  if (!isAdmin) {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center p-6 text-center">
         <div className="w-20 h-20 bg-muted rounded-full flex items-center justify-center mb-6">
@@ -65,7 +68,7 @@ export default function NotificationsPage() {
         <h2 className="text-2xl font-black mb-4">Admin Access Only</h2>
         <p className="text-muted-foreground mb-8 text-sm">Please login with the administrator account to manage inquiries.</p>
         <Link href="/login">
-          <Button className="rounded-xl px-8 h-12 bg-primary">Login Again</Button>
+          <Button className="rounded-xl px-8 h-12 bg-primary">Go to Login</Button>
         </Link>
       </div>
     )

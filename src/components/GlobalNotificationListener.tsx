@@ -1,3 +1,4 @@
+
 "use client"
 
 import * as React from "react"
@@ -25,11 +26,10 @@ export function GlobalNotificationListener() {
     return user.email === "aravallisteelpvcfurniture@gmail.com" || user.uid === "Qmcch2NXxmg47Zf28Wh0KTp9Njt1";
   }, [user, isUserLoading]);
 
-  // Query is ONLY created if isAdmin is explicitly true
+  // Query is created for admins only to monitor new requests
   const pendingQuery = useMemoFirebase(() => {
     if (!db || !isAdmin) return null
     
-    // Safety check to ensure we don't query prematurely
     return query(
       collection(db, "quoteRequests"),
       where("status", "==", "pending"),
