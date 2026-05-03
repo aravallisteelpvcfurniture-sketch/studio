@@ -11,6 +11,7 @@ import { useRouter } from "next/navigation"
 /**
  * GlobalNotificationListener
  * Background listener that alerts the admin of new pending quote requests.
+ * Now includes System Tray (Slider Bar) notifications.
  */
 export function GlobalNotificationListener() {
   const db = useFirestore()
@@ -26,8 +27,16 @@ export function GlobalNotificationListener() {
     return user.email === "aravallisteelpvcfurniture@gmail.com" || user.uid === "Qmcch2NXxmg47Zf28Wh0KTp9Njt1";
   }, [user, isUserLoading]);
 
+  // Request Notification Permission
   React.useEffect(() => {
-    // Only run if database is ready and user is confirmed Admin
+    if (isAdmin && typeof window !== "undefined" && "Notification" in window) {
+      if (Notification.permission === "default") {
+        Notification.requestPermission();
+      }
+    }
+  }, [isAdmin]);
+
+  React.useEffect(() => {
     if (!db || !isAdmin || !user) return;
 
     try {
@@ -56,6 +65,8 @@ export function GlobalNotificationListener() {
 
           if (latestDoc.id !== lastId) {
             setLastId(latestDoc.id);
+
+            // 1. Show Visual Toast in App
             toast({
               title: "🚨 NEW INQUIRY!",
               description: `${data.name} is asking for ${data.serviceType}.`,
@@ -70,10 +81,25 @@ export function GlobalNotificationListener() {
                 </Button>
               ),
             });
+
+            // 2. Show System Notification (Slider Bar)
+            if (typeof window !== "undefined" && "Notification" in window && Notification.permission === "granted") {
+              const systemNotification = new Notification("Nayi Inquiry Aayi Hai! 🚨", {
+                body: `${data.name} ne ${data.serviceType} ke liye request dali hai.`,
+                icon: "/favicon.ico", // Standard icon fallback
+                tag: "new-inquiry",
+                requireInteraction: true,
+              });
+
+              systemNotification.onclick = () => {
+                window.focus();
+                router.push("/notifications");
+                systemNotification.close();
+              };
+            }
           }
         },
         (error) => {
-          // Catch silently to avoid red screen during auth sync
           console.log("Waiting for database permissions...");
         }
       );
