@@ -3,7 +3,7 @@
 
 import * as React from "react"
 import { useRouter } from "next/navigation"
-import { GoogleAuthProvider, signInWithPopup } from "firebase/auth"
+import { GoogleAuthProvider, signInWithRedirect, getRedirectResult } from "firebase/auth"
 import { doc, setDoc, serverTimestamp } from "firebase/firestore"
 import { useAuth, useFirestore, useUser } from "@/firebase"
 import { Button } from "@/components/ui/button"
@@ -23,6 +23,32 @@ export default function LoginPage() {
 
   const logoImg = PlaceHolderImages.find(i => i.id === "company-logo")
 
+  // Handle Redirect Result on mount
+  React.useEffect(() => {
+    if (!auth || !db) return
+
+    getRedirectResult(auth)
+      .then(async (result) => {
+        if (result?.user) {
+          const loggedUser = result.user
+          const userRef = doc(db, "users", loggedUser.uid)
+          await setDoc(userRef, {
+            displayName: loggedUser.displayName,
+            email: loggedUser.email,
+            photoURL: loggedUser.photoURL,
+            lastLogin: serverTimestamp(),
+            updatedAt: serverTimestamp(),
+          }, { merge: true })
+
+          toast({ title: "Namaste!", description: `${loggedUser.displayName}, aapka swagat hai!` })
+          router.push("/")
+        }
+      })
+      .catch((error) => {
+        console.error("Redirect Login Error:", error)
+      })
+  }, [auth, db, router, toast])
+
   React.useEffect(() => {
     if (user && !isUserLoading) {
       router.push("/")
@@ -30,7 +56,7 @@ export default function LoginPage() {
   }, [user, isUserLoading, router])
 
   const handleGoogleLogin = async () => {
-    if (!auth || !db) {
+    if (!auth) {
       toast({
         variant: "destructive",
         title: "System Error",
@@ -43,37 +69,16 @@ export default function LoginPage() {
     try {
       const provider = new GoogleAuthProvider()
       provider.setCustomParameters({ prompt: 'select_account' })
-      
-      const result = await signInWithPopup(auth, provider)
-      const loggedUser = result.user
-
-      const userRef = doc(db, "users", loggedUser.uid)
-      await setDoc(userRef, {
-        displayName: loggedUser.displayName,
-        email: loggedUser.email,
-        photoURL: loggedUser.photoURL,
-        lastLogin: serverTimestamp(),
-        updatedAt: serverTimestamp(),
-      }, { merge: true })
-
-      toast({
-        title: "Namaste!",
-        description: `${loggedUser.displayName}, aapka swagat hai!`,
-      })
-      
-      router.push("/")
+      // Use Redirect instead of Popup for installed apps (PWAs)
+      await signInWithRedirect(auth, provider)
     } catch (error: any) {
       console.error("Login Error:", error)
-      let msg = "Login nahi ho paya. Dobara koshish karein."
-      if (error.code === 'auth/popup-closed-by-user') msg = "Aapne login window band kar di thi."
-      
+      setLoading(false)
       toast({
         variant: "destructive",
         title: "Login Failed",
-        description: msg,
+        description: "Login nahi ho paya. Dobara koshish karein.",
       })
-    } finally {
-      setLoading(false)
     }
   }
 
@@ -130,7 +135,7 @@ export default function LoginPage() {
           </Button>
 
           <p className="text-[10px] text-muted-foreground/60 font-medium tracking-wide">
-            Login karke hamare premium designs dekhein
+            Ab installed app mein bhi login chalega!
           </p>
         </div>
       </Card>
