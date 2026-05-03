@@ -11,7 +11,6 @@ import { useRouter } from "next/navigation"
 /**
  * GlobalNotificationListener
  * Background listener that alerts the admin of new pending quote requests.
- * Only runs if the user is confirmed as Admin to avoid permission errors.
  */
 export function GlobalNotificationListener() {
   const db = useFirestore()
@@ -21,14 +20,14 @@ export function GlobalNotificationListener() {
   const isInitialLoad = React.useRef(true)
   const [lastId, setLastId] = React.useState<string | null>(null)
 
-  // Verify Admin status before even thinking about querying
+  // Verify Admin status
   const isAdmin = React.useMemo(() => {
     if (!user || isUserLoading) return false;
     return user.email === "aravallisteelpvcfurniture@gmail.com" || user.uid === "Qmcch2NXxmg47Zf28Wh0KTp9Njt1";
   }, [user, isUserLoading]);
 
   React.useEffect(() => {
-    // CRITICAL: Only proceed if db is ready AND user is confirmed Admin
+    // Only run if database is ready and user is confirmed Admin
     if (!db || !isAdmin || !user) return;
 
     try {
@@ -74,15 +73,14 @@ export function GlobalNotificationListener() {
           }
         },
         (error) => {
-          // If a permission error still happens, we catch it silently here
-          // instead of letting it bubble up to a red screen.
-          console.log("Notification listener is waiting for sync...");
+          // Catch silently to avoid red screen during auth sync
+          console.log("Waiting for database permissions...");
         }
       );
 
       return () => unsubscribe();
     } catch (e) {
-      console.log("Listener setup paused...");
+      console.log("Notification setup paused...");
     }
   }, [db, isAdmin, user, toast, router, lastId]);
 

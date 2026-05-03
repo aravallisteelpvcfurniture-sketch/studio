@@ -3,17 +3,19 @@
 
 import * as React from "react"
 import Link from "next/link"
-import { ChevronLeft, Bell, User, Clock, MessageCircle, Phone, Mail, Loader2 } from "lucide-react"
+import { ChevronLeft, Bell, User, Clock, MessageCircle, Phone, Mail, Loader2, Trash2 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { useFirestore, useCollection, useUser, useMemoFirebase } from "@/firebase"
-import { collection, query, orderBy, limit } from "firebase/firestore"
+import { collection, query, orderBy, limit, doc, deleteDoc } from "firebase/firestore"
 import { formatDistanceToNow } from "date-fns"
+import { useToast } from "@/hooks/use-toast"
 
 export default function NotificationsPage() {
   const db = useFirestore()
   const { user, isUserLoading } = useUser()
+  const { toast } = useToast()
 
   // Strict Admin Check
   const isAdmin = React.useMemo(() => {
@@ -21,44 +23,44 @@ export default function NotificationsPage() {
     return user.email === "aravallisteelpvcfurniture@gmail.com" || user.uid === "Qmcch2NXxmg47Zf28Wh0KTp9Njt1";
   }, [user, isUserLoading]);
 
-  // Simplified query for inquiries
+  // Query only if Admin is confirmed
   const notificationsQuery = useMemoFirebase(() => {
-    if (!db) return null
-    // We only load this for the admin to keep the list clean
-    if (!isAdmin && !isUserLoading) return null
-    
+    if (!db || !isAdmin) return null;
     return query(
       collection(db, "quoteRequests"),
       orderBy("createdAt", "desc"),
-      limit(30)
-    )
-  }, [db, isAdmin, isUserLoading])
+      limit(50)
+    );
+  }, [db, isAdmin]);
 
-  const { data: requests, isLoading } = useCollection(notificationsQuery)
+  const { data: requests, isLoading, error } = useCollection(notificationsQuery);
+
+  const deleteRequest = async (id: string) => {
+    if (!db) return;
+    try {
+      await deleteDoc(doc(db, "quoteRequests", id));
+      toast({ title: "Inquiry deleted successfully" });
+    } catch (e) {
+      toast({ variant: "destructive", title: "Failed to delete" });
+    }
+  };
 
   const sendEmail = (req: any) => {
-    const subject = encodeURIComponent(`New Inquiry: ${req.serviceType} from ${req.name}`)
+    const subject = encodeURIComponent(`New Inquiry: ${req.serviceType} from ${req.name}`);
     const body = encodeURIComponent(
-      `Hello Admin,\n\nA new inquiry has been received:\n\n` +
-      `Customer Name: ${req.name}\n` +
-      `Service: ${req.serviceType}\n` +
-      `Phone: ${req.phone}\n` +
-      `Email: ${req.email}\n` +
-      `Message: ${req.message || "No message provided"}\n\n` +
-      `Please contact the customer as soon as possible.`
-    )
-    window.location.href = `mailto:aravallisteelpvcfurniture@gmail.com?subject=${subject}&body=${body}`
-  }
+      `Customer Name: ${req.name}\nService: ${req.serviceType}\nPhone: ${req.phone}\nEmail: ${req.email}\nMessage: ${req.message || "No message"}`
+    );
+    window.location.href = `mailto:aravallisteelpvcfurniture@gmail.com?subject=${subject}&body=${body}`;
+  };
 
   if (isUserLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-background">
         <Loader2 className="w-10 h-10 animate-spin text-accent" />
       </div>
-    )
+    );
   }
 
-  // If not admin, show unauthorized but don't crash
   if (!isAdmin) {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center p-6 text-center">
@@ -66,12 +68,12 @@ export default function NotificationsPage() {
           <Bell className="w-10 h-10 text-muted-foreground" />
         </div>
         <h2 className="text-2xl font-black mb-4">Admin Access Only</h2>
-        <p className="text-muted-foreground mb-8 text-sm">Please login with the administrator account to manage inquiries.</p>
+        <p className="text-muted-foreground mb-8 text-sm">Please login with the administrator account.</p>
         <Link href="/login">
           <Button className="rounded-xl px-8 h-12 bg-primary">Go to Login</Button>
         </Link>
       </div>
-    )
+    );
   }
 
   return (
@@ -90,16 +92,16 @@ export default function NotificationsPage() {
       <ScrollArea className="flex-1">
         <div className="p-6 space-y-6">
           <div className="flex items-center justify-between">
-            <h2 className="text-sm font-black text-muted-foreground uppercase tracking-widest">Customer Requests</h2>
+            <h2 className="text-sm font-black text-muted-foreground uppercase tracking-widest">Live Feed</h2>
             <span className="bg-accent/10 text-accent text-[10px] font-bold px-3 py-1 rounded-full">
-              {requests?.length || 0} Total
+              {requests?.length || 0} Records
             </span>
           </div>
 
           {isLoading ? (
             <div className="flex flex-col items-center justify-center py-20 gap-4">
               <Loader2 className="w-10 h-10 animate-spin text-accent" />
-              <p className="text-sm font-bold text-muted-foreground">Fetching latest data...</p>
+              <p className="text-sm font-bold text-muted-foreground">Checking for new data...</p>
             </div>
           ) : requests && requests.length > 0 ? (
             requests.map((req: any) => (
@@ -114,48 +116,33 @@ export default function NotificationsPage() {
                         <h3 className="text-lg font-black text-primary">{req.name}</h3>
                         <p className="text-xs text-muted-foreground font-bold flex items-center gap-1">
                           <Clock className="w-3 h-3" />
-                          {req.createdAt?.toDate ? formatDistanceToNow(req.createdAt.toDate(), { addSuffix: true }) : "Just now"}
+                          {req.createdAt?.toDate ? formatDistanceToNow(req.createdAt.toDate(), { addSuffix: true }) : "Recent"}
                         </p>
                       </div>
                     </div>
-                    <div className="bg-green-100 text-green-600 text-[10px] font-black px-3 py-1 rounded-full uppercase">
-                      {req.status || "Pending"}
-                    </div>
+                    <Button variant="ghost" size="icon" onClick={() => deleteRequest(req.id)} className="text-destructive hover:bg-destructive/10">
+                      <Trash2 className="w-4 h-4" />
+                    </Button>
                   </div>
                   
                   <div className="grid grid-cols-2 gap-3 py-4 border-y border-dashed">
                     <div className="space-y-1">
                       <span className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">Service</span>
-                      <p className="text-sm font-bold text-primary flex items-center gap-2">
-                        <MessageCircle className="w-3 h-3 text-accent" /> {req.serviceType}
-                      </p>
+                      <p className="text-sm font-bold text-primary">{req.serviceType}</p>
                     </div>
                     <div className="space-y-1">
-                      <span className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">Contact</span>
-                      <p className="text-sm font-bold text-primary flex items-center gap-2">
-                        <Phone className="w-3 h-3 text-accent" /> {req.phone}
-                      </p>
+                      <span className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">Phone</span>
+                      <p className="text-sm font-bold text-primary">{req.phone}</p>
                     </div>
                   </div>
 
-                  {req.message && (
-                    <div className="p-4 bg-muted/30 rounded-xl">
-                       <p className="text-xs text-primary/70 leading-relaxed italic">"{req.message}"</p>
-                    </div>
-                  )}
-
                   <div className="flex gap-3 pt-2">
-                    <Button 
-                      onClick={() => sendEmail(req)}
-                      className="flex-1 h-12 rounded-xl bg-primary text-white font-bold flex gap-2"
-                    >
-                      <Mail className="w-4 h-4" />
-                      Email
+                    <Button onClick={() => sendEmail(req)} className="flex-1 h-12 rounded-xl bg-primary text-white font-bold flex gap-2">
+                      <Mail className="w-4 h-4" /> Email
                     </Button>
                     <a href={`tel:${req.phone}`} className="flex-1">
                       <Button variant="outline" className="w-full h-12 rounded-xl border-accent text-accent font-bold flex gap-2">
-                        <Phone className="w-4 h-4" />
-                        Call
+                        <Phone className="w-4 h-4" /> Call
                       </Button>
                     </a>
                   </div>
@@ -163,15 +150,15 @@ export default function NotificationsPage() {
               </Card>
             ))
           ) : (
-            <div className="flex flex-col items-center justify-center py-32 text-center space-y-6 opacity-40">
+            <div className="flex flex-col items-center justify-center py-32 text-center space-y-6">
               <div className="w-24 h-24 bg-muted rounded-full flex items-center justify-center">
-                <Bell className="w-12 h-12" />
+                <Bell className="w-12 h-12 opacity-20" />
               </div>
-              <p className="text-xl font-black">No inquiries yet</p>
+              <p className="text-xl font-black text-muted-foreground">No inquiries found in database</p>
             </div>
           )}
         </div>
       </ScrollArea>
     </div>
-  )
+  );
 }
