@@ -2,15 +2,15 @@
 "use client"
 
 import * as React from "react"
-import { useFirestore, useCollection, useMemoFirebase, useUser } from "@/firebase"
-import { collection, query, where, orderBy, limit } from "firebase/firestore"
+import { collection, query, where, orderBy, limit, onSnapshot } from "firebase/firestore"
+import { useFirestore, useUser } from "@/firebase"
 import { useToast } from "@/hooks/use-toast"
 import { Button } from "@/components/ui/button"
 import { useRouter } from "next/navigation"
 
 /**
  * GlobalNotificationListener
- * Background listener that alerts the admin of new pending quote requests.
+ * Background listener that alerts the admin of new pending quote requests silently.
  */
 export function GlobalNotificationListener() {
   const db = useFirestore()
@@ -18,58 +18,65 @@ export function GlobalNotificationListener() {
   const { toast } = useToast()
   const router = useRouter()
   const isInitialLoad = React.useRef(true)
-  const prevCount = React.useRef(0)
+  const [lastId, setLastId] = React.useState<string | null>(null)
 
-  // Strict Admin Check
   const isAdmin = React.useMemo(() => {
     if (!user || isUserLoading) return false;
     return user.email === "aravallisteelpvcfurniture@gmail.com" || user.uid === "Qmcch2NXxmg47Zf28Wh0KTp9Njt1";
   }, [user, isUserLoading]);
 
-  // Query is created for admins only to monitor new requests
-  const pendingQuery = useMemoFirebase(() => {
-    if (!db || !isAdmin) return null
-    
-    return query(
+  React.useEffect(() => {
+    if (!db || !isAdmin) return;
+
+    // We use a manual onSnapshot to avoid the global error listener crashing the app
+    const q = query(
       collection(db, "quoteRequests"),
       where("status", "==", "pending"),
       orderBy("createdAt", "desc"),
-      limit(5)
-    )
-  }, [db, isAdmin])
+      limit(1)
+    );
 
-  const { data: pending } = useCollection(pendingQuery)
+    const unsubscribe = onSnapshot(q, 
+      (snapshot) => {
+        if (snapshot.empty) {
+          isInitialLoad.current = false;
+          return;
+        }
 
-  React.useEffect(() => {
-    if (!pending || !isAdmin || pending.length === 0) return
+        const latestDoc = snapshot.docs[0];
+        const data = latestDoc.data();
 
-    if (isInitialLoad.current) {
-      prevCount.current = pending.length
-      isInitialLoad.current = false
-      return
-    }
+        if (isInitialLoad.current) {
+          setLastId(latestDoc.id);
+          isInitialLoad.current = false;
+          return;
+        }
 
-    if (pending.length > prevCount.current) {
-      const newInquiry = pending[0]
-      
-      toast({
-        title: "🚨 NEW INQUIRY!",
-        description: `${newInquiry.name} requested ${newInquiry.serviceType}.`,
-        action: (
-          <Button 
-            variant="default" 
-            size="sm" 
-            className="bg-accent text-white font-bold"
-            onClick={() => router.push("/notifications")}
-          >
-            VIEW
-          </Button>
-        ),
-      })
-    }
+        if (latestDoc.id !== lastId) {
+          setLastId(latestDoc.id);
+          toast({
+            title: "🚨 NEW INQUIRY RECEIVED!",
+            description: `${data.name} requested ${data.serviceType}.`,
+            action: (
+              <Button 
+                variant="default" 
+                size="sm" 
+                className="bg-accent text-white font-bold"
+                onClick={() => router.push("/notifications")}
+              >
+                VIEW
+              </Button>
+            ),
+          });
+        }
+      },
+      (error) => {
+        console.warn("Silent listener error:", error.message);
+      }
+    );
 
-    prevCount.current = pending.length
-  }, [pending, toast, router, isAdmin])
+    return () => unsubscribe();
+  }, [db, isAdmin, toast, router, lastId]);
 
-  return null
+  return null;
 }
