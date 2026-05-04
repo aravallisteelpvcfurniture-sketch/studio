@@ -70,6 +70,23 @@
         "createdAt": { "type": "string", "format": "date-time" }
       },
       "required": ["name", "email", "phone", "customerUid"]
+    },
+    "SiteVisit": {
+      "title": "Site Visit",
+      "type": "object",
+      "description": "Track a visitor from site visit to measurement and finalization.",
+      "properties": {
+        "customerName": { "type": "string" },
+        "phone": { "type": "string" },
+        "address": { "type": "string" },
+        "serviceType": { "type": "string" },
+        "scheduledDate": { "type": "string", "format": "date-time" },
+        "status": { "type": "string", "enum": ["New", "Scheduled", "Visited", "Measured", "Quoted", "Started", "Completed"] },
+        "measurements": { "type": "string" },
+        "notes": { "type": "string" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["customerName", "phone", "status"]
     }
   },
   "auth": {
@@ -115,6 +132,14 @@
           "entityName": "QuoteRequest",
           "schema": { "$ref": "#/backend/entities/QuoteRequest" },
           "description": "Customer inquiries and consultation requests."
+        }
+      },
+      {
+        "path": "/siteVisits/{visitId}",
+        "definition": {
+          "entityName": "SiteVisit",
+          "schema": { "$ref": "#/backend/entities/SiteVisit" },
+          "description": "Management of site visits and measurements."
         }
       }
     ]

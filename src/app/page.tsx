@@ -4,7 +4,7 @@
 import * as React from "react"
 import { useRouter } from "next/navigation"
 import { useUser, useAuth } from "@/firebase"
-import { Loader2, LogOut, ShoppingBag, LayoutGrid, Sparkles, MapPin, Bell, Download, Calculator, ChevronRight, User } from "lucide-react"
+import { Loader2, LogOut, ShoppingBag, LayoutGrid, Sparkles, MapPin, Bell, Download, Calculator, ChevronRight, User, ClipboardList } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { signOut } from "firebase/auth"
 import Image from "next/image"
@@ -18,8 +18,6 @@ export default function Home() {
   const { auth } = useAuth()
   const router = useRouter()
   const [deferredPrompt, setDeferredPrompt] = React.useState<any>(null)
-
-  const logoImg = PlaceHolderImages.find(i => i.id === "company-logo")
 
   const isAdmin = React.useMemo(() => {
     if (!user) return false;
@@ -130,7 +128,7 @@ export default function Home() {
           </div>
           <div className="text-center">
             <span className="block font-black text-primary text-xs uppercase tracking-tight">Shop Now</span>
-            <span className="text-[9px] font-bold text-muted-foreground uppercase opacity-60">Modular Items</span>
+            <span className="text-[9px] font-bold text-muted-foreground uppercase opacity-60">Items</span>
           </div>
         </button>
 
@@ -156,11 +154,24 @@ export default function Home() {
           </div>
           <div className="text-center">
             <span className="block font-black text-primary text-xs uppercase tracking-tight">Calculator</span>
-            <span className="text-[9px] font-bold text-muted-foreground uppercase opacity-60">Quick Budget</span>
+            <span className="text-[9px] font-bold text-muted-foreground uppercase opacity-60">Budget</span>
           </div>
         </button>
 
-        {deferredPrompt ? (
+        {isAdmin ? (
+          <button 
+            onClick={() => router.push("/site-visits")}
+            className="bg-accent/5 p-5 rounded-[2rem] flex flex-col items-center gap-3 active:scale-90 transition-all border-2 border-accent/20"
+          >
+            <div className="w-14 h-14 bg-accent rounded-2xl flex items-center justify-center shadow-lg shadow-accent/20">
+              <ClipboardList className="w-7 h-7 text-white" />
+            </div>
+            <div className="text-center">
+              <span className="block font-black text-accent text-xs uppercase tracking-tight">Manager</span>
+              <span className="text-[9px] font-bold text-accent/60 uppercase">Visits</span>
+            </div>
+          </button>
+        ) : deferredPrompt ? (
           <button 
             onClick={handleInstallClick}
             className="bg-accent/5 p-5 rounded-[2rem] flex flex-col items-center gap-3 active:scale-90 transition-all border-2 border-dashed border-accent/20"
