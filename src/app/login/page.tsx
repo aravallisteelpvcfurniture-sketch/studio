@@ -22,6 +22,7 @@ import Image from "next/image"
 import { PlaceHolderImages } from "@/lib/placeholder-images"
 import { useToast } from "@/hooks/use-toast"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert"
 
 export default function LoginPage() {
   const auth = useAuth()
@@ -35,6 +36,7 @@ export default function LoginPage() {
   const [password, setPassword] = React.useState("")
   const [displayName, setDisplayName] = React.useState("")
   const [redirectChecking, setRedirectChecking] = React.useState(true)
+  const [authError, setAuthError] = React.useState<string | null>(null)
 
   const logoImg = PlaceHolderImages.find(i => i.id === "company-logo")
 
@@ -62,11 +64,7 @@ export default function LoginPage() {
       .catch((error) => {
         setRedirectChecking(false)
         if (error.code === 'auth/unauthorized-domain') {
-          toast({ 
-            variant: "destructive", 
-            title: "Domain Whitelist Karein", 
-            description: "Firebase Console > Auth > Settings > Authorized Domains mein apna current domain add karein." 
-          })
+          setAuthError("Domain Not Whitelisted: Firebase Console > Auth > Settings > Authorized Domains mein apna domain add karein.")
         }
         console.error("Login Redirect Error:", error)
       })
@@ -81,20 +79,19 @@ export default function LoginPage() {
   const handleGoogleLogin = async () => {
     if (!auth) return
     setLoading(true)
+    setAuthError(null)
     try {
       const provider = new GoogleAuthProvider()
       provider.setCustomParameters({ prompt: 'select_account' })
-      // Use Redirect for 100% compatibility in installed apps
+      // Sign-in with redirect is most reliable for PWAs on mobile
       await signInWithRedirect(auth, provider)
     } catch (error: any) {
       setLoading(false)
       console.error("Auth trigger failed:", error)
       if (error.code === 'auth/unauthorized-domain') {
-        toast({
-          variant: "destructive",
-          title: "Setup Needed",
-          description: "Firebase Console mein is domain ko whitelist kijiye (Settings > Authorized Domains).",
-        })
+        setAuthError("Setup Required: Please add this domain to 'Authorized Domains' in your Firebase Console Settings.")
+      } else {
+        setAuthError(error.message)
       }
     }
   }
@@ -145,7 +142,7 @@ export default function LoginPage() {
     return (
       <div className="min-h-screen bg-background flex flex-col items-center justify-center p-6">
         <Loader2 className="w-10 h-10 animate-spin text-accent" />
-        <p className="mt-4 text-sm font-bold text-muted-foreground">Initializing App...</p>
+        <p className="mt-4 text-sm font-bold text-muted-foreground">Checking Session...</p>
       </div>
     )
   }
@@ -164,10 +161,20 @@ export default function LoginPage() {
             )}
           </div>
           <div>
-            <h1 className="text-3xl font-black text-primary tracking-tighter uppercase">ARAVALLI <span className="text-accent">STEEL</span></h1>
-            <p className="text-muted-foreground text-[10px] font-bold tracking-widest uppercase opacity-60">Premium Modular Solutions</p>
+            <h1 className="text-3xl font-black text-primary tracking-tighter uppercase leading-none">ARAVALLI <span className="text-accent">STEEL</span></h1>
+            <p className="text-muted-foreground text-[10px] font-bold tracking-widest uppercase opacity-60 mt-1">Premium Modular Solutions</p>
           </div>
         </div>
+
+        {authError && (
+          <Alert variant="destructive" className="rounded-2xl border-destructive/50 bg-destructive/5">
+            <AlertCircle className="h-4 w-4" />
+            <AlertTitle className="text-xs font-bold uppercase">Auth Error</AlertTitle>
+            <AlertDescription className="text-[10px] leading-tight">
+              {authError}
+            </AlertDescription>
+          </Alert>
+        )}
 
         <Tabs defaultValue="login" className="w-full">
           <TabsList className="grid w-full grid-cols-2 rounded-2xl h-12 mb-6 bg-muted/50 p-1">
@@ -187,7 +194,7 @@ export default function LoginPage() {
               </div>
               <Button disabled={loading} className="w-full h-14 rounded-2xl bg-primary text-white font-black text-lg shadow-xl shadow-primary/10 flex gap-2 active:scale-95 transition-all">
                 {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : <LogIn className="w-5 h-5" />}
-                Login Karein
+                Login
               </Button>
             </form>
           </TabsContent>
@@ -207,7 +214,7 @@ export default function LoginPage() {
                 <Input type="password" value={password} onChange={(e) => setPassword(e.target.value)} className="h-14 rounded-2xl bg-muted/30 border-none px-6" />
               </div>
               <Button disabled={loading} className="w-full h-14 rounded-2xl bg-accent text-white font-black text-lg shadow-xl shadow-accent/10 active:scale-95 transition-all">
-                {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : "Sign Up Karein"}
+                {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : "Sign Up"}
               </Button>
             </form>
           </TabsContent>
@@ -215,7 +222,7 @@ export default function LoginPage() {
 
         <div className="relative">
           <div className="absolute inset-0 flex items-center"><span className="w-full border-t border-muted" /></div>
-          <div className="relative flex justify-center text-[10px] uppercase"><span className="bg-white px-3 text-muted-foreground font-black">Ya Phir</span></div>
+          <div className="relative flex justify-center text-[10px] uppercase"><span className="bg-white px-3 text-muted-foreground font-black">OR</span></div>
         </div>
 
         <Button 
@@ -230,7 +237,7 @@ export default function LoginPage() {
             <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z"/>
             <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.66l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
           </svg>
-          Google se Login
+          Google Login
         </Button>
       </Card>
     </div>

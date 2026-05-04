@@ -51,7 +51,8 @@ export default function Home() {
     if (auth) {
       try {
         await signOut(auth);
-        window.location.href = "/login"; // Hard redirect to clear all states
+        // Using window.location to force a full refresh and clear all states
+        window.location.href = "/login";
       } catch (error) {
         console.error("Logout failed:", error);
       }
@@ -70,7 +71,7 @@ export default function Home() {
 
   return (
     <div className="min-h-screen bg-[#F8F9FA] flex flex-col font-body pb-10">
-      {/* Native App Header */}
+      {/* App Header */}
       <div className="px-6 pt-8 pb-4 flex items-center justify-between bg-white/80 backdrop-blur-xl sticky top-0 z-50 border-b">
         <div className="flex items-center gap-3">
           <Avatar className="h-10 w-10 border-2 border-accent/20">
@@ -105,85 +106,88 @@ export default function Home() {
         </div>
       </div>
 
-      {/* Hero Section: AI Design Studio */}
-      <div className="px-6 mt-6">
-        <Card 
-          onClick={() => router.push("/ai-designer")}
-          className="group relative overflow-hidden p-6 rounded-[2.5rem] border-none bg-primary text-white shadow-2xl shadow-primary/20 active:scale-[0.97] transition-all cursor-pointer h-44 flex flex-col justify-end"
-        >
-          <div className="absolute top-0 right-0 w-32 h-32 bg-accent/20 rounded-full blur-[60px] -mr-16 -mt-16" />
-          <div className="relative z-10 space-y-1">
-            <div className="inline-flex items-center gap-2 bg-accent px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest mb-1">
-              <Sparkles className="w-3 h-3" /> AI Powered
-            </div>
-            <h3 className="text-2xl font-black tracking-tighter leading-none uppercase">AI Design Studio</h3>
-            <p className="text-white/60 text-[10px] font-medium uppercase tracking-wider">Instant Modular Designs</p>
-          </div>
-        </Card>
-      </div>
-
-      {/* Visitor Manager - PLACED DIRECTLY BELOW AI DESIGNER */}
-      {isAdmin && (
-        <div className="px-6 mt-4">
-          <button 
-            onClick={() => router.push("/site-visits")}
-            className="w-full bg-accent p-6 rounded-[2.5rem] shadow-lg shadow-accent/20 flex items-center justify-between active:scale-[0.97] transition-all border-none text-white group"
+      {/* Main Content Scroll Area */}
+      <div className="flex-1 space-y-4 pt-6">
+        {/* Hero Section: AI Design Studio */}
+        <div className="px-6">
+          <Card 
+            onClick={() => router.push("/ai-designer")}
+            className="group relative overflow-hidden p-6 rounded-[2.5rem] border-none bg-primary text-white shadow-2xl shadow-primary/20 active:scale-[0.97] transition-all cursor-pointer h-48 flex flex-col justify-end"
           >
-            <div className="flex items-center gap-4">
-              <div className="w-12 h-12 bg-white/20 rounded-2xl flex items-center justify-center backdrop-blur-md">
-                <ClipboardList className="w-6 h-6 text-white" />
+            <div className="absolute top-0 right-0 w-40 h-40 bg-accent/20 rounded-full blur-[60px] -mr-20 -mt-20" />
+            <div className="relative z-10 space-y-1">
+              <div className="inline-flex items-center gap-2 bg-accent px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest mb-1">
+                <Sparkles className="w-3 h-3 text-white" /> AI Powered
               </div>
-              <div className="text-left">
-                <span className="block font-black text-white text-base uppercase tracking-tight">Visitor Manager</span>
-                <span className="text-[9px] font-bold text-white/70 uppercase tracking-widest">Tracking & Measurements</span>
+              <h3 className="text-2xl font-black tracking-tighter leading-none uppercase">AI Design Studio</h3>
+              <p className="text-white/60 text-[10px] font-medium uppercase tracking-wider">Instant Modular Designs</p>
+            </div>
+          </Card>
+        </div>
+
+        {/* Visitor Manager Tool - Directly Below AI Designer */}
+        {isAdmin && (
+          <div className="px-6">
+            <button 
+              onClick={() => router.push("/site-visits")}
+              className="w-full bg-accent p-6 rounded-[2.5rem] shadow-xl shadow-accent/20 flex items-center justify-between active:scale-[0.97] transition-all border-none text-white group"
+            >
+              <div className="flex items-center gap-4">
+                <div className="w-12 h-12 bg-white/20 rounded-2xl flex items-center justify-center backdrop-blur-md">
+                  <ClipboardList className="w-6 h-6 text-white" />
+                </div>
+                <div className="text-left">
+                  <span className="block font-black text-white text-base uppercase tracking-tight">Visitor Manager</span>
+                  <span className="text-[9px] font-bold text-white/70 uppercase tracking-widest">Tracking & Measurements</span>
+                </div>
               </div>
-            </div>
-            <div className="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center">
-              <ChevronRight className="w-4 h-4" />
-            </div>
+              <div className="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center">
+                <ChevronRight className="w-4 h-4" />
+              </div>
+            </button>
+          </div>
+        )}
+
+        {/* Tools Grid */}
+        <div className="px-6 grid grid-cols-3 gap-3">
+          <button onClick={() => router.push("/shop")} className="bg-white p-4 rounded-[2rem] shadow-sm flex flex-col items-center gap-2 active:scale-95 border border-gray-100">
+            <div className="w-10 h-10 bg-orange-50 rounded-xl flex items-center justify-center"><ShoppingBag className="w-5 h-5 text-accent" /></div>
+            <span className="font-black text-primary text-[9px] uppercase">Shop</span>
+          </button>
+          <button onClick={() => router.push("/categories")} className="bg-white p-4 rounded-[2rem] shadow-sm flex flex-col items-center gap-2 active:scale-95 border border-gray-100">
+            <div className="w-10 h-10 bg-blue-50 rounded-xl flex items-center justify-center"><LayoutGrid className="w-5 h-5 text-blue-500" /></div>
+            <span className="font-black text-primary text-[9px] uppercase">Explore</span>
+          </button>
+          <button onClick={() => router.push("/estimator")} className="bg-white p-4 rounded-[2rem] shadow-sm flex flex-col items-center gap-2 active:scale-95 border border-gray-100">
+            <div className="w-10 h-10 bg-green-50 rounded-xl flex items-center justify-center"><Calculator className="w-5 h-5 text-green-500" /></div>
+            <span className="font-black text-primary text-[9px] uppercase">Budget</span>
           </button>
         </div>
-      )}
 
-      {/* Tools Grid */}
-      <div className="px-6 mt-4 grid grid-cols-3 gap-3">
-        <button onClick={() => router.push("/shop")} className="bg-white p-4 rounded-[2rem] shadow-sm flex flex-col items-center gap-2 active:scale-95 border border-gray-100">
-          <div className="w-10 h-10 bg-orange-50 rounded-xl flex items-center justify-center"><ShoppingBag className="w-5 h-5 text-accent" /></div>
-          <span className="font-black text-primary text-[9px] uppercase">Shop</span>
-        </button>
-        <button onClick={() => router.push("/categories")} className="bg-white p-4 rounded-[2rem] shadow-sm flex flex-col items-center gap-2 active:scale-95 border border-gray-100">
-          <div className="w-10 h-10 bg-blue-50 rounded-xl flex items-center justify-center"><LayoutGrid className="w-5 h-5 text-blue-500" /></div>
-          <span className="font-black text-primary text-[9px] uppercase">Explore</span>
-        </button>
-        <button onClick={() => router.push("/estimator")} className="bg-white p-4 rounded-[2rem] shadow-sm flex flex-col items-center gap-2 active:scale-95 border border-gray-100">
-          <div className="w-10 h-10 bg-green-50 rounded-xl flex items-center justify-center"><Calculator className="w-5 h-5 text-green-500" /></div>
-          <span className="font-black text-primary text-[9px] uppercase">Budget</span>
-        </button>
-      </div>
-
-      {/* Secondary Tools */}
-      <div className="px-6 mt-4 space-y-3">
-        <button onClick={() => router.push("/book-consultation")} className="w-full bg-white p-5 rounded-[2rem] shadow-sm border border-gray-100 flex items-center justify-between active:scale-[0.98]">
-          <div className="flex items-center gap-4">
-            <div className="w-12 h-12 bg-green-50 rounded-2xl flex items-center justify-center shrink-0"><MapPin className="w-6 h-6 text-green-600" /></div>
-            <div className="text-left">
-              <h4 className="font-black text-primary text-sm uppercase">Free Site Visit</h4>
-              <p className="text-[9px] text-muted-foreground font-bold uppercase opacity-60">Book Expert Today</p>
+        {/* Support Tools */}
+        <div className="px-6 space-y-3">
+          <button onClick={() => router.push("/book-consultation")} className="w-full bg-white p-5 rounded-[2rem] shadow-sm border border-gray-100 flex items-center justify-between active:scale-[0.98]">
+            <div className="flex items-center gap-4">
+              <div className="w-12 h-12 bg-green-50 rounded-2xl flex items-center justify-center shrink-0"><MapPin className="w-6 h-6 text-green-600" /></div>
+              <div className="text-left">
+                <h4 className="font-black text-primary text-sm uppercase">Free Site Visit</h4>
+                <p className="text-[9px] text-muted-foreground font-bold uppercase opacity-60">Book Expert Today</p>
+              </div>
             </div>
-          </div>
-          <ChevronRight className="w-4 h-4 text-muted-foreground" />
-        </button>
-
-        {deferredPrompt && (
-          <button onClick={handleInstallClick} className="w-full bg-primary/5 p-4 rounded-[2rem] border border-primary/10 flex items-center justify-center gap-3 active:scale-95">
-            <Download className="w-5 h-5 text-primary" />
-            <span className="font-black text-primary text-[10px] uppercase">Install Fast App</span>
+            <ChevronRight className="w-4 h-4 text-muted-foreground" />
           </button>
-        )}
+
+          {deferredPrompt && (
+            <button onClick={handleInstallClick} className="w-full bg-primary/5 p-4 rounded-[2rem] border border-primary/10 flex items-center justify-center gap-3 active:scale-95">
+              <Download className="w-5 h-5 text-primary" />
+              <span className="font-black text-primary text-[10px] uppercase">Install Fast App</span>
+            </button>
+          )}
+        </div>
       </div>
 
       {/* App Branding Footer */}
-      <div className="mt-auto pt-10 pb-6 flex flex-col items-center gap-2 opacity-20">
+      <div className="mt-10 mb-6 flex flex-col items-center gap-2 opacity-20">
         <div className="flex items-center gap-2">
           <div className="w-6 h-6 bg-primary rounded-lg flex items-center justify-center p-1"><span className="text-white text-[10px] font-black">AS</span></div>
           <span className="text-[10px] font-black tracking-[0.3em] uppercase">Aravalli Steel</span>
