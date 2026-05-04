@@ -1,5 +1,5 @@
 
-import type {Metadata} from 'next';
+import type { Metadata, Viewport } from 'next';
 import './globals.css';
 import { Toaster } from "@/components/ui/toaster";
 import { FirebaseClientProvider } from "@/firebase";
@@ -16,6 +16,20 @@ const roboto = Roboto({
 export const metadata: Metadata = {
   title: 'Aravalli Steel | Ready to Build',
   description: 'Premium Modular Solutions and AI Design Studio',
+  manifest: '/manifest.json',
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: 'default',
+    title: 'Aravalli Steel',
+  },
+};
+
+export const viewport: Viewport = {
+  themeColor: '#f15a24',
+  width: 'device-width',
+  initialScale: 1,
+  maximumScale: 1,
+  userScalable: false,
 };
 
 export default function RootLayout({

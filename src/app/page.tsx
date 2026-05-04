@@ -4,7 +4,7 @@
 import * as React from "react"
 import { useRouter } from "next/navigation"
 import { useUser, useAuth } from "@/firebase"
-import { Loader2, LogOut, ShoppingBag, LayoutGrid, Sparkles, MapPin, ShieldAlert, Bell } from "lucide-react"
+import { Loader2, LogOut, ShoppingBag, LayoutGrid, Sparkles, MapPin, ShieldAlert, Bell, Download } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { signOut } from "firebase/auth"
 import Image from "next/image"
@@ -15,6 +15,7 @@ export default function Home() {
   const { user, isUserLoading } = useUser()
   const { auth } = useAuth()
   const router = useRouter()
+  const [deferredPrompt, setDeferredPrompt] = React.useState<any>(null)
 
   const logoImg = PlaceHolderImages.find(i => i.id === "company-logo")
 
@@ -23,6 +24,25 @@ export default function Home() {
     if (!user) return false;
     return user.email === "aravallisteelpvcfurniture@gmail.com" || user.uid === "Qmcch2NXxmg47Zf28Wh0KTp9Njt1";
   }, [user]);
+
+  // PWA Install Logic
+  React.useEffect(() => {
+    const handler = (e: any) => {
+      e.preventDefault();
+      setDeferredPrompt(e);
+    };
+    window.addEventListener('beforeinstallprompt', handler);
+    return () => window.removeEventListener('beforeinstallprompt', handler);
+  }, []);
+
+  const handleInstallClick = async () => {
+    if (!deferredPrompt) return;
+    deferredPrompt.prompt();
+    const { outcome } = await deferredPrompt.userChoice;
+    if (outcome === 'accepted') {
+      setDeferredPrompt(null);
+    }
+  };
 
   React.useEffect(() => {
     if (!isUserLoading && !user) {
@@ -64,6 +84,11 @@ export default function Home() {
           </div>
         </div>
         <div className="flex items-center gap-2">
+          {deferredPrompt && (
+            <Button variant="ghost" size="icon" onClick={handleInstallClick} className="rounded-full text-accent animate-bounce">
+              <Download className="w-5 h-5" />
+            </Button>
+          )}
           {isAdmin && (
             <Link href="/notifications">
               <Button variant="ghost" size="icon" className="rounded-full text-accent">
@@ -147,6 +172,20 @@ export default function Home() {
               <span className="font-bold text-primary">Categories</span>
             </button>
           </div>
+
+          {/* PWA Install Promo if available */}
+          {deferredPrompt && (
+            <div className="bg-white p-6 rounded-[2.5rem] border-2 border-dashed border-accent flex flex-col gap-4 text-center items-center animate-in zoom-in">
+               <div className="w-12 h-12 bg-accent/10 rounded-full flex items-center justify-center">
+                 <Download className="w-6 h-6 text-accent" />
+               </div>
+               <div>
+                 <h4 className="font-bold text-primary">Install Mobile App</h4>
+                 <p className="text-xs text-muted-foreground">Faster access from your home screen</p>
+               </div>
+               <Button onClick={handleInstallClick} className="w-full rounded-xl bg-accent text-white font-bold h-12">INSTALL NOW</Button>
+            </div>
+          )}
 
           {/* Site Visit Card */}
           <button 
