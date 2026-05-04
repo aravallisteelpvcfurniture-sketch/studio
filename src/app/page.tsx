@@ -14,7 +14,7 @@ import { Badge } from "@/components/ui/badge"
 
 export default function Home() {
   const { user, isUserLoading } = useUser()
-  const auth = useAuth() // Fixed: useAuth returns auth directly
+  const auth = useAuth()
   const router = useRouter()
   const [deferredPrompt, setDeferredPrompt] = React.useState<any>(null)
 
@@ -51,7 +51,7 @@ export default function Home() {
     if (auth) {
       try {
         await signOut(auth)
-        router.push("/login") // Force redirect for better UX
+        // No need for router.push here as the useEffect above handles it
       } catch (error) {
         console.error("Logout failed:", error)
       }

@@ -62,6 +62,9 @@ export default function LoginPage() {
       })
       .catch((error) => {
         setRedirectChecking(false)
+        if (error.code === 'auth/operation-not-allowed') {
+          toast({ variant: "destructive", title: "Error 403", description: "Firebase Console mein domain whitelist kijiye." })
+        }
         console.error("Login Error:", error)
       })
   }, [auth, db, router, toast])
@@ -79,14 +82,15 @@ export default function LoginPage() {
     try {
       const provider = new GoogleAuthProvider()
       provider.setCustomParameters({ prompt: 'select_account' })
-      // Redirect is much more reliable on mobile/installed apps than popups
+      // Use Redirect for 100% compatibility in installed apps
       await signInWithRedirect(auth, provider)
     } catch (error: any) {
       setLoading(false)
+      console.error("Auth redirect trigger failed:", error)
       toast({
         variant: "destructive",
         title: "Login Failed",
-        description: "Google login nahi ho paya. Dobara koshish karein.",
+        description: "Google login nahi ho paya. " + (error.message || ""),
       })
     }
   }
