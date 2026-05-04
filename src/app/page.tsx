@@ -49,7 +49,9 @@ export default function Home() {
 
   const handleLogout = async () => {
     try {
-      await signOut(auth);
+      if (auth) {
+        await signOut(auth);
+      }
       // Force a full clean redirect to login page to clear any cached states
       window.location.href = "/login";
     } catch (error) {

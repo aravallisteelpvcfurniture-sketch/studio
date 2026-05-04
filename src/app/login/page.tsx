@@ -83,6 +83,7 @@ export default function LoginPage() {
     try {
       const provider = new GoogleAuthProvider()
       provider.setCustomParameters({ prompt: 'select_account' })
+      // Sign-in with redirect is most reliable for PWAs on mobile
       await signInWithRedirect(auth, provider)
     } catch (error: any) {
       setLoading(false)
@@ -171,17 +172,20 @@ export default function LoginPage() {
               <AlertCircle className="h-4 w-4" />
               <AlertTitle className="text-xs font-bold uppercase">Setup Required</AlertTitle>
               <AlertDescription className="text-[10px] leading-tight">
-                {authError}
+                Google Login ke liye niche diye gaye Domain ko Firebase Console mein add karein.
               </AlertDescription>
             </Alert>
-            <div className="bg-blue-50 p-4 rounded-2xl flex gap-3 border border-blue-100">
-              <Info className="w-4 h-4 text-blue-500 shrink-0" />
-              <p className="text-[10px] text-blue-700 font-medium">
-                Firebase Console mein Authentication {'>'} Settings {'>'} Authorized Domains mein jaaiye aur ye domain add karein: <br/>
-                <code className="bg-white/50 px-2 py-1 rounded mt-2 block font-bold text-primary">
-                  {typeof window !== 'undefined' ? window.location.hostname : 'loading...'}
-                </code>
+            <div className="bg-blue-50 p-4 rounded-2xl flex flex-col gap-2 border border-blue-100">
+              <div className="flex gap-2 items-center">
+                <Info className="w-4 h-4 text-blue-500 shrink-0" />
+                <span className="text-[10px] font-bold text-blue-700">FIREBASE SETUP STEP:</span>
+              </div>
+              <p className="text-[10px] text-blue-700 font-medium leading-relaxed">
+                Firebase Console {'>'} Auth {'>'} Settings {'>'} Authorized Domains mein ye domain add karein:
               </p>
+              <code className="bg-white/80 p-2 rounded-xl text-[10px] font-black text-primary border border-blue-200 select-all text-center">
+                {typeof window !== 'undefined' ? window.location.hostname : 'loading...'}
+              </code>
             </div>
           </div>
         )}
