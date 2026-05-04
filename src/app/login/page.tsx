@@ -17,7 +17,7 @@ import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { Loader2, Sparkles, LogIn, AlertCircle } from "lucide-react"
+import { Loader2, Sparkles, LogIn, AlertCircle, Info } from "lucide-react"
 import Image from "next/image"
 import { PlaceHolderImages } from "@/lib/placeholder-images"
 import { useToast } from "@/hooks/use-toast"
@@ -64,7 +64,7 @@ export default function LoginPage() {
       .catch((error) => {
         setRedirectChecking(false)
         if (error.code === 'auth/unauthorized-domain') {
-          setAuthError("Domain Not Whitelisted: Firebase Console > Auth > Settings > Authorized Domains mein apna domain add karein.")
+          setAuthError(`Domain Error: Firebase Console mein apna domain add karein. Domain: ${window.location.hostname}`)
         }
         console.error("Login Redirect Error:", error)
       })
@@ -83,13 +83,13 @@ export default function LoginPage() {
     try {
       const provider = new GoogleAuthProvider()
       provider.setCustomParameters({ prompt: 'select_account' })
-      // Sign-in with redirect is most reliable for PWAs on mobile
+      // Use Redirect for 100% compatibility in installed apps
       await signInWithRedirect(auth, provider)
     } catch (error: any) {
       setLoading(false)
       console.error("Auth trigger failed:", error)
       if (error.code === 'auth/unauthorized-domain') {
-        setAuthError("Setup Required: Please add this domain to 'Authorized Domains' in your Firebase Console Settings.")
+        setAuthError(`Domain Error: Firebase Console > Auth > Settings > Authorized Domains mein '${window.location.hostname}' add karein.`)
       } else {
         setAuthError(error.message)
       }
@@ -167,13 +167,21 @@ export default function LoginPage() {
         </div>
 
         {authError && (
-          <Alert variant="destructive" className="rounded-2xl border-destructive/50 bg-destructive/5">
-            <AlertCircle className="h-4 w-4" />
-            <AlertTitle className="text-xs font-bold uppercase">Auth Error</AlertTitle>
-            <AlertDescription className="text-[10px] leading-tight">
-              {authError}
-            </AlertDescription>
-          </Alert>
+          <div className="space-y-4">
+            <Alert variant="destructive" className="rounded-2xl border-destructive/50 bg-destructive/5">
+              <AlertCircle className="h-4 w-4" />
+              <AlertTitle className="text-xs font-bold uppercase">Setup Required</AlertTitle>
+              <AlertDescription className="text-[10px] leading-tight">
+                {authError}
+              </AlertDescription>
+            </Alert>
+            <div className="bg-blue-50 p-4 rounded-2xl flex gap-3 border border-blue-100">
+              <Info className="w-4 h-4 text-blue-500 shrink-0" />
+              <p className="text-[10px] text-blue-700 font-medium">
+                Firebase Console mein Authentication > Settings > Authorized Domains mein jaaiye aur ye domain add karein: <b>{typeof window !== 'undefined' ? window.location.hostname : 'loading...'}</b>
+              </p>
+            </div>
+          </div>
         )}
 
         <Tabs defaultValue="login" className="w-full">

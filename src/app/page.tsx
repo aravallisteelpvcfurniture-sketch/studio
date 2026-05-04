@@ -6,7 +6,7 @@ import { useRouter } from "next/navigation"
 import { useUser, useFirebase } from "@/firebase"
 import { Loader2, LogOut, ShoppingBag, LayoutGrid, Sparkles, MapPin, Bell, Download, Calculator, ChevronRight, User, ClipboardList } from "lucide-react"
 import { Button } from "@/components/ui/button"
-import { signOut } from "firebase/auth"
+import { signOut, getAuth } from "firebase/auth"
 import Link from "next/link"
 import { Card } from "@/components/ui/card"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
@@ -14,7 +14,7 @@ import { Badge } from "@/components/ui/badge"
 
 export default function Home() {
   const { user, isUserLoading } = useUser()
-  const { auth } = useFirebase()
+  const { auth: firebaseAuth } = useFirebase()
   const router = useRouter()
   const [deferredPrompt, setDeferredPrompt] = React.useState<any>(null)
 
@@ -48,14 +48,15 @@ export default function Home() {
   }, [user, isUserLoading, router])
 
   const handleLogout = async () => {
-    if (auth) {
-      try {
-        await signOut(auth);
-        // Using window.location to force a full refresh and clear all states
-        window.location.href = "/login";
-      } catch (error) {
-        console.error("Logout failed:", error);
-      }
+    const auth = getAuth(); // Direct access to be absolutely sure
+    try {
+      await signOut(auth);
+      // Force a full clean redirect to login page
+      window.location.href = "/login";
+    } catch (error) {
+      console.error("Logout failed:", error);
+      // Fallback
+      window.location.href = "/login";
     }
   }
 
@@ -125,7 +126,7 @@ export default function Home() {
           </Card>
         </div>
 
-        {/* Visitor Manager Tool - Directly Below AI Designer */}
+        {/* Visitor Manager Tool - Directly Below AI Designer as requested */}
         {isAdmin && (
           <div className="px-6">
             <button 
