@@ -64,7 +64,7 @@ export default function LoginPage() {
       .catch((error) => {
         setRedirectChecking(false)
         if (error.code === 'auth/unauthorized-domain') {
-          setAuthError(`Domain Error: Firebase Console mein apna domain add karein. Domain: ${window.location.hostname}`)
+          setAuthError(`Domain Error: Firebase Console mein apna domain add karein.`)
         }
         console.error("Login Redirect Error:", error)
       })
@@ -83,13 +83,12 @@ export default function LoginPage() {
     try {
       const provider = new GoogleAuthProvider()
       provider.setCustomParameters({ prompt: 'select_account' })
-      // Use Redirect for 100% compatibility in installed apps
       await signInWithRedirect(auth, provider)
     } catch (error: any) {
       setLoading(false)
       console.error("Auth trigger failed:", error)
       if (error.code === 'auth/unauthorized-domain') {
-        setAuthError(`Domain Error: Firebase Console > Auth > Settings > Authorized Domains mein '${window.location.hostname}' add karein.`)
+        setAuthError(`Domain Error: Firebase Console mein domain whitelist karein.`)
       } else {
         setAuthError(error.message)
       }
@@ -178,7 +177,10 @@ export default function LoginPage() {
             <div className="bg-blue-50 p-4 rounded-2xl flex gap-3 border border-blue-100">
               <Info className="w-4 h-4 text-blue-500 shrink-0" />
               <p className="text-[10px] text-blue-700 font-medium">
-                Firebase Console mein Authentication > Settings > Authorized Domains mein jaaiye aur ye domain add karein: <b>{typeof window !== 'undefined' ? window.location.hostname : 'loading...'}</b>
+                Firebase Console mein Authentication {'>'} Settings {'>'} Authorized Domains mein jaaiye aur ye domain add karein: <br/>
+                <code className="bg-white/50 px-2 py-1 rounded mt-2 block font-bold text-primary">
+                  {typeof window !== 'undefined' ? window.location.hostname : 'loading...'}
+                </code>
               </p>
             </div>
           </div>

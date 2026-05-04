@@ -3,10 +3,10 @@
 
 import * as React from "react"
 import { useRouter } from "next/navigation"
-import { useUser, useFirebase } from "@/firebase"
+import { useUser, useAuth } from "@/firebase"
 import { Loader2, LogOut, ShoppingBag, LayoutGrid, Sparkles, MapPin, Bell, Download, Calculator, ChevronRight, User, ClipboardList } from "lucide-react"
 import { Button } from "@/components/ui/button"
-import { signOut, getAuth } from "firebase/auth"
+import { signOut } from "firebase/auth"
 import Link from "next/link"
 import { Card } from "@/components/ui/card"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
@@ -14,7 +14,7 @@ import { Badge } from "@/components/ui/badge"
 
 export default function Home() {
   const { user, isUserLoading } = useUser()
-  const { auth: firebaseAuth } = useFirebase()
+  const auth = useAuth()
   const router = useRouter()
   const [deferredPrompt, setDeferredPrompt] = React.useState<any>(null)
 
@@ -48,14 +48,12 @@ export default function Home() {
   }, [user, isUserLoading, router])
 
   const handleLogout = async () => {
-    const auth = getAuth(); // Direct access to be absolutely sure
     try {
       await signOut(auth);
-      // Force a full clean redirect to login page
+      // Force a full clean redirect to login page to clear any cached states
       window.location.href = "/login";
     } catch (error) {
       console.error("Logout failed:", error);
-      // Fallback
       window.location.href = "/login";
     }
   }
@@ -118,15 +116,15 @@ export default function Home() {
             <div className="absolute top-0 right-0 w-40 h-40 bg-accent/20 rounded-full blur-[60px] -mr-20 -mt-20" />
             <div className="relative z-10 space-y-1">
               <div className="inline-flex items-center gap-2 bg-accent px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest mb-1">
-                <Sparkles className="w-3 h-3 text-white" /> AI Powered
+                <Sparkles className="w-3 h-3 text-white" /> AI Powered Studio
               </div>
-              <h3 className="text-2xl font-black tracking-tighter leading-none uppercase">AI Design Studio</h3>
-              <p className="text-white/60 text-[10px] font-medium uppercase tracking-wider">Instant Modular Designs</p>
+              <h3 className="text-2xl font-black tracking-tighter leading-none uppercase">AI Design Ideas</h3>
+              <p className="text-white/60 text-[10px] font-medium uppercase tracking-wider">Modular Furniture Designs</p>
             </div>
           </Card>
         </div>
 
-        {/* Visitor Manager Tool - Directly Below AI Designer as requested */}
+        {/* Visitor Manager Tool - Directly Below AI Designer */}
         {isAdmin && (
           <div className="px-6">
             <button 
