@@ -17,7 +17,7 @@ import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { Loader2, Sparkles, Mail, Lock, User as UserIcon, LogIn, AlertCircle } from "lucide-react"
+import { Loader2, Sparkles, LogIn, AlertCircle } from "lucide-react"
 import Image from "next/image"
 import { PlaceHolderImages } from "@/lib/placeholder-images"
 import { useToast } from "@/hooks/use-toast"
@@ -65,7 +65,7 @@ export default function LoginPage() {
           toast({ 
             variant: "destructive", 
             title: "Domain Whitelist Karein", 
-            description: "Firebase Console > Auth > Settings > Authorized Domains mein apna domain add karein." 
+            description: "Firebase Console > Auth > Settings > Authorized Domains mein apna current domain add karein." 
           })
         }
         console.error("Login Redirect Error:", error)
@@ -84,6 +84,7 @@ export default function LoginPage() {
     try {
       const provider = new GoogleAuthProvider()
       provider.setCustomParameters({ prompt: 'select_account' })
+      // Use Redirect for 100% compatibility in installed apps
       await signInWithRedirect(auth, provider)
     } catch (error: any) {
       setLoading(false)
@@ -92,7 +93,7 @@ export default function LoginPage() {
         toast({
           variant: "destructive",
           title: "Setup Needed",
-          description: "Firebase Console mein is domain ko whitelist kijiye.",
+          description: "Firebase Console mein is domain ko whitelist kijiye (Settings > Authorized Domains).",
         })
       }
     }
@@ -144,7 +145,7 @@ export default function LoginPage() {
     return (
       <div className="min-h-screen bg-background flex flex-col items-center justify-center p-6">
         <Loader2 className="w-10 h-10 animate-spin text-accent" />
-        <p className="mt-4 text-sm font-bold text-muted-foreground">Initializing...</p>
+        <p className="mt-4 text-sm font-bold text-muted-foreground">Initializing App...</p>
       </div>
     )
   }
@@ -184,7 +185,7 @@ export default function LoginPage() {
                 <Label className="text-[10px] font-black uppercase text-muted-foreground ml-1">Password</Label>
                 <Input type="password" value={password} onChange={(e) => setPassword(e.target.value)} className="h-14 rounded-2xl bg-muted/30 border-none px-6" />
               </div>
-              <Button disabled={loading} className="w-full h-14 rounded-2xl bg-primary text-white font-black text-lg shadow-xl shadow-primary/10 flex gap-2">
+              <Button disabled={loading} className="w-full h-14 rounded-2xl bg-primary text-white font-black text-lg shadow-xl shadow-primary/10 flex gap-2 active:scale-95 transition-all">
                 {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : <LogIn className="w-5 h-5" />}
                 Login Karein
               </Button>
@@ -205,7 +206,7 @@ export default function LoginPage() {
                 <Label className="text-[10px] font-black uppercase text-muted-foreground ml-1">Password</Label>
                 <Input type="password" value={password} onChange={(e) => setPassword(e.target.value)} className="h-14 rounded-2xl bg-muted/30 border-none px-6" />
               </div>
-              <Button disabled={loading} className="w-full h-14 rounded-2xl bg-accent text-white font-black text-lg shadow-xl shadow-accent/10">
+              <Button disabled={loading} className="w-full h-14 rounded-2xl bg-accent text-white font-black text-lg shadow-xl shadow-accent/10 active:scale-95 transition-all">
                 {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : "Sign Up Karein"}
               </Button>
             </form>
@@ -229,7 +230,7 @@ export default function LoginPage() {
             <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z"/>
             <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.66l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
           </svg>
-          Google se Login Karein
+          Google se Login
         </Button>
       </Card>
     </div>
