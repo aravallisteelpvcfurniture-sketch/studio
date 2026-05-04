@@ -4,7 +4,7 @@
 import * as React from "react"
 import { useRouter } from "next/navigation"
 import { useUser, useAuth } from "@/firebase"
-import { Loader2, LogOut, ShoppingBag, LayoutGrid, Sparkles, MapPin, ShieldAlert, Bell, Download } from "lucide-react"
+import { Loader2, LogOut, ShoppingBag, LayoutGrid, Sparkles, MapPin, Bell, Download } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { signOut } from "firebase/auth"
 import Image from "next/image"
@@ -112,24 +112,6 @@ export default function Home() {
         </div>
 
         <div className="grid grid-cols-1 gap-6">
-          {/* Admin Special Access */}
-          {isAdmin && (
-            <div className="bg-accent/10 border-2 border-accent/20 p-6 rounded-[2.5rem] flex items-center justify-between">
-              <div className="flex items-center gap-4">
-                <div className="w-12 h-12 bg-accent rounded-2xl flex items-center justify-center shadow-lg">
-                  <ShieldAlert className="w-6 h-6 text-white" />
-                </div>
-                <div>
-                  <h3 className="font-black text-primary">Admin Control</h3>
-                  <p className="text-xs text-muted-foreground font-bold uppercase tracking-wider">Manage All Inquiries</p>
-                </div>
-              </div>
-              <Link href="/notifications">
-                <Button className="rounded-xl bg-accent text-white font-bold h-10">OPEN</Button>
-              </Link>
-            </div>
-          )}
-
           {/* Main Action Card */}
           <div className="bg-primary text-white p-8 rounded-[3rem] shadow-2xl relative overflow-hidden group">
             <div className="absolute top-[-20%] right-[-10%] w-40 h-40 bg-accent/20 rounded-full blur-3xl" />
