@@ -51,7 +51,7 @@ export default function Home() {
     if (auth) {
       try {
         await signOut(auth);
-        window.location.href = "/login"; // Force reload to clear state
+        window.location.href = "/login"; // Hard redirect to clear all states
       } catch (error) {
         console.error("Logout failed:", error);
       }
@@ -122,7 +122,7 @@ export default function Home() {
         </Card>
       </div>
 
-      {/* Visitor Manager - Right below AI Designer for Admin */}
+      {/* Visitor Manager - PLACED DIRECTLY BELOW AI DESIGNER */}
       {isAdmin && (
         <div className="px-6 mt-4">
           <button 
@@ -147,62 +147,37 @@ export default function Home() {
 
       {/* Tools Grid */}
       <div className="px-6 mt-4 grid grid-cols-3 gap-3">
-        <button 
-          onClick={() => router.push("/shop")}
-          className="bg-white p-4 rounded-[2rem] shadow-sm flex flex-col items-center gap-2 active:scale-95 transition-all border border-gray-100"
-        >
-          <div className="w-10 h-10 bg-orange-50 rounded-xl flex items-center justify-center">
-            <ShoppingBag className="w-5 h-5 text-accent" />
-          </div>
-          <span className="font-black text-primary text-[9px] uppercase tracking-tight">Shop</span>
+        <button onClick={() => router.push("/shop")} className="bg-white p-4 rounded-[2rem] shadow-sm flex flex-col items-center gap-2 active:scale-95 border border-gray-100">
+          <div className="w-10 h-10 bg-orange-50 rounded-xl flex items-center justify-center"><ShoppingBag className="w-5 h-5 text-accent" /></div>
+          <span className="font-black text-primary text-[9px] uppercase">Shop</span>
         </button>
-
-        <button 
-          onClick={() => router.push("/categories")}
-          className="bg-white p-4 rounded-[2rem] shadow-sm flex flex-col items-center gap-2 active:scale-95 transition-all border border-gray-100"
-        >
-          <div className="w-10 h-10 bg-blue-50 rounded-xl flex items-center justify-center">
-            <LayoutGrid className="w-5 h-5 text-blue-500" />
-          </div>
-          <span className="font-black text-primary text-[9px] uppercase tracking-tight">Explore</span>
+        <button onClick={() => router.push("/categories")} className="bg-white p-4 rounded-[2rem] shadow-sm flex flex-col items-center gap-2 active:scale-95 border border-gray-100">
+          <div className="w-10 h-10 bg-blue-50 rounded-xl flex items-center justify-center"><LayoutGrid className="w-5 h-5 text-blue-500" /></div>
+          <span className="font-black text-primary text-[9px] uppercase">Explore</span>
         </button>
-
-        <button 
-          onClick={() => router.push("/estimator")}
-          className="bg-white p-4 rounded-[2rem] shadow-sm flex flex-col items-center gap-2 active:scale-95 transition-all border border-gray-100"
-        >
-          <div className="w-10 h-10 bg-green-50 rounded-xl flex items-center justify-center">
-            <Calculator className="w-5 h-5 text-green-500" />
-          </div>
-          <span className="font-black text-primary text-[9px] uppercase tracking-tight">Budget</span>
+        <button onClick={() => router.push("/estimator")} className="bg-white p-4 rounded-[2rem] shadow-sm flex flex-col items-center gap-2 active:scale-95 border border-gray-100">
+          <div className="w-10 h-10 bg-green-50 rounded-xl flex items-center justify-center"><Calculator className="w-5 h-5 text-green-500" /></div>
+          <span className="font-black text-primary text-[9px] uppercase">Budget</span>
         </button>
       </div>
 
       {/* Secondary Tools */}
       <div className="px-6 mt-4 space-y-3">
-        <button 
-          onClick={() => router.push("/book-consultation")}
-          className="w-full bg-white p-5 rounded-[2rem] shadow-sm border border-gray-100 flex items-center justify-between active:scale-[0.98] transition-all group"
-        >
+        <button onClick={() => router.push("/book-consultation")} className="w-full bg-white p-5 rounded-[2rem] shadow-sm border border-gray-100 flex items-center justify-between active:scale-[0.98]">
           <div className="flex items-center gap-4">
-            <div className="w-12 h-12 bg-green-50 rounded-2xl flex items-center justify-center shrink-0">
-              <MapPin className="w-6 h-6 text-green-600" />
-            </div>
+            <div className="w-12 h-12 bg-green-50 rounded-2xl flex items-center justify-center shrink-0"><MapPin className="w-6 h-6 text-green-600" /></div>
             <div className="text-left">
-              <h4 className="font-black text-primary text-sm uppercase tracking-tight">Free Site Visit</h4>
-              <p className="text-[9px] text-muted-foreground font-bold uppercase opacity-60 tracking-wider">Book Expert Today</p>
+              <h4 className="font-black text-primary text-sm uppercase">Free Site Visit</h4>
+              <p className="text-[9px] text-muted-foreground font-bold uppercase opacity-60">Book Expert Today</p>
             </div>
           </div>
           <ChevronRight className="w-4 h-4 text-muted-foreground" />
         </button>
 
         {deferredPrompt && (
-          <button 
-            onClick={handleInstallClick}
-            className="w-full bg-primary/5 p-4 rounded-[2rem] border border-primary/10 flex items-center justify-center gap-3 active:scale-95 transition-all"
-          >
+          <button onClick={handleInstallClick} className="w-full bg-primary/5 p-4 rounded-[2rem] border border-primary/10 flex items-center justify-center gap-3 active:scale-95">
             <Download className="w-5 h-5 text-primary" />
-            <span className="font-black text-primary text-[10px] uppercase tracking-widest">Install Fast App</span>
+            <span className="font-black text-primary text-[10px] uppercase">Install Fast App</span>
           </button>
         )}
       </div>
@@ -210,9 +185,7 @@ export default function Home() {
       {/* App Branding Footer */}
       <div className="mt-auto pt-10 pb-6 flex flex-col items-center gap-2 opacity-20">
         <div className="flex items-center gap-2">
-          <div className="w-6 h-6 bg-primary rounded-lg flex items-center justify-center p-1">
-             <span className="text-white text-[10px] font-black">AS</span>
-          </div>
+          <div className="w-6 h-6 bg-primary rounded-lg flex items-center justify-center p-1"><span className="text-white text-[10px] font-black">AS</span></div>
           <span className="text-[10px] font-black tracking-[0.3em] uppercase">Aravalli Steel</span>
         </div>
         <p className="text-[8px] font-bold uppercase tracking-widest">Premium Modular Solutions • Since 1998</p>

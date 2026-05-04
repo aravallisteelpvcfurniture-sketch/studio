@@ -17,7 +17,7 @@ import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { Loader2, Sparkles, Mail, Lock, User as UserIcon, LogIn } from "lucide-react"
+import { Loader2, Sparkles, Mail, Lock, User as UserIcon, LogIn, AlertCircle } from "lucide-react"
 import Image from "next/image"
 import { PlaceHolderImages } from "@/lib/placeholder-images"
 import { useToast } from "@/hooks/use-toast"
@@ -38,7 +38,6 @@ export default function LoginPage() {
 
   const logoImg = PlaceHolderImages.find(i => i.id === "company-logo")
 
-  // Handle Redirect Result on mount (Crucial for Installed PWA)
   React.useEffect(() => {
     if (!auth || !db) return
 
@@ -62,18 +61,17 @@ export default function LoginPage() {
       })
       .catch((error) => {
         setRedirectChecking(false)
-        if (error.code === 'auth/operation-not-allowed' || error.message?.includes('403')) {
+        if (error.code === 'auth/unauthorized-domain') {
           toast({ 
             variant: "destructive", 
-            title: "Domain Error (403)", 
-            description: "Bhai, Firebase Console mein jaake 'Authorized Domains' mein apna domain add kijiye." 
+            title: "Domain Whitelist Karein", 
+            description: "Firebase Console > Auth > Settings > Authorized Domains mein apna domain add karein." 
           })
         }
-        console.error("Login Error:", error)
+        console.error("Login Redirect Error:", error)
       })
   }, [auth, db, router, toast])
 
-  // Redirect if already logged in
   React.useEffect(() => {
     if (user && !isUserLoading) {
       router.push("/")
@@ -86,16 +84,17 @@ export default function LoginPage() {
     try {
       const provider = new GoogleAuthProvider()
       provider.setCustomParameters({ prompt: 'select_account' })
-      // Use Redirect for 100% compatibility in installed apps
       await signInWithRedirect(auth, provider)
     } catch (error: any) {
       setLoading(false)
-      console.error("Auth redirect trigger failed:", error)
-      toast({
-        variant: "destructive",
-        title: "Login Failed",
-        description: "Google login nahi ho paya. Domain whitelist check karein.",
-      })
+      console.error("Auth trigger failed:", error)
+      if (error.code === 'auth/unauthorized-domain') {
+        toast({
+          variant: "destructive",
+          title: "Setup Needed",
+          description: "Firebase Console mein is domain ko whitelist kijiye.",
+        })
+      }
     }
   }
 
@@ -111,9 +110,7 @@ export default function LoginPage() {
     try {
       const userCredential = await createUserWithEmailAndPassword(auth, email, password)
       const newUser = userCredential.user
-      
       await updateProfile(newUser, { displayName })
-      
       const userRef = doc(db, "users", newUser.uid)
       await setDoc(userRef, {
         displayName,
@@ -121,25 +118,17 @@ export default function LoginPage() {
         createdAt: serverTimestamp(),
         updatedAt: serverTimestamp(),
       })
-
       toast({ title: "Account Created", description: "Aapka account ban gaya hai!" })
       router.push("/")
     } catch (error: any) {
       setLoading(false)
-      let msg = "Signup nahi ho paya."
-      if (error.code === 'auth/email-already-in-use') msg = "Ye email pehle se register hai."
-      toast({ variant: "destructive", title: "Error", description: msg })
+      toast({ variant: "destructive", title: "Signup Error", description: error.message })
     }
   }
 
   const handleEmailLogin = async (e: React.FormEvent) => {
     e.preventDefault()
     if (!auth) return
-    if (!email || !password) {
-      toast({ variant: "destructive", title: "Missing Fields", description: "Email aur password daaliye." })
-      return
-    }
-
     setLoading(true)
     try {
       await signInWithEmailAndPassword(auth, email, password)
@@ -147,10 +136,7 @@ export default function LoginPage() {
       router.push("/")
     } catch (error: any) {
       setLoading(false)
-      let msg = "Invalid credentials."
-      if (error.code === 'auth/user-not-found') msg = "Account nahi mila. Signup karein."
-      if (error.code === 'auth/wrong-password') msg = "Galat password."
-      toast({ variant: "destructive", title: "Error", description: msg })
+      toast({ variant: "destructive", title: "Error", description: "Invalid email or password." })
     }
   }
 
@@ -158,77 +144,47 @@ export default function LoginPage() {
     return (
       <div className="min-h-screen bg-background flex flex-col items-center justify-center p-6">
         <Loader2 className="w-10 h-10 animate-spin text-accent" />
-        <p className="mt-4 text-sm font-bold text-muted-foreground animate-pulse">Checking Login Status...</p>
+        <p className="mt-4 text-sm font-bold text-muted-foreground">Initializing...</p>
       </div>
     )
   }
 
   return (
     <div className="min-h-screen bg-background flex flex-col items-center justify-center p-6 relative overflow-hidden font-body">
-      <div className="absolute top-[-20%] left-[-20%] w-[600px] h-[600px] bg-accent/10 rounded-full blur-[120px] pointer-events-none" />
-      <div className="absolute bottom-[-20%] right-[-20%] w-[600px] h-[600px] bg-primary/5 rounded-full blur-[120px] pointer-events-none" />
-
+      <div className="absolute top-[-20%] left-[-20%] w-[600px] h-[600px] bg-accent/10 rounded-full blur-[120px]" />
+      
       <Card className="w-full max-w-md p-8 border-none shadow-2xl bg-white/95 backdrop-blur-xl rounded-[3rem] flex flex-col space-y-8 animate-in zoom-in duration-500">
         <div className="text-center space-y-4">
           <div className="w-20 h-20 bg-white rounded-3xl flex items-center justify-center mx-auto shadow-lg p-3 border border-accent/10">
             {logoImg ? (
-              <Image 
-                src={logoImg.imageUrl} 
-                alt="Logo" 
-                width={60} 
-                height={60} 
-                className="object-contain"
-                data-ai-hint="company logo"
-              />
+              <Image src={logoImg.imageUrl} alt="Logo" width={60} height={60} className="object-contain" />
             ) : (
               <Sparkles className="w-8 h-8 text-accent" />
             )}
           </div>
-          <div className="space-y-1">
-            <h1 className="text-3xl font-black text-primary tracking-tighter uppercase leading-none">
-              ARAVALLI <span className="text-accent">STEEL</span>
-            </h1>
-            <p className="text-muted-foreground text-[10px] font-bold tracking-widest uppercase opacity-60">
-              Premium Modular Solutions
-            </p>
+          <div>
+            <h1 className="text-3xl font-black text-primary tracking-tighter uppercase">ARAVALLI <span className="text-accent">STEEL</span></h1>
+            <p className="text-muted-foreground text-[10px] font-bold tracking-widest uppercase opacity-60">Premium Modular Solutions</p>
           </div>
         </div>
 
         <Tabs defaultValue="login" className="w-full">
           <TabsList className="grid w-full grid-cols-2 rounded-2xl h-12 mb-6 bg-muted/50 p-1">
-            <TabsTrigger value="login" className="rounded-xl font-bold data-[state=active]:bg-white data-[state=active]:shadow-sm">Login</TabsTrigger>
-            <TabsTrigger value="signup" className="rounded-xl font-bold data-[state=active]:bg-white data-[state=active]:shadow-sm">Sign Up</TabsTrigger>
+            <TabsTrigger value="login" className="rounded-xl font-bold">Login</TabsTrigger>
+            <TabsTrigger value="signup" className="rounded-xl font-bold">Sign Up</TabsTrigger>
           </TabsList>
 
           <TabsContent value="login" className="space-y-4">
             <form onSubmit={handleEmailLogin} className="space-y-4">
-              <div className="space-y-2">
-                <Label className="text-[10px] font-black uppercase text-muted-foreground ml-1 tracking-widest">Email</Label>
-                <div className="relative">
-                  <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-                  <Input 
-                    type="email" 
-                    placeholder="example@mail.com" 
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    className="h-14 pl-11 rounded-2xl bg-muted/30 border-none focus-visible:ring-accent font-medium"
-                  />
-                </div>
+              <div className="space-y-1">
+                <Label className="text-[10px] font-black uppercase text-muted-foreground ml-1">Email</Label>
+                <Input type="email" value={email} onChange={(e) => setEmail(e.target.value)} className="h-14 rounded-2xl bg-muted/30 border-none px-6" />
               </div>
-              <div className="space-y-2">
-                <Label className="text-[10px] font-black uppercase text-muted-foreground ml-1 tracking-widest">Password</Label>
-                <div className="relative">
-                  <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-                  <Input 
-                    type="password" 
-                    placeholder="••••••••" 
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    className="h-14 pl-11 rounded-2xl bg-muted/30 border-none focus-visible:ring-accent font-medium"
-                  />
-                </div>
+              <div className="space-y-1">
+                <Label className="text-[10px] font-black uppercase text-muted-foreground ml-1">Password</Label>
+                <Input type="password" value={password} onChange={(e) => setPassword(e.target.value)} className="h-14 rounded-2xl bg-muted/30 border-none px-6" />
               </div>
-              <Button disabled={loading} className="w-full h-14 rounded-2xl bg-primary text-white font-black text-lg hover:bg-primary/90 transition-all shadow-xl shadow-primary/10 flex gap-2">
+              <Button disabled={loading} className="w-full h-14 rounded-2xl bg-primary text-white font-black text-lg shadow-xl shadow-primary/10 flex gap-2">
                 {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : <LogIn className="w-5 h-5" />}
                 Login Karein
               </Button>
@@ -237,45 +193,19 @@ export default function LoginPage() {
 
           <TabsContent value="signup" className="space-y-4">
             <form onSubmit={handleEmailSignup} className="space-y-4">
-              <div className="space-y-2">
-                <Label className="text-[10px] font-black uppercase text-muted-foreground ml-1 tracking-widest">Full Name</Label>
-                <div className="relative">
-                  <UserIcon className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-                  <Input 
-                    placeholder="Aapka Naam" 
-                    value={displayName}
-                    onChange={(e) => setDisplayName(e.target.value)}
-                    className="h-14 pl-11 rounded-2xl bg-muted/30 border-none focus-visible:ring-accent font-medium"
-                  />
-                </div>
+              <div className="space-y-1">
+                <Label className="text-[10px] font-black uppercase text-muted-foreground ml-1">Full Name</Label>
+                <Input value={displayName} onChange={(e) => setDisplayName(e.target.value)} className="h-14 rounded-2xl bg-muted/30 border-none px-6" />
               </div>
-              <div className="space-y-2">
-                <Label className="text-[10px] font-black uppercase text-muted-foreground ml-1 tracking-widest">Email</Label>
-                <div className="relative">
-                  <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-                  <Input 
-                    type="email" 
-                    placeholder="example@mail.com" 
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    className="h-14 pl-11 rounded-2xl bg-muted/30 border-none focus-visible:ring-accent font-medium"
-                  />
-                </div>
+              <div className="space-y-1">
+                <Label className="text-[10px] font-black uppercase text-muted-foreground ml-1">Email</Label>
+                <Input type="email" value={email} onChange={(e) => setEmail(e.target.value)} className="h-14 rounded-2xl bg-muted/30 border-none px-6" />
               </div>
-              <div className="space-y-2">
-                <Label className="text-[10px] font-black uppercase text-muted-foreground ml-1 tracking-widest">Password</Label>
-                <div className="relative">
-                  <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-                  <Input 
-                    type="password" 
-                    placeholder="At least 6 characters" 
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    className="h-14 pl-11 rounded-2xl bg-muted/30 border-none focus-visible:ring-accent font-medium"
-                  />
-                </div>
+              <div className="space-y-1">
+                <Label className="text-[10px] font-black uppercase text-muted-foreground ml-1">Password</Label>
+                <Input type="password" value={password} onChange={(e) => setPassword(e.target.value)} className="h-14 rounded-2xl bg-muted/30 border-none px-6" />
               </div>
-              <Button disabled={loading} className="w-full h-14 rounded-2xl bg-accent text-white font-black text-lg hover:bg-accent/90 transition-all shadow-xl shadow-accent/10">
+              <Button disabled={loading} className="w-full h-14 rounded-2xl bg-accent text-white font-black text-lg shadow-xl shadow-accent/10">
                 {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : "Sign Up Karein"}
               </Button>
             </form>
@@ -283,19 +213,15 @@ export default function LoginPage() {
         </Tabs>
 
         <div className="relative">
-          <div className="absolute inset-0 flex items-center">
-            <span className="w-full border-t border-muted" />
-          </div>
-          <div className="relative flex justify-center text-[10px] uppercase">
-            <span className="bg-white px-3 text-muted-foreground font-black tracking-widest">Ya Phir</span>
-          </div>
+          <div className="absolute inset-0 flex items-center"><span className="w-full border-t border-muted" /></div>
+          <div className="relative flex justify-center text-[10px] uppercase"><span className="bg-white px-3 text-muted-foreground font-black">Ya Phir</span></div>
         </div>
 
         <Button 
           variant="outline"
           onClick={handleGoogleLogin} 
           disabled={loading}
-          className="w-full h-16 border-2 border-muted hover:bg-muted/30 rounded-[1.5rem] font-bold flex items-center justify-center gap-3 transition-all active:scale-95 shadow-sm"
+          className="w-full h-16 border-2 border-muted hover:bg-muted/30 rounded-[1.5rem] font-bold flex items-center justify-center gap-3 active:scale-95"
         >
           <svg className="w-6 h-6" viewBox="0 0 24 24">
             <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
@@ -306,10 +232,6 @@ export default function LoginPage() {
           Google se Login Karein
         </Button>
       </Card>
-      
-      <p className="mt-8 text-[10px] text-muted-foreground/60 font-black uppercase tracking-[0.2em] text-center">
-        Aravalli Steel - Trusted Modular Solutions
-      </p>
     </div>
   )
 }
