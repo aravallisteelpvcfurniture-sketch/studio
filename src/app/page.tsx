@@ -12,6 +12,7 @@ import { PlaceHolderImages } from "@/lib/placeholder-images"
 import Link from "next/link"
 import { Card } from "@/components/ui/card"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+import { Badge } from "@/components/ui/badge"
 
 export default function Home() {
   const { user, isUserLoading } = useUser()
@@ -65,7 +66,7 @@ export default function Home() {
   return (
     <div className="min-h-screen bg-[#F8F9FA] flex flex-col font-body pb-10">
       {/* Native App Header */}
-      <div className="px-6 pt-8 pb-4 flex items-center justify-between bg-white/80 backdrop-blur-xl sticky top-0 z-50">
+      <div className="px-6 pt-8 pb-4 flex items-center justify-between bg-white/80 backdrop-blur-xl sticky top-0 z-50 border-b">
         <div className="flex items-center gap-3">
           <Avatar className="h-10 w-10 border-2 border-accent/20">
             <AvatarImage src={user.photoURL || ""} alt={user.displayName || "User"} />
@@ -74,8 +75,11 @@ export default function Home() {
             </AvatarFallback>
           </Avatar>
           <div className="flex flex-col">
-            <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest leading-none mb-1">Namaste,</span>
-            <h1 className="text-sm font-black text-primary tracking-tight leading-none truncate max-w-[120px]">
+            <div className="flex items-center gap-2">
+              <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest leading-none">Namaste,</span>
+              {isAdmin && <Badge className="h-4 px-1.5 text-[8px] bg-accent text-white border-none font-black">ADMIN</Badge>}
+            </div>
+            <h1 className="text-sm font-black text-primary tracking-tight leading-none truncate max-w-[120px] mt-1">
               {user.displayName?.split(' ')[0] || "Dost"}
             </h1>
           </div>
@@ -96,23 +100,23 @@ export default function Home() {
         </div>
       </div>
 
-      {/* Admin Quick Tool (Only for Admin) */}
+      {/* Visitor Manager - Main Admin Tool (Only for Admin) */}
       {isAdmin && (
-        <div className="px-6 mt-4">
+        <div className="px-6 mt-6">
           <Card 
             onClick={() => router.push("/site-visits")}
-            className="p-6 rounded-[2.5rem] border-2 border-accent/30 bg-accent/5 flex items-center justify-between active:scale-[0.98] transition-all cursor-pointer shadow-lg shadow-accent/5"
+            className="p-6 rounded-[2.5rem] border-none bg-accent text-white flex items-center justify-between active:scale-[0.98] transition-all cursor-pointer shadow-xl shadow-accent/20"
           >
             <div className="flex items-center gap-4">
-              <div className="w-14 h-14 bg-accent rounded-3xl flex items-center justify-center shadow-lg shadow-accent/20">
+              <div className="w-14 h-14 bg-white/20 rounded-3xl flex items-center justify-center backdrop-blur-md">
                 <ClipboardList className="w-7 h-7 text-white" />
               </div>
               <div className="text-left">
-                <h4 className="font-black text-accent text-lg leading-tight uppercase tracking-tight">Visitor Manager</h4>
-                <p className="text-[10px] text-accent/70 font-bold uppercase tracking-wider">Naap & Site Visit Data</p>
+                <h4 className="font-black text-white text-lg leading-tight uppercase tracking-tight">Visitor Manager</h4>
+                <p className="text-[10px] text-white/70 font-bold uppercase tracking-wider">Naap & Site Visit Data</p>
               </div>
             </div>
-            <div className="w-10 h-10 rounded-full bg-accent text-white flex items-center justify-center">
+            <div className="w-10 h-10 rounded-full bg-white/20 text-white flex items-center justify-center">
               <ChevronRight className="w-5 h-5" />
             </div>
           </Card>
@@ -120,7 +124,7 @@ export default function Home() {
       )}
 
       {/* Hero Section: AI Design Studio */}
-      <div className="px-6 mt-4">
+      <div className="px-6 mt-6">
         <Card 
           onClick={() => router.push("/ai-designer")}
           className="group relative overflow-hidden p-6 rounded-[2.5rem] border-none bg-primary text-white shadow-2xl shadow-primary/20 active:scale-[0.97] transition-all cursor-pointer h-44 flex flex-col justify-end"
