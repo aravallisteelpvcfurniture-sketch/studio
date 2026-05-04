@@ -52,7 +52,7 @@ export default function Home() {
       if (auth) {
         await signOut(auth);
       }
-      // Hard redirect to login to ensure state is cleared
+      // Hard redirect to clear all auth state and route back to login
       window.location.href = "/login";
     } catch (error) {
       console.error("Logout failed:", error);
