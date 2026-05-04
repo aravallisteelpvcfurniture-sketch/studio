@@ -4,7 +4,7 @@
 import * as React from "react"
 import { useRouter } from "next/navigation"
 import { useUser, useAuth } from "@/firebase"
-import { Loader2, LogOut, ShoppingBag, LayoutGrid, Sparkles, MapPin, Bell, Download, Calculator, ChevronRight, User, ClipboardList, ShieldCheck } from "lucide-react"
+import { Loader2, LogOut, ShoppingBag, LayoutGrid, Sparkles, MapPin, Bell, Download, Calculator, ChevronRight, User, ClipboardList, Ruler } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { signOut } from "firebase/auth"
 import Image from "next/image"
@@ -59,8 +59,11 @@ export default function Home() {
 
   if (!user) return null
 
-  const handleLogout = () => {
-    if (auth) signOut(auth)
+  const handleLogout = async () => {
+    if (auth) {
+      await signOut(auth)
+      router.push("/login")
+    }
   }
 
   return (
@@ -100,34 +103,11 @@ export default function Home() {
         </div>
       </div>
 
-      {/* Visitor Manager - Main Admin Tool (Only for Admin) */}
-      {isAdmin && (
-        <div className="px-6 mt-6">
-          <Card 
-            onClick={() => router.push("/site-visits")}
-            className="p-6 rounded-[2.5rem] border-none bg-accent text-white flex items-center justify-between active:scale-[0.98] transition-all cursor-pointer shadow-xl shadow-accent/20"
-          >
-            <div className="flex items-center gap-4">
-              <div className="w-14 h-14 bg-white/20 rounded-3xl flex items-center justify-center backdrop-blur-md">
-                <ClipboardList className="w-7 h-7 text-white" />
-              </div>
-              <div className="text-left">
-                <h4 className="font-black text-white text-lg leading-tight uppercase tracking-tight">Visitor Manager</h4>
-                <p className="text-[10px] text-white/70 font-bold uppercase tracking-wider">Naap & Site Visit Data</p>
-              </div>
-            </div>
-            <div className="w-10 h-10 rounded-full bg-white/20 text-white flex items-center justify-center">
-              <ChevronRight className="w-5 h-5" />
-            </div>
-          </Card>
-        </div>
-      )}
-
-      {/* Hero Section: AI Design Studio */}
+      {/* Hero Section: AI Design Studio - Sabse Upar */}
       <div className="px-6 mt-6">
         <Card 
           onClick={() => router.push("/ai-designer")}
-          className="group relative overflow-hidden p-6 rounded-[2.5rem] border-none bg-primary text-white shadow-2xl shadow-primary/20 active:scale-[0.97] transition-all cursor-pointer h-44 flex flex-col justify-end"
+          className="group relative overflow-hidden p-6 rounded-[2.5rem] border-none bg-primary text-white shadow-2xl shadow-primary/20 active:scale-[0.97] transition-all cursor-pointer h-48 flex flex-col justify-end"
         >
           <div className="absolute top-0 right-0 w-32 h-32 bg-accent/20 rounded-full blur-[60px] -mr-16 -mt-16" />
           <div className="absolute -right-4 -top-4 opacity-10 group-hover:rotate-12 transition-transform duration-700">
@@ -138,24 +118,39 @@ export default function Home() {
             <div className="inline-flex items-center gap-2 bg-accent px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest mb-2">
               <Sparkles className="w-3 h-3" /> AI Powered
             </div>
-            <h3 className="text-2xl font-black tracking-tighter leading-none">AI DESIGN STUDIO</h3>
+            <h3 className="text-2xl font-black tracking-tighter leading-none uppercase">AI Design Studio</h3>
             <p className="text-white/60 text-xs font-medium">Automatic modular designs in seconds.</p>
           </div>
         </Card>
       </div>
 
-      {/* App Icons Grid */}
+      {/* Tools Grid - Visitor Manager and Others */}
       <div className="px-6 mt-6 grid grid-cols-2 gap-4">
+        {isAdmin && (
+          <button 
+            onClick={() => router.push("/site-visits")}
+            className="bg-accent p-5 rounded-[2.5rem] shadow-lg shadow-accent/20 flex flex-col items-center gap-3 active:scale-90 transition-all border-none text-white col-span-2"
+          >
+            <div className="w-14 h-14 bg-white/20 rounded-3xl flex items-center justify-center backdrop-blur-md">
+              <ClipboardList className="w-7 h-7 text-white" />
+            </div>
+            <div className="text-center">
+              <span className="block font-black text-white text-sm uppercase tracking-tight">Visitor Manager</span>
+              <span className="text-[9px] font-bold text-white/70 uppercase tracking-widest">Site Visits & Measurements</span>
+            </div>
+          </button>
+        )}
+
         <button 
           onClick={() => router.push("/shop")}
           className="bg-white p-5 rounded-[2.5rem] shadow-sm flex flex-col items-center gap-3 active:scale-90 transition-all border border-gray-50"
         >
-          <div className="w-14 h-14 bg-orange-50 rounded-3xl flex items-center justify-center">
-            <ShoppingBag className="w-7 h-7 text-accent" />
+          <div className="w-12 h-12 bg-orange-50 rounded-2xl flex items-center justify-center">
+            <ShoppingBag className="w-6 h-6 text-accent" />
           </div>
           <div className="text-center">
-            <span className="block font-black text-primary text-xs uppercase tracking-tight">Shop Now</span>
-            <span className="text-[9px] font-bold text-muted-foreground uppercase opacity-60">Items</span>
+            <span className="block font-black text-primary text-[10px] uppercase tracking-tight">Shop</span>
+            <span className="text-[8px] font-bold text-muted-foreground uppercase opacity-60">Products</span>
           </div>
         </button>
 
@@ -163,12 +158,12 @@ export default function Home() {
           onClick={() => router.push("/categories")}
           className="bg-white p-5 rounded-[2.5rem] shadow-sm flex flex-col items-center gap-3 active:scale-90 transition-all border border-gray-50"
         >
-          <div className="w-14 h-14 bg-blue-50 rounded-3xl flex items-center justify-center">
-            <LayoutGrid className="w-7 h-7 text-blue-500" />
+          <div className="w-12 h-12 bg-blue-50 rounded-2xl flex items-center justify-center">
+            <LayoutGrid className="w-6 h-6 text-blue-500" />
           </div>
           <div className="text-center">
-            <span className="block font-black text-primary text-xs uppercase tracking-tight">Explore</span>
-            <span className="text-[9px] font-bold text-muted-foreground uppercase opacity-60">Categories</span>
+            <span className="block font-black text-primary text-[10px] uppercase tracking-tight">Explore</span>
+            <span className="text-[8px] font-bold text-muted-foreground uppercase opacity-60">Categories</span>
           </div>
         </button>
 
@@ -176,33 +171,28 @@ export default function Home() {
           onClick={() => router.push("/estimator")}
           className="bg-white p-5 rounded-[2.5rem] shadow-sm flex flex-col items-center gap-3 active:scale-90 transition-all border border-gray-50"
         >
-          <div className="w-14 h-14 bg-green-50 rounded-3xl flex items-center justify-center">
-            <Calculator className="w-7 h-7 text-green-500" />
+          <div className="w-12 h-12 bg-green-50 rounded-2xl flex items-center justify-center">
+            <Calculator className="w-6 h-6 text-green-500" />
           </div>
           <div className="text-center">
-            <span className="block font-black text-primary text-xs uppercase tracking-tight">Calculator</span>
-            <span className="text-[9px] font-bold text-muted-foreground uppercase opacity-60">Budget</span>
+            <span className="block font-black text-primary text-[10px] uppercase tracking-tight">Estimator</span>
+            <span className="text-[8px] font-bold text-muted-foreground uppercase opacity-60">Budget</span>
           </div>
         </button>
 
-        {deferredPrompt ? (
+        {deferredPrompt && (
           <button 
             onClick={handleInstallClick}
-            className="bg-accent/5 p-5 rounded-[2.5rem] flex flex-col items-center gap-3 active:scale-90 transition-all border-2 border-dashed border-accent/20"
+            className="bg-primary p-5 rounded-[2.5rem] shadow-sm flex flex-col items-center gap-3 active:scale-90 transition-all border-none text-white"
           >
-            <div className="w-14 h-14 bg-accent rounded-3xl flex items-center justify-center shadow-lg shadow-accent/20">
-              <Download className="w-7 h-7 text-white" />
+            <div className="w-12 h-12 bg-white/10 rounded-2xl flex items-center justify-center">
+              <Download className="w-6 h-6 text-white" />
             </div>
             <div className="text-center">
-              <span className="block font-black text-accent text-xs uppercase tracking-tight">Install App</span>
-              <span className="text-[9px] font-bold text-accent/60 uppercase">Better Experience</span>
+              <span className="block font-black text-white text-[10px] uppercase tracking-tight">Install</span>
+              <span className="text-[8px] font-bold text-white/50 uppercase">Fast App</span>
             </div>
           </button>
-        ) : (
-          <div className="bg-gray-100/50 p-5 rounded-[2.5rem] border border-gray-100 flex flex-col items-center justify-center gap-2 opacity-40">
-            <Sparkles className="w-6 h-6 text-gray-400" />
-            <span className="text-[9px] font-black text-gray-400 uppercase">Coming Soon</span>
-          </div>
         )}
       </div>
 
