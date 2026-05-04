@@ -4,11 +4,9 @@
 import * as React from "react"
 import { useRouter } from "next/navigation"
 import { useUser, useAuth } from "@/firebase"
-import { Loader2, LogOut, ShoppingBag, LayoutGrid, Sparkles, MapPin, Bell, Download, Calculator, ChevronRight, User, ClipboardList, Ruler } from "lucide-react"
+import { Loader2, LogOut, ShoppingBag, LayoutGrid, Sparkles, MapPin, Bell, Download, Calculator, ChevronRight, User, ClipboardList } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { signOut } from "firebase/auth"
-import Image from "next/image"
-import { PlaceHolderImages } from "@/lib/placeholder-images"
 import Link from "next/link"
 import { Card } from "@/components/ui/card"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
@@ -61,8 +59,12 @@ export default function Home() {
 
   const handleLogout = async () => {
     if (auth) {
-      await signOut(auth)
-      router.push("/login")
+      try {
+        await signOut(auth)
+        // Redirect handled by useEffect
+      } catch (error) {
+        console.error("Logout failed:", error)
+      }
     }
   }
 
@@ -103,7 +105,7 @@ export default function Home() {
         </div>
       </div>
 
-      {/* Hero Section: AI Design Studio - Sabse Upar */}
+      {/* Hero Section: AI Design Studio */}
       <div className="px-6 mt-6">
         <Card 
           onClick={() => router.push("/ai-designer")}
@@ -129,7 +131,7 @@ export default function Home() {
         {isAdmin && (
           <button 
             onClick={() => router.push("/site-visits")}
-            className="bg-accent p-5 rounded-[2.5rem] shadow-lg shadow-accent/20 flex flex-col items-center gap-3 active:scale-90 transition-all border-none text-white col-span-2"
+            className="bg-accent p-5 rounded-[2.5rem] shadow-lg shadow-accent/20 flex flex-col items-center gap-3 active:scale-95 transition-all border-none text-white col-span-2"
           >
             <div className="w-14 h-14 bg-white/20 rounded-3xl flex items-center justify-center backdrop-blur-md">
               <ClipboardList className="w-7 h-7 text-white" />
@@ -143,7 +145,7 @@ export default function Home() {
 
         <button 
           onClick={() => router.push("/shop")}
-          className="bg-white p-5 rounded-[2.5rem] shadow-sm flex flex-col items-center gap-3 active:scale-90 transition-all border border-gray-50"
+          className="bg-white p-5 rounded-[2.5rem] shadow-sm flex flex-col items-center gap-3 active:scale-95 transition-all border border-gray-100"
         >
           <div className="w-12 h-12 bg-orange-50 rounded-2xl flex items-center justify-center">
             <ShoppingBag className="w-6 h-6 text-accent" />
@@ -156,7 +158,7 @@ export default function Home() {
 
         <button 
           onClick={() => router.push("/categories")}
-          className="bg-white p-5 rounded-[2.5rem] shadow-sm flex flex-col items-center gap-3 active:scale-90 transition-all border border-gray-50"
+          className="bg-white p-5 rounded-[2.5rem] shadow-sm flex flex-col items-center gap-3 active:scale-95 transition-all border border-gray-100"
         >
           <div className="w-12 h-12 bg-blue-50 rounded-2xl flex items-center justify-center">
             <LayoutGrid className="w-6 h-6 text-blue-500" />
@@ -169,7 +171,7 @@ export default function Home() {
 
         <button 
           onClick={() => router.push("/estimator")}
-          className="bg-white p-5 rounded-[2.5rem] shadow-sm flex flex-col items-center gap-3 active:scale-90 transition-all border border-gray-50"
+          className="bg-white p-5 rounded-[2.5rem] shadow-sm flex flex-col items-center gap-3 active:scale-95 transition-all border border-gray-100"
         >
           <div className="w-12 h-12 bg-green-50 rounded-2xl flex items-center justify-center">
             <Calculator className="w-6 h-6 text-green-500" />
@@ -183,7 +185,7 @@ export default function Home() {
         {deferredPrompt && (
           <button 
             onClick={handleInstallClick}
-            className="bg-primary p-5 rounded-[2.5rem] shadow-sm flex flex-col items-center gap-3 active:scale-90 transition-all border-none text-white"
+            className="bg-primary p-5 rounded-[2.5rem] shadow-sm flex flex-col items-center gap-3 active:scale-95 transition-all border-none text-white"
           >
             <div className="w-12 h-12 bg-white/10 rounded-2xl flex items-center justify-center">
               <Download className="w-6 h-6 text-white" />
