@@ -17,7 +17,7 @@ import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { Loader2, Sparkles, Mail, Lock, User as UserIcon, ArrowRight } from "lucide-react"
+import { Loader2, Sparkles, Mail, Lock, User as UserIcon, LogIn } from "lucide-react"
 import Image from "next/image"
 import { PlaceHolderImages } from "@/lib/placeholder-images"
 import { useToast } from "@/hooks/use-toast"
@@ -34,15 +34,17 @@ export default function LoginPage() {
   const [email, setEmail] = React.useState("")
   const [password, setPassword] = React.useState("")
   const [displayName, setDisplayName] = React.useState("")
+  const [redirectChecking, setRedirectChecking] = React.useState(true)
 
   const logoImg = PlaceHolderImages.find(i => i.id === "company-logo")
 
-  // Handle Redirect Result on mount (for Google Login)
+  // Handle Redirect Result on mount (Crucial for Installed PWA)
   React.useEffect(() => {
     if (!auth || !db) return
 
     getRedirectResult(auth)
       .then(async (result) => {
+        setRedirectChecking(false)
         if (result?.user) {
           const loggedUser = result.user
           const userRef = doc(db, "users", loggedUser.uid)
@@ -54,14 +56,13 @@ export default function LoginPage() {
             updatedAt: serverTimestamp(),
           }, { merge: true })
 
-          toast({ title: "Namaste!", description: `${loggedUser.displayName || 'User'}, aapka swagat hai!` })
+          toast({ title: "Namaste!", description: "Aap login ho gaye hain!" })
           router.push("/")
         }
       })
       .catch((error) => {
-        if (error.code !== 'auth/configuration-not-found') {
-          console.error("Redirect Login Error:", error)
-        }
+        setRedirectChecking(false)
+        console.error("Login Error:", error)
       })
   }, [auth, db, router, toast])
 
@@ -78,6 +79,7 @@ export default function LoginPage() {
     try {
       const provider = new GoogleAuthProvider()
       provider.setCustomParameters({ prompt: 'select_account' })
+      // Redirect is much more reliable on mobile/installed apps than popups
       await signInWithRedirect(auth, provider)
     } catch (error: any) {
       setLoading(false)
@@ -144,6 +146,15 @@ export default function LoginPage() {
     }
   }
 
+  if (redirectChecking && isUserLoading) {
+    return (
+      <div className="min-h-screen bg-background flex flex-col items-center justify-center p-6">
+        <Loader2 className="w-10 h-10 animate-spin text-accent" />
+        <p className="mt-4 text-sm font-bold text-muted-foreground animate-pulse">Checking Login Status...</p>
+      </div>
+    )
+  }
+
   return (
     <div className="min-h-screen bg-background flex flex-col items-center justify-center p-6 relative overflow-hidden font-body">
       <div className="absolute top-[-20%] left-[-20%] w-[600px] h-[600px] bg-accent/10 rounded-full blur-[120px] pointer-events-none" />
@@ -166,7 +177,7 @@ export default function LoginPage() {
             )}
           </div>
           <div className="space-y-1">
-            <h1 className="text-3xl font-black text-primary tracking-tighter uppercase">
+            <h1 className="text-3xl font-black text-primary tracking-tighter uppercase leading-none">
               ARAVALLI <span className="text-accent">STEEL</span>
             </h1>
             <p className="text-muted-foreground text-[10px] font-bold tracking-widest uppercase opacity-60">
@@ -176,7 +187,7 @@ export default function LoginPage() {
         </div>
 
         <Tabs defaultValue="login" className="w-full">
-          <TabsList className="grid w-full grid-cols-2 rounded-2xl h-12 mb-8 bg-muted/50 p-1">
+          <TabsList className="grid w-full grid-cols-2 rounded-2xl h-12 mb-6 bg-muted/50 p-1">
             <TabsTrigger value="login" className="rounded-xl font-bold data-[state=active]:bg-white data-[state=active]:shadow-sm">Login</TabsTrigger>
             <TabsTrigger value="signup" className="rounded-xl font-bold data-[state=active]:bg-white data-[state=active]:shadow-sm">Sign Up</TabsTrigger>
           </TabsList>
@@ -184,7 +195,7 @@ export default function LoginPage() {
           <TabsContent value="login" className="space-y-4">
             <form onSubmit={handleEmailLogin} className="space-y-4">
               <div className="space-y-2">
-                <Label className="text-xs font-bold uppercase text-muted-foreground ml-1">Email</Label>
+                <Label className="text-[10px] font-black uppercase text-muted-foreground ml-1 tracking-widest">Email</Label>
                 <div className="relative">
                   <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
                   <Input 
@@ -192,12 +203,12 @@ export default function LoginPage() {
                     placeholder="example@mail.com" 
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
-                    className="h-12 pl-11 rounded-xl bg-muted/30 border-none focus-visible:ring-accent"
+                    className="h-14 pl-11 rounded-2xl bg-muted/30 border-none focus-visible:ring-accent font-medium"
                   />
                 </div>
               </div>
               <div className="space-y-2">
-                <Label className="text-xs font-bold uppercase text-muted-foreground ml-1">Password</Label>
+                <Label className="text-[10px] font-black uppercase text-muted-foreground ml-1 tracking-widest">Password</Label>
                 <div className="relative">
                   <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
                   <Input 
@@ -205,12 +216,13 @@ export default function LoginPage() {
                     placeholder="••••••••" 
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
-                    className="h-12 pl-11 rounded-xl bg-muted/30 border-none focus-visible:ring-accent"
+                    className="h-14 pl-11 rounded-2xl bg-muted/30 border-none focus-visible:ring-accent font-medium"
                   />
                 </div>
               </div>
-              <Button disabled={loading} className="w-full h-12 rounded-xl bg-primary text-white font-bold text-lg hover:bg-primary/90 transition-all shadow-lg shadow-primary/10">
-                {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : "Login Karo"}
+              <Button disabled={loading} className="w-full h-14 rounded-2xl bg-primary text-white font-black text-lg hover:bg-primary/90 transition-all shadow-xl shadow-primary/10 flex gap-2">
+                {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : <LogIn className="w-5 h-5" />}
+                Login Karein
               </Button>
             </form>
           </TabsContent>
@@ -218,19 +230,19 @@ export default function LoginPage() {
           <TabsContent value="signup" className="space-y-4">
             <form onSubmit={handleEmailSignup} className="space-y-4">
               <div className="space-y-2">
-                <Label className="text-xs font-bold uppercase text-muted-foreground ml-1">Full Name</Label>
+                <Label className="text-[10px] font-black uppercase text-muted-foreground ml-1 tracking-widest">Full Name</Label>
                 <div className="relative">
                   <UserIcon className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
                   <Input 
                     placeholder="Aapka Naam" 
                     value={displayName}
                     onChange={(e) => setDisplayName(e.target.value)}
-                    className="h-12 pl-11 rounded-xl bg-muted/30 border-none focus-visible:ring-accent"
+                    className="h-14 pl-11 rounded-2xl bg-muted/30 border-none focus-visible:ring-accent font-medium"
                   />
                 </div>
               </div>
               <div className="space-y-2">
-                <Label className="text-xs font-bold uppercase text-muted-foreground ml-1">Email</Label>
+                <Label className="text-[10px] font-black uppercase text-muted-foreground ml-1 tracking-widest">Email</Label>
                 <div className="relative">
                   <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
                   <Input 
@@ -238,12 +250,12 @@ export default function LoginPage() {
                     placeholder="example@mail.com" 
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
-                    className="h-12 pl-11 rounded-xl bg-muted/30 border-none focus-visible:ring-accent"
+                    className="h-14 pl-11 rounded-2xl bg-muted/30 border-none focus-visible:ring-accent font-medium"
                   />
                 </div>
               </div>
               <div className="space-y-2">
-                <Label className="text-xs font-bold uppercase text-muted-foreground ml-1">Password</Label>
+                <Label className="text-[10px] font-black uppercase text-muted-foreground ml-1 tracking-widest">Password</Label>
                 <div className="relative">
                   <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
                   <Input 
@@ -251,12 +263,12 @@ export default function LoginPage() {
                     placeholder="At least 6 characters" 
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
-                    className="h-12 pl-11 rounded-xl bg-muted/30 border-none focus-visible:ring-accent"
+                    className="h-14 pl-11 rounded-2xl bg-muted/30 border-none focus-visible:ring-accent font-medium"
                   />
                 </div>
               </div>
-              <Button disabled={loading} className="w-full h-12 rounded-xl bg-accent text-white font-bold text-lg hover:bg-accent/90 transition-all shadow-lg shadow-accent/10">
-                {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : "Sign Up Karo"}
+              <Button disabled={loading} className="w-full h-14 rounded-2xl bg-accent text-white font-black text-lg hover:bg-accent/90 transition-all shadow-xl shadow-accent/10">
+                {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : "Sign Up Karein"}
               </Button>
             </form>
           </TabsContent>
@@ -266,28 +278,28 @@ export default function LoginPage() {
           <div className="absolute inset-0 flex items-center">
             <span className="w-full border-t border-muted" />
           </div>
-          <div className="relative flex justify-center text-xs uppercase">
-            <span className="bg-white px-2 text-muted-foreground font-bold">Ya Phir</span>
+          <div className="relative flex justify-center text-[10px] uppercase">
+            <span className="bg-white px-3 text-muted-foreground font-black tracking-widest">Ya Phir</span>
           </div>
         </div>
 
         <Button 
           variant="outline"
           onClick={handleGoogleLogin} 
-          disabled={loading || isUserLoading}
-          className="w-full h-14 border-2 border-muted hover:bg-muted/30 rounded-2xl font-bold flex items-center justify-center gap-3 transition-all active:scale-95"
+          disabled={loading}
+          className="w-full h-16 border-2 border-muted hover:bg-muted/30 rounded-[1.5rem] font-bold flex items-center justify-center gap-3 transition-all active:scale-95 shadow-sm"
         >
-          <svg className="w-5 h-5" viewBox="0 0 24 24">
+          <svg className="w-6 h-6" viewBox="0 0 24 24">
             <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
             <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
             <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z"/>
             <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.66l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
           </svg>
-          Google se Login karein
+          Google se Login Karein
         </Button>
       </Card>
       
-      <p className="mt-8 text-[10px] text-muted-foreground/60 font-bold uppercase tracking-widest text-center">
+      <p className="mt-8 text-[10px] text-muted-foreground/60 font-black uppercase tracking-[0.2em] text-center">
         Aravalli Steel - Trusted Modular Solutions
       </p>
     </div>

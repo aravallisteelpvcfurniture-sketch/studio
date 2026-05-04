@@ -7,7 +7,7 @@ service cloud.firestore {
       return request.auth != null;
     }
 
-    // Comprehensive Admin check
+    // Direct and robust Admin check for both email and UID
     function isAdmin() {
       return isSignedIn() && (
         request.auth.token.email == "aravallisteelpvcfurniture@gmail.com" || 
@@ -18,12 +18,15 @@ service cloud.firestore {
     match /quoteRequests/{requestId} {
       // Anyone can create an inquiry
       allow create: if true;
-      // Admin has full control over all inquiries
+      // Admin has full control, others cannot read
       allow read, write: if isAdmin();
     }
 
     match /users/{userId} {
+      // Users can manage their own profile, Admin can see all
       allow get, write: if isSignedIn() && (request.auth.uid == userId || isAdmin());
+      // List all users only for Admin
+      allow list: if isAdmin();
     }
 
     match /products/{id} {
