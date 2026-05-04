@@ -16,13 +16,18 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { signOut } from "firebase/auth"
+import { useRouter } from "next/navigation"
 
 export function TopBar({ onMenuClick }: { onMenuClick: () => void }) {
   const { user } = useUser()
-  const { auth } = useAuth()
+  const auth = useAuth() // Fixed: useAuth returns auth directly
+  const router = useRouter()
 
-  const handleSignOut = () => {
-    if (auth) signOut(auth)
+  const handleSignOut = async () => {
+    if (auth) {
+      await signOut(auth)
+      router.push("/login")
+    }
   }
 
   return (
