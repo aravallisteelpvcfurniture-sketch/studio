@@ -83,7 +83,6 @@ export default function LoginPage() {
     try {
       const provider = new GoogleAuthProvider()
       provider.setCustomParameters({ prompt: 'select_account' })
-      // Sign-in with redirect is most reliable for PWAs on mobile
       await signInWithRedirect(auth, provider)
     } catch (error: any) {
       setLoading(false)
@@ -186,6 +185,9 @@ export default function LoginPage() {
               <code className="bg-white/80 p-2 rounded-xl text-[10px] font-black text-primary border border-blue-200 select-all text-center">
                 {typeof window !== 'undefined' ? window.location.hostname : 'loading...'}
               </code>
+              <p className="text-[8px] text-blue-600 font-bold uppercase mt-1">
+                * Note: Localhost aur aapka current URL dono add karna pad sakta hai.
+              </p>
             </div>
           </div>
         )}
