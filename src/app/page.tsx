@@ -4,7 +4,7 @@
 import * as React from "react"
 import { useRouter } from "next/navigation"
 import { useUser, useAuth } from "@/firebase"
-import { Loader2, LogOut, ShoppingBag, LayoutGrid, Sparkles, MapPin, Bell, Download, Calculator, ChevronRight, User, ClipboardList } from "lucide-react"
+import { Loader2, LogOut, ShoppingBag, LayoutGrid, Sparkles, MapPin, Bell, Download, Calculator, ChevronRight, User, ClipboardList, ShieldCheck } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { signOut } from "firebase/auth"
 import Image from "next/image"
@@ -96,11 +96,34 @@ export default function Home() {
         </div>
       </div>
 
+      {/* Admin Quick Tool (Only for Admin) */}
+      {isAdmin && (
+        <div className="px-6 mt-4">
+          <Card 
+            onClick={() => router.push("/site-visits")}
+            className="p-6 rounded-[2.5rem] border-2 border-accent/30 bg-accent/5 flex items-center justify-between active:scale-[0.98] transition-all cursor-pointer shadow-lg shadow-accent/5"
+          >
+            <div className="flex items-center gap-4">
+              <div className="w-14 h-14 bg-accent rounded-3xl flex items-center justify-center shadow-lg shadow-accent/20">
+                <ClipboardList className="w-7 h-7 text-white" />
+              </div>
+              <div className="text-left">
+                <h4 className="font-black text-accent text-lg leading-tight uppercase tracking-tight">Visitor Manager</h4>
+                <p className="text-[10px] text-accent/70 font-bold uppercase tracking-wider">Naap & Site Visit Data</p>
+              </div>
+            </div>
+            <div className="w-10 h-10 rounded-full bg-accent text-white flex items-center justify-center">
+              <ChevronRight className="w-5 h-5" />
+            </div>
+          </Card>
+        </div>
+      )}
+
       {/* Hero Section: AI Design Studio */}
       <div className="px-6 mt-4">
         <Card 
           onClick={() => router.push("/ai-designer")}
-          className="group relative overflow-hidden p-6 rounded-[2rem] border-none bg-primary text-white shadow-2xl shadow-primary/20 active:scale-[0.97] transition-all cursor-pointer h-48 flex flex-col justify-end"
+          className="group relative overflow-hidden p-6 rounded-[2.5rem] border-none bg-primary text-white shadow-2xl shadow-primary/20 active:scale-[0.97] transition-all cursor-pointer h-44 flex flex-col justify-end"
         >
           <div className="absolute top-0 right-0 w-32 h-32 bg-accent/20 rounded-full blur-[60px] -mr-16 -mt-16" />
           <div className="absolute -right-4 -top-4 opacity-10 group-hover:rotate-12 transition-transform duration-700">
@@ -118,12 +141,12 @@ export default function Home() {
       </div>
 
       {/* App Icons Grid */}
-      <div className="px-6 mt-8 grid grid-cols-2 gap-4">
+      <div className="px-6 mt-6 grid grid-cols-2 gap-4">
         <button 
           onClick={() => router.push("/shop")}
-          className="bg-white p-5 rounded-[2rem] shadow-sm flex flex-col items-center gap-3 active:scale-90 transition-all border border-gray-50"
+          className="bg-white p-5 rounded-[2.5rem] shadow-sm flex flex-col items-center gap-3 active:scale-90 transition-all border border-gray-50"
         >
-          <div className="w-14 h-14 bg-orange-50 rounded-2xl flex items-center justify-center">
+          <div className="w-14 h-14 bg-orange-50 rounded-3xl flex items-center justify-center">
             <ShoppingBag className="w-7 h-7 text-accent" />
           </div>
           <div className="text-center">
@@ -134,9 +157,9 @@ export default function Home() {
 
         <button 
           onClick={() => router.push("/categories")}
-          className="bg-white p-5 rounded-[2rem] shadow-sm flex flex-col items-center gap-3 active:scale-90 transition-all border border-gray-50"
+          className="bg-white p-5 rounded-[2.5rem] shadow-sm flex flex-col items-center gap-3 active:scale-90 transition-all border border-gray-50"
         >
-          <div className="w-14 h-14 bg-blue-50 rounded-2xl flex items-center justify-center">
+          <div className="w-14 h-14 bg-blue-50 rounded-3xl flex items-center justify-center">
             <LayoutGrid className="w-7 h-7 text-blue-500" />
           </div>
           <div className="text-center">
@@ -147,9 +170,9 @@ export default function Home() {
 
         <button 
           onClick={() => router.push("/estimator")}
-          className="bg-white p-5 rounded-[2rem] shadow-sm flex flex-col items-center gap-3 active:scale-90 transition-all border border-gray-50"
+          className="bg-white p-5 rounded-[2.5rem] shadow-sm flex flex-col items-center gap-3 active:scale-90 transition-all border border-gray-50"
         >
-          <div className="w-14 h-14 bg-green-50 rounded-2xl flex items-center justify-center">
+          <div className="w-14 h-14 bg-green-50 rounded-3xl flex items-center justify-center">
             <Calculator className="w-7 h-7 text-green-500" />
           </div>
           <div className="text-center">
@@ -158,25 +181,12 @@ export default function Home() {
           </div>
         </button>
 
-        {isAdmin ? (
-          <button 
-            onClick={() => router.push("/site-visits")}
-            className="bg-accent/5 p-5 rounded-[2rem] flex flex-col items-center gap-3 active:scale-90 transition-all border-2 border-accent/20"
-          >
-            <div className="w-14 h-14 bg-accent rounded-2xl flex items-center justify-center shadow-lg shadow-accent/20">
-              <ClipboardList className="w-7 h-7 text-white" />
-            </div>
-            <div className="text-center">
-              <span className="block font-black text-accent text-xs uppercase tracking-tight">Manager</span>
-              <span className="text-[9px] font-bold text-accent/60 uppercase">Visits</span>
-            </div>
-          </button>
-        ) : deferredPrompt ? (
+        {deferredPrompt ? (
           <button 
             onClick={handleInstallClick}
-            className="bg-accent/5 p-5 rounded-[2rem] flex flex-col items-center gap-3 active:scale-90 transition-all border-2 border-dashed border-accent/20"
+            className="bg-accent/5 p-5 rounded-[2.5rem] flex flex-col items-center gap-3 active:scale-90 transition-all border-2 border-dashed border-accent/20"
           >
-            <div className="w-14 h-14 bg-accent rounded-2xl flex items-center justify-center shadow-lg shadow-accent/20">
+            <div className="w-14 h-14 bg-accent rounded-3xl flex items-center justify-center shadow-lg shadow-accent/20">
               <Download className="w-7 h-7 text-white" />
             </div>
             <div className="text-center">
@@ -185,7 +195,7 @@ export default function Home() {
             </div>
           </button>
         ) : (
-          <div className="bg-gray-100/50 p-5 rounded-[2rem] border border-gray-100 flex flex-col items-center justify-center gap-2 opacity-40">
+          <div className="bg-gray-100/50 p-5 rounded-[2.5rem] border border-gray-100 flex flex-col items-center justify-center gap-2 opacity-40">
             <Sparkles className="w-6 h-6 text-gray-400" />
             <span className="text-[9px] font-black text-gray-400 uppercase">Coming Soon</span>
           </div>
