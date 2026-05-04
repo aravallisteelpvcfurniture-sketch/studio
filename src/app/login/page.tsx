@@ -62,8 +62,12 @@ export default function LoginPage() {
       })
       .catch((error) => {
         setRedirectChecking(false)
-        if (error.code === 'auth/operation-not-allowed') {
-          toast({ variant: "destructive", title: "Error 403", description: "Firebase Console mein domain whitelist kijiye." })
+        if (error.code === 'auth/operation-not-allowed' || error.message?.includes('403')) {
+          toast({ 
+            variant: "destructive", 
+            title: "Domain Error (403)", 
+            description: "Bhai, Firebase Console mein jaake 'Authorized Domains' mein apna domain add kijiye." 
+          })
         }
         console.error("Login Error:", error)
       })
@@ -90,7 +94,7 @@ export default function LoginPage() {
       toast({
         variant: "destructive",
         title: "Login Failed",
-        description: "Google login nahi ho paya. " + (error.message || ""),
+        description: "Google login nahi ho paya. Domain whitelist check karein.",
       })
     }
   }

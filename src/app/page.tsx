@@ -3,7 +3,7 @@
 
 import * as React from "react"
 import { useRouter } from "next/navigation"
-import { useUser, useAuth } from "@/firebase"
+import { useUser, useFirebase } from "@/firebase"
 import { Loader2, LogOut, ShoppingBag, LayoutGrid, Sparkles, MapPin, Bell, Download, Calculator, ChevronRight, User, ClipboardList } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { signOut } from "firebase/auth"
@@ -14,7 +14,7 @@ import { Badge } from "@/components/ui/badge"
 
 export default function Home() {
   const { user, isUserLoading } = useUser()
-  const auth = useAuth()
+  const { auth } = useFirebase()
   const router = useRouter()
   const [deferredPrompt, setDeferredPrompt] = React.useState<any>(null)
 
@@ -50,10 +50,10 @@ export default function Home() {
   const handleLogout = async () => {
     if (auth) {
       try {
-        await signOut(auth)
-        // No need for router.push here as the useEffect above handles it
+        await signOut(auth);
+        window.location.href = "/login"; // Force reload to clear state
       } catch (error) {
-        console.error("Logout failed:", error)
+        console.error("Logout failed:", error);
       }
     }
   }
