@@ -51,7 +51,6 @@ export default function Home() {
     try {
       if (auth) {
         await signOut(auth);
-        // Force redirect to login page and clear state
         window.location.href = "/login";
       }
     } catch (error) {
@@ -107,7 +106,6 @@ export default function Home() {
         </div>
       </div>
 
-      {/* Main Content Scroll Area */}
       <div className="flex-1 space-y-4 pt-6">
         {/* Hero Section: AI Design Studio */}
         <div className="px-6">
@@ -149,7 +147,6 @@ export default function Home() {
           </div>
         )}
 
-        {/* Tools Grid */}
         <div className="px-6 grid grid-cols-3 gap-3">
           <button onClick={() => router.push("/shop")} className="bg-white p-4 rounded-[2rem] shadow-sm flex flex-col items-center gap-2 active:scale-95 border border-gray-100">
             <div className="w-10 h-10 bg-orange-50 rounded-xl flex items-center justify-center"><ShoppingBag className="w-5 h-5 text-accent" /></div>
@@ -165,7 +162,6 @@ export default function Home() {
           </button>
         </div>
 
-        {/* Support Tools */}
         <div className="px-6 space-y-3">
           <button onClick={() => router.push("/book-consultation")} className="w-full bg-white p-5 rounded-[2rem] shadow-sm border border-gray-100 flex items-center justify-between active:scale-[0.98]">
             <div className="flex items-center gap-4">
@@ -187,7 +183,6 @@ export default function Home() {
         </div>
       </div>
 
-      {/* App Branding Footer */}
       <div className="mt-10 mb-6 flex flex-col items-center gap-2 opacity-20">
         <div className="flex items-center gap-2">
           <div className="w-6 h-6 bg-primary rounded-lg flex items-center justify-center p-1"><span className="text-white text-[10px] font-black">AS</span></div>

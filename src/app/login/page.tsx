@@ -84,7 +84,6 @@ export default function LoginPage() {
     try {
       const provider = new GoogleAuthProvider()
       provider.setCustomParameters({ prompt: 'select_account' })
-      // Sign-in with redirect is most reliable for PWAs on mobile
       await signInWithRedirect(auth, provider)
     } catch (error: any) {
       setLoading(false)
@@ -191,7 +190,7 @@ export default function LoginPage() {
                 <span className="text-[10px] font-bold text-blue-700">FIREBASE SETUP STEP:</span>
               </div>
               <p className="text-[10px] text-blue-700 font-medium leading-relaxed">
-                Firebase Console mein Authentication {'->'} Settings {'->'} Authorized Domains mein jaaiye aur ye domain add karein:
+                Firebase Console mein Authentication {'>'} Settings {'>'} Authorized Domains mein jaaiye aur ye domain add karein:
               </p>
               <div className="flex gap-2">
                 <code className="flex-1 bg-white/80 p-2 rounded-xl text-[10px] font-black text-primary border border-blue-200 select-all truncate">
