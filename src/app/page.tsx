@@ -51,7 +51,7 @@ export default function Home() {
     try {
       if (auth) {
         await signOut(auth);
-        // Clear session and force redirect to login
+        // Force redirect to login page and clear state
         window.location.href = "/login";
       }
     } catch (error) {
