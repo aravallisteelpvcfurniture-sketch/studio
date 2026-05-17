@@ -11,7 +11,7 @@ import { useRouter } from "next/navigation"
 /**
  * GlobalNotificationListener
  * Background listener that alerts the admin of new pending quote requests.
- * Now includes System Tray (Slider Bar) notifications.
+ * Now includes System Tray (Slider Bar) notifications for mobile/desktop.
  */
 export function GlobalNotificationListener() {
   const db = useFirestore()
@@ -27,7 +27,7 @@ export function GlobalNotificationListener() {
     return user.email === "aravallisteelpvcfurniture@gmail.com" || user.uid === "Qmcch2NXxmg47Zf28Wh0KTp9Njt1";
   }, [user, isUserLoading]);
 
-  // Request Notification Permission
+  // Request System Notification Permission
   React.useEffect(() => {
     if (isAdmin && typeof window !== "undefined" && "Notification" in window) {
       if (Notification.permission === "default") {
@@ -57,19 +57,21 @@ export function GlobalNotificationListener() {
           const latestDoc = snapshot.docs[0];
           const data = latestDoc.data();
 
+          // Skip notification on first load of the app
           if (isInitialLoad.current) {
             setLastId(latestDoc.id);
             isInitialLoad.current = false;
             return;
           }
 
+          // Only notify if it's a NEW document ID
           if (latestDoc.id !== lastId) {
             setLastId(latestDoc.id);
 
-            // 1. Show Visual Toast in App
+            // 1. Show Visual Toast in-app
             toast({
-              title: "🚨 NEW INQUIRY!",
-              description: `${data.name} is asking for ${data.serviceType}.`,
+              title: "🚨 NAYI INQUIRY AAYI HAI!",
+              description: `${data.name} ne ${data.serviceType} ke liye poocha hai.`,
               action: (
                 <Button 
                   variant="default" 
@@ -77,15 +79,15 @@ export function GlobalNotificationListener() {
                   className="bg-accent text-white font-bold"
                   onClick={() => router.push("/notifications")}
                 >
-                  VIEW
+                  DEKHO
                 </Button>
               ),
             });
 
-            // 2. Show System Notification (Slider Bar)
+            // 2. Show System Notification (Slider Bar / Header Bar)
             if (typeof window !== "undefined" && "Notification" in window && Notification.permission === "granted") {
-              const systemNotification = new Notification("Nayi Inquiry Aayi Hai! 🚨", {
-                body: `${data.name} ne ${data.serviceType} ke liye request dali hai.`,
+              const systemNotification = new Notification("Aravalli Steel: New Inquiry! 🚨", {
+                body: `${data.name} is interested in ${data.serviceType}. Tap to view details.`,
                 icon: "/favicon.ico", // Standard icon fallback
                 tag: "new-inquiry",
                 requireInteraction: true,
@@ -100,13 +102,13 @@ export function GlobalNotificationListener() {
           }
         },
         (error) => {
-          console.log("Waiting for database permissions...");
+          console.log("Waiting for data permissions...");
         }
       );
 
       return () => unsubscribe();
     } catch (e) {
-      console.log("Notification setup paused...");
+      console.log("Notification listener paused...");
     }
   }, [db, isAdmin, user, toast, router, lastId]);
 

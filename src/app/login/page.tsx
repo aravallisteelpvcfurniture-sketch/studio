@@ -67,7 +67,6 @@ export default function LoginPage() {
         if (error.code === 'auth/unauthorized-domain') {
           setAuthError(`Domain Error: Google Login allow karne ke liye domain add karein.`)
         }
-        console.error("Login Redirect Error:", error)
       })
   }, [auth, db, router, toast])
 
@@ -87,7 +86,6 @@ export default function LoginPage() {
       await signInWithRedirect(auth, provider)
     } catch (error: any) {
       setLoading(false)
-      console.error("Auth trigger failed:", error)
       if (error.code === 'auth/unauthorized-domain') {
         setAuthError(`Domain Error: Firebase Console mein domain whitelist karein.`)
       } else {
@@ -200,9 +198,6 @@ export default function LoginPage() {
                   {copied ? <Check className="w-4 h-4 text-green-500" /> : <Copy className="w-4 h-4" />}
                 </Button>
               </div>
-              <p className="text-[8px] text-blue-600 font-bold uppercase mt-1">
-                * Note: Localhost aur aapka current URL dono add karna pad sakta hai.
-              </p>
             </div>
           </div>
         )}
