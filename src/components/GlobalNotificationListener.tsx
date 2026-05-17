@@ -88,7 +88,7 @@ export function GlobalNotificationListener() {
             if (typeof window !== "undefined" && "Notification" in window && Notification.permission === "granted") {
               const systemNotification = new Notification("Aravalli Steel: New Inquiry! 🚨", {
                 body: `${data.name} is interested in ${data.serviceType}. Tap to view details.`,
-                icon: "/favicon.ico", // Standard icon fallback
+                icon: "https://picsum.photos/seed/aravalli-logo/192/192",
                 tag: "new-inquiry",
                 requireInteraction: true,
               });
