@@ -51,9 +51,9 @@ export default function Home() {
     try {
       if (auth) {
         await signOut(auth);
+        // Clear all local state and force redirect
+        window.location.href = "/login";
       }
-      // Hard redirect to clear all auth state and route back to login
-      window.location.href = "/login";
     } catch (error) {
       console.error("Logout failed:", error);
       window.location.href = "/login";

@@ -17,7 +17,7 @@ import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { Loader2, Sparkles, LogIn, AlertCircle, Info } from "lucide-react"
+import { Loader2, Sparkles, LogIn, AlertCircle, Info, Copy, Check } from "lucide-react"
 import Image from "next/image"
 import { PlaceHolderImages } from "@/lib/placeholder-images"
 import { useToast } from "@/hooks/use-toast"
@@ -37,6 +37,7 @@ export default function LoginPage() {
   const [displayName, setDisplayName] = React.useState("")
   const [redirectChecking, setRedirectChecking] = React.useState(true)
   const [authError, setAuthError] = React.useState<string | null>(null)
+  const [copied, setCopied] = React.useState(false)
 
   const logoImg = PlaceHolderImages.find(i => i.id === "company-logo")
 
@@ -92,6 +93,15 @@ export default function LoginPage() {
       } else {
         setAuthError(error.message)
       }
+    }
+  }
+
+  const copyDomain = () => {
+    if (typeof window !== 'undefined') {
+      navigator.clipboard.writeText(window.location.hostname)
+      setCopied(true)
+      setTimeout(() => setCopied(false), 2000)
+      toast({ title: "Domain Copied!", description: "Ab ise Firebase Console mein paste karein." })
     }
   }
 
@@ -180,11 +190,16 @@ export default function LoginPage() {
                 <span className="text-[10px] font-bold text-blue-700">FIREBASE SETUP STEP:</span>
               </div>
               <p className="text-[10px] text-blue-700 font-medium leading-relaxed">
-                Firebase Console {'>'} Auth {'>'} Settings {'>'} Authorized Domains mein ye domain add karein:
+                Firebase Console mein Authentication {'->'} Settings {'->'} Authorized Domains mein jaaiye aur ye domain add karein:
               </p>
-              <code className="bg-white/80 p-2 rounded-xl text-[10px] font-black text-primary border border-blue-200 select-all text-center">
-                {typeof window !== 'undefined' ? window.location.hostname : 'loading...'}
-              </code>
+              <div className="flex gap-2">
+                <code className="flex-1 bg-white/80 p-2 rounded-xl text-[10px] font-black text-primary border border-blue-200 select-all truncate">
+                  {typeof window !== 'undefined' ? window.location.hostname : 'loading...'}
+                </code>
+                <Button size="icon" variant="ghost" className="h-10 w-10 bg-white border border-blue-200" onClick={copyDomain}>
+                  {copied ? <Check className="w-4 h-4 text-green-500" /> : <Copy className="w-4 h-4" />}
+                </Button>
+              </div>
               <p className="text-[8px] text-blue-600 font-bold uppercase mt-1">
                 * Note: Localhost aur aapka current URL dono add karna pad sakta hai.
               </p>
