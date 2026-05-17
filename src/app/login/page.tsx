@@ -65,7 +65,7 @@ export default function LoginPage() {
       .catch((error) => {
         setRedirectChecking(false)
         if (error.code === 'auth/unauthorized-domain') {
-          setAuthError(`Domain Error: Firebase Console mein apna domain add karein.`)
+          setAuthError(`Domain Error: Google Login allow karne ke liye domain add karein.`)
         }
         console.error("Login Redirect Error:", error)
       })
@@ -84,6 +84,7 @@ export default function LoginPage() {
     try {
       const provider = new GoogleAuthProvider()
       provider.setCustomParameters({ prompt: 'select_account' })
+      // Sign-in with redirect is most reliable for PWAs on mobile
       await signInWithRedirect(auth, provider)
     } catch (error: any) {
       setLoading(false)
