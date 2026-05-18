@@ -8,11 +8,9 @@ import { signOut } from "firebase/auth"
 import { 
   User, 
   LogOut, 
-  ClipboardList, 
   Bell, 
   ChevronRight, 
   ShieldCheck,
-  Settings,
   UserCircle,
   Lock,
   Info
@@ -80,7 +78,7 @@ export default function MorePage() {
               </div>
               <div className="mt-6 pt-6 border-t grid grid-cols-2 gap-3">
                 <Button variant="outline" className="rounded-xl h-12 font-bold text-xs gap-2 border-gray-100">
-                  <UserCircle className="w-4 h-4" /> Edit Profile
+                  <UserCircle className="w-4 h-4" /> Profile
                 </Button>
                 <Button onClick={handleLogout} variant="ghost" className="rounded-xl h-12 font-bold text-xs gap-2 text-destructive hover:bg-destructive/5">
                   <LogOut className="w-4 h-4" /> Logout
@@ -89,27 +87,11 @@ export default function MorePage() {
             </Card>
           </div>
 
-          {/* Admin Management Section */}
+          {/* Business Management Section */}
           {isAdmin && (
             <div className="space-y-4">
               <h3 className="text-[10px] font-black text-accent uppercase tracking-[0.2em] ml-2">Business Management</h3>
               <div className="grid gap-2">
-                <button 
-                  onClick={() => router.push("/site-visits")}
-                  className="w-full bg-white p-5 rounded-2xl flex items-center justify-between active:scale-[0.98] transition-all border border-gray-100/50 shadow-sm"
-                >
-                  <div className="flex items-center gap-4">
-                    <div className="w-10 h-10 bg-accent/10 rounded-xl flex items-center justify-center">
-                      <ClipboardList className="w-5 h-5 text-accent" />
-                    </div>
-                    <div className="text-left">
-                      <span className="block font-bold text-primary text-sm">Visitor Manager</span>
-                      <span className="text-[9px] text-muted-foreground font-bold uppercase tracking-widest">Tracking & Measurements</span>
-                    </div>
-                  </div>
-                  <ChevronRight className="w-4 h-4 text-muted-foreground/30" />
-                </button>
-
                 <button 
                   onClick={() => router.push("/notifications")}
                   className="w-full bg-white p-5 rounded-2xl flex items-center justify-between active:scale-[0.98] transition-all border border-gray-100/50 shadow-sm"
@@ -168,7 +150,7 @@ export default function MorePage() {
             </div>
             <div className="pt-2">
               <div className="flex items-center gap-2 text-[10px] font-bold text-white/80">
-                <ShieldCheck className="w-3.5 h-3.5 text-accent" /> 10 Years Warranty Guaranteed
+                <ShieldCheck className="w-3.5 h-3.5 text-accent" /> 10 Years Warranty
               </div>
             </div>
           </div>
