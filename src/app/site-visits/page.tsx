@@ -3,16 +3,15 @@
 
 import * as React from "react"
 import Link from "next/link"
-import { ChevronLeft, Plus, Ruler, MapPin, Phone, Calendar, Trash2, Loader2, CheckCircle2, Calculator, Settings2, UserPlus, X } from "lucide-react"
+import { ChevronLeft, Ruler, MapPin, Phone, Calendar, Trash2, Loader2, Calculator, Settings2, UserPlus, X, Save } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { useFirestore, useCollection, useUser, useMemoFirebase } from "@/firebase"
 import { collection, addDoc, updateDoc, deleteDoc, doc, query, orderBy, serverTimestamp } from "firebase/firestore"
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogFooter } from "@/components/ui/dialog"
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog"
 import { format } from "date-fns"
 import { useToast } from "@/hooks/use-toast"
 import { Badge } from "@/components/ui/badge"
@@ -33,10 +32,13 @@ export default function SiteVisitManager() {
   const { user, isUserLoading } = useUser()
   const { toast } = useToast()
   
-  // Pop-up opens automatically on mount
   const [isModalOpen, setIsModalOpen] = React.useState(true)
   const [loading, setLoading] = React.useState(false)
   const [selectedVisit, setSelectedVisit] = React.useState<any>(null)
+  
+  // States for the individual tool editing
+  const [tempMeasurements, setTempMeasurements] = React.useState("")
+  const [tempBudget, setTempBudget] = React.useState("")
 
   const isAdmin = React.useMemo(() => {
     if (!user || isUserLoading) return false;
@@ -57,11 +59,16 @@ export default function SiteVisitManager() {
     serviceType: "Kitchen",
     status: "New",
     notes: "",
-    measurements: ""
+    measurements: "",
+    estimatedBudget: 0
   })
 
   const handleCreate = async () => {
     if (!db) return
+    if (!formData.customerName || !formData.phone) {
+      toast({ variant: "destructive", title: "Naam aur Phone zaroori hai" })
+      return
+    }
     setLoading(true)
     try {
       await addDoc(collection(db, "siteVisits"), {
@@ -71,7 +78,7 @@ export default function SiteVisitManager() {
       })
       toast({ title: "Visitor added successfully" })
       setIsModalOpen(false)
-      setFormData({ customerName: "", phone: "", address: "", serviceType: "Kitchen", status: "New", notes: "", measurements: "" })
+      setFormData({ customerName: "", phone: "", address: "", serviceType: "Kitchen", status: "New", notes: "", measurements: "", estimatedBudget: 0 })
     } catch (e) {
       toast({ variant: "destructive", title: "Failed to add visitor" })
     } finally {
@@ -86,6 +93,44 @@ export default function SiteVisitManager() {
       updatedAt: serverTimestamp()
     })
     toast({ title: `Status updated to ${newStatus}` })
+    // Update local selectedVisit state to reflect changes immediately in the overlay
+    setSelectedVisit((prev: any) => ({ ...prev, status: newStatus }))
+  }
+
+  const handleSaveNaap = async () => {
+    if (!db || !selectedVisit) return
+    setLoading(true)
+    try {
+      await updateDoc(doc(db, "siteVisits", selectedVisit.id), {
+        measurements: tempMeasurements,
+        status: "Measured",
+        updatedAt: serverTimestamp()
+      })
+      toast({ title: "Naap save ho gaya!" })
+      setSelectedVisit((prev: any) => ({ ...prev, measurements: tempMeasurements, status: "Measured" }))
+    } catch (e) {
+      toast({ variant: "destructive", title: "Save failed" })
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  const handleSaveBudget = async () => {
+    if (!db || !selectedVisit) return
+    setLoading(true)
+    try {
+      await updateDoc(doc(db, "siteVisits", selectedVisit.id), {
+        estimatedBudget: parseFloat(tempBudget) || 0,
+        status: "Quoted",
+        updatedAt: serverTimestamp()
+      })
+      toast({ title: "Budget update ho gaya!" })
+      setSelectedVisit((prev: any) => ({ ...prev, estimatedBudget: parseFloat(tempBudget) || 0, status: "Quoted" }))
+    } catch (e) {
+      toast({ variant: "destructive", title: "Save failed" })
+    } finally {
+      setLoading(false)
+    }
   }
 
   const deleteVisit = async (visitId: string) => {
@@ -94,6 +139,13 @@ export default function SiteVisitManager() {
     toast({ title: "Record deleted" })
     setSelectedVisit(null)
   }
+
+  React.useEffect(() => {
+    if (selectedVisit) {
+      setTempMeasurements(selectedVisit.measurements || "")
+      setTempBudget(selectedVisit.estimatedBudget?.toString() || "")
+    }
+  }, [selectedVisit])
 
   if (isUserLoading) return <div className="h-screen flex items-center justify-center"><Loader2 className="animate-spin text-accent" /></div>
   if (!isAdmin) return <div className="p-20 text-center font-bold">Admin Access Only</div>
@@ -134,6 +186,9 @@ export default function SiteVisitManager() {
                     <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest flex items-center gap-1">
                       <Phone className="w-3 h-3 text-accent" /> {visit.phone}
                     </p>
+                    {visit.estimatedBudget > 0 && (
+                      <p className="text-[10px] font-black text-green-600">Budget: ₹{visit.estimatedBudget.toLocaleString('en-IN')}</p>
+                    )}
                   </div>
                   <Badge className={`rounded-full border-none px-3 py-1 text-[8px] font-black ${STATUS_COLORS[visit.status] || "bg-gray-100"}`}>
                     {visit.status.toUpperCase()}
@@ -192,7 +247,7 @@ export default function SiteVisitManager() {
           </div>
 
           <div className="flex-1 p-8 grid grid-cols-2 gap-6 content-center">
-            {/* Tool 1: Naap (Measurement) */}
+            {/* Tool 1: Naap (Measurement) - REAL WORKING */}
             <Dialog>
               <DialogTrigger asChild>
                 <button className="aspect-square bg-orange-50 rounded-[2.5rem] flex flex-col items-center justify-center gap-3 border-2 border-orange-100 active:scale-95 transition-all shadow-sm">
@@ -204,30 +259,51 @@ export default function SiteVisitManager() {
               </DialogTrigger>
               <DialogContent className="rounded-[2.5rem] w-[95%]">
                 <DialogHeader><DialogTitle className="font-black uppercase">Measurement Data</DialogTitle></DialogHeader>
-                <Textarea 
-                  defaultValue={selectedVisit.measurements}
-                  placeholder="Kitchen L-Shape: 10x8ft..."
-                  className="min-h-[200px] rounded-2xl bg-muted/30 border-none p-4 font-bold"
-                  onBlur={async (e) => {
-                    await updateDoc(doc(db!, "siteVisits", selectedVisit.id), { measurements: e.target.value, status: "Measured" })
-                    toast({ title: "Naap saved!" })
-                  }}
-                />
+                <div className="space-y-4">
+                  <Textarea 
+                    value={tempMeasurements}
+                    onChange={(e) => setTempMeasurements(e.target.value)}
+                    placeholder="Kitchen L-Shape: 10x8ft..."
+                    className="min-h-[200px] rounded-2xl bg-muted/30 border-none p-4 font-bold"
+                  />
+                  <Button onClick={handleSaveNaap} disabled={loading} className="w-full h-12 bg-accent text-white font-bold rounded-xl flex gap-2">
+                    <Save className="w-4 h-4" /> Save Measurements
+                  </Button>
+                </div>
               </DialogContent>
             </Dialog>
 
-            {/* Tool 2: Estimate (Quotation) */}
-            <button 
-              onClick={() => toast({ title: "Estimate Feature Coming Soon" })}
-              className="aspect-square bg-blue-50 rounded-[2.5rem] flex flex-col items-center justify-center gap-3 border-2 border-blue-100 active:scale-95 transition-all shadow-sm"
-            >
-              <div className="w-16 h-16 bg-white rounded-3xl flex items-center justify-center shadow-md">
-                <Calculator className="w-8 h-8 text-blue-500" />
-              </div>
-              <span className="font-black text-blue-700 text-sm uppercase">Budget</span>
-            </button>
+            {/* Tool 2: Estimate (Quotation) - REAL WORKING */}
+            <Dialog>
+              <DialogTrigger asChild>
+                <button className="aspect-square bg-blue-50 rounded-[2.5rem] flex flex-col items-center justify-center gap-3 border-2 border-blue-100 active:scale-95 transition-all shadow-sm">
+                  <div className="w-16 h-16 bg-white rounded-3xl flex items-center justify-center shadow-md">
+                    <Calculator className="w-8 h-8 text-blue-500" />
+                  </div>
+                  <span className="font-black text-blue-700 text-sm uppercase">Budget</span>
+                </button>
+              </DialogTrigger>
+              <DialogContent className="rounded-[2.5rem] w-[95%]">
+                <DialogHeader><DialogTitle className="font-black uppercase">Tentative Budget</DialogTitle></DialogHeader>
+                <div className="space-y-4">
+                  <div className="space-y-1">
+                    <Label className="text-xs font-bold uppercase">Estimated Amount (₹)</Label>
+                    <Input 
+                      type="number"
+                      value={tempBudget}
+                      onChange={(e) => setTempBudget(e.target.value)}
+                      placeholder="e.g. 50000"
+                      className="h-12 rounded-xl bg-muted/30 border-none font-bold"
+                    />
+                  </div>
+                  <Button onClick={handleSaveBudget} disabled={loading} className="w-full h-12 bg-blue-600 text-white font-bold rounded-xl flex gap-2">
+                    <Save className="w-4 h-4" /> Save Budget
+                  </Button>
+                </div>
+              </DialogContent>
+            </Dialog>
 
-            {/* Tool 3: Status Update */}
+            {/* Tool 3: Status Update - REAL WORKING */}
             <Dialog>
               <DialogTrigger asChild>
                 <button className="aspect-square bg-green-50 rounded-[2.5rem] flex flex-col items-center justify-center gap-3 border-2 border-green-100 active:scale-95 transition-all shadow-sm">
@@ -249,7 +325,7 @@ export default function SiteVisitManager() {
               </DialogContent>
             </Dialog>
 
-            {/* Tool 4: Delete */}
+            {/* Tool 4: Delete - REAL WORKING */}
             <button 
               onClick={() => { if(confirm("Bhai, record delete kar dein?")) deleteVisit(selectedVisit.id) }}
               className="aspect-square bg-red-50 rounded-[2.5rem] flex flex-col items-center justify-center gap-3 border-2 border-red-100 active:scale-95 transition-all shadow-sm"
@@ -264,11 +340,15 @@ export default function SiteVisitManager() {
           <div className="p-8 bg-gray-50 border-t space-y-2">
             <div className="flex items-center gap-3 text-primary/60">
               <MapPin className="w-4 h-4" />
-              <span className="text-xs font-bold uppercase">{selectedVisit.address || "No Address Added"}</span>
+              <span className="text-xs font-bold uppercase truncate">{selectedVisit.address || "No Address Added"}</span>
             </div>
             <div className="flex items-center gap-3 text-primary/60">
               <Calendar className="w-4 h-4" />
               <span className="text-xs font-bold uppercase">Registered: {selectedVisit.createdAt?.toDate ? format(selectedVisit.createdAt.toDate(), "dd MMM yyyy") : "Recent"}</span>
+            </div>
+            <div className="flex items-center gap-3 text-primary/60 mt-4">
+              <div className="w-2 h-2 rounded-full bg-accent" />
+              <span className="text-[10px] font-black uppercase tracking-widest">Current Status: {selectedVisit.status}</span>
             </div>
           </div>
         </div>

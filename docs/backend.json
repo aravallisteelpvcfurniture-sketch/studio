@@ -84,6 +84,7 @@
         "status": { "type": "string", "enum": ["New", "Scheduled", "Visited", "Measured", "Quoted", "Started", "Completed"] },
         "measurements": { "type": "string" },
         "notes": { "type": "string" },
+        "estimatedBudget": { "type": "number" },
         "createdAt": { "type": "string", "format": "date-time" }
       },
       "required": ["customerName", "phone", "status"]
