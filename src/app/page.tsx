@@ -70,7 +70,7 @@ export default function Home() {
   if (!user) return null
 
   return (
-    <div className="min-h-screen bg-[#F8F9FA] flex flex-col font-body pb-10">
+    <div className="min-h-screen bg-[#F8F9FA] flex flex-col font-body pb-20">
       {/* App Header */}
       <div className="px-6 pt-8 pb-4 flex items-center justify-between bg-white/80 backdrop-blur-xl sticky top-0 z-50 border-b">
         <div className="flex items-center gap-3">
