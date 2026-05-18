@@ -4,7 +4,7 @@
 import * as React from "react"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
-import { Home, ShoppingBag, Sparkles, Calendar, User } from "lucide-react"
+import { Home, ShoppingBag, Sparkles, Calendar, MoreHorizontal } from "lucide-react"
 import { cn } from "@/lib/utils"
 
 export function BottomNav() {
@@ -17,7 +17,7 @@ export function BottomNav() {
     { label: "Shop", icon: ShoppingBag, href: "/shop" },
     { label: "AI Design", icon: Sparkles, href: "/ai-designer" },
     { label: "Book", icon: Calendar, href: "/book-consultation" },
-    { label: "Cart", icon: ShoppingBag, href: "/cart" },
+    { label: "More", icon: MoreHorizontal, href: "/cart" }, // Replacing Cart label with More
   ]
 
   return (
