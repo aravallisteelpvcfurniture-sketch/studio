@@ -11,7 +11,7 @@ import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import { useFirestore, useCollection, useUser, useMemoFirebase } from "@/firebase"
 import { collection, addDoc, updateDoc, deleteDoc, doc, query, orderBy, serverTimestamp } from "firebase/firestore"
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog"
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogTrigger } from "@/components/ui/dialog"
 import { format } from "date-fns"
 import { useToast } from "@/hooks/use-toast"
 import { Badge } from "@/components/ui/badge"
@@ -93,7 +93,6 @@ export default function SiteVisitManager() {
       updatedAt: serverTimestamp()
     })
     toast({ title: `Status updated to ${newStatus}` })
-    // Update local selectedVisit state to reflect changes immediately in the overlay
     setSelectedVisit((prev: any) => ({ ...prev, status: newStatus }))
   }
 
@@ -152,7 +151,6 @@ export default function SiteVisitManager() {
 
   return (
     <div className="min-h-screen bg-[#F8F9FA] flex flex-col font-body pb-24">
-      {/* Header */}
       <div className="p-6 flex items-center justify-between bg-white border-b sticky top-0 z-50">
         <div className="flex items-center gap-4">
           <Link href="/">
@@ -186,9 +184,6 @@ export default function SiteVisitManager() {
                     <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest flex items-center gap-1">
                       <Phone className="w-3 h-3 text-accent" /> {visit.phone}
                     </p>
-                    {visit.estimatedBudget > 0 && (
-                      <p className="text-[10px] font-black text-green-600">Budget: ₹{visit.estimatedBudget.toLocaleString('en-IN')}</p>
-                    )}
                   </div>
                   <Badge className={`rounded-full border-none px-3 py-1 text-[8px] font-black ${STATUS_COLORS[visit.status] || "bg-gray-100"}`}>
                     {visit.status.toUpperCase()}
@@ -205,7 +200,6 @@ export default function SiteVisitManager() {
         </div>
       </ScrollArea>
 
-      {/* AUTO POPUP FOR NEW VISITOR */}
       <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
         <DialogContent className="rounded-[2.5rem] w-[95%] max-w-md p-8">
           <DialogHeader>
@@ -233,7 +227,6 @@ export default function SiteVisitManager() {
         </DialogContent>
       </Dialog>
 
-      {/* 4 ICON TOOLS SCREEN (Overlay) */}
       {selectedVisit && (
         <div className="fixed inset-0 z-[100] bg-white animate-in slide-in-from-bottom duration-300 flex flex-col">
           <div className="p-6 flex items-center justify-between border-b">
@@ -247,7 +240,6 @@ export default function SiteVisitManager() {
           </div>
 
           <div className="flex-1 p-8 grid grid-cols-2 gap-6 content-center">
-            {/* Tool 1: Naap (Measurement) - REAL WORKING */}
             <Dialog>
               <DialogTrigger asChild>
                 <button className="aspect-square bg-orange-50 rounded-[2.5rem] flex flex-col items-center justify-center gap-3 border-2 border-orange-100 active:scale-95 transition-all shadow-sm">
@@ -273,7 +265,6 @@ export default function SiteVisitManager() {
               </DialogContent>
             </Dialog>
 
-            {/* Tool 2: Estimate (Quotation) - REAL WORKING */}
             <Dialog>
               <DialogTrigger asChild>
                 <button className="aspect-square bg-blue-50 rounded-[2.5rem] flex flex-col items-center justify-center gap-3 border-2 border-blue-100 active:scale-95 transition-all shadow-sm">
@@ -303,7 +294,6 @@ export default function SiteVisitManager() {
               </DialogContent>
             </Dialog>
 
-            {/* Tool 3: Status Update - REAL WORKING */}
             <Dialog>
               <DialogTrigger asChild>
                 <button className="aspect-square bg-green-50 rounded-[2.5rem] flex flex-col items-center justify-center gap-3 border-2 border-green-100 active:scale-95 transition-all shadow-sm">
@@ -325,7 +315,6 @@ export default function SiteVisitManager() {
               </DialogContent>
             </Dialog>
 
-            {/* Tool 4: Delete - REAL WORKING */}
             <button 
               onClick={() => { if(confirm("Bhai, record delete kar dein?")) deleteVisit(selectedVisit.id) }}
               className="aspect-square bg-red-50 rounded-[2.5rem] flex flex-col items-center justify-center gap-3 border-2 border-red-100 active:scale-95 transition-all shadow-sm"
@@ -345,10 +334,6 @@ export default function SiteVisitManager() {
             <div className="flex items-center gap-3 text-primary/60">
               <Calendar className="w-4 h-4" />
               <span className="text-xs font-bold uppercase">Registered: {selectedVisit.createdAt?.toDate ? format(selectedVisit.createdAt.toDate(), "dd MMM yyyy") : "Recent"}</span>
-            </div>
-            <div className="flex items-center gap-3 text-primary/60 mt-4">
-              <div className="w-2 h-2 rounded-full bg-accent" />
-              <span className="text-[10px] font-black uppercase tracking-widest">Current Status: {selectedVisit.status}</span>
             </div>
           </div>
         </div>
