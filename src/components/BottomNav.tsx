@@ -17,7 +17,7 @@ export function BottomNav() {
     { label: "Shop", icon: ShoppingBag, href: "/shop" },
     { label: "AI Design", icon: Sparkles, href: "/ai-designer" },
     { label: "Book", icon: Calendar, href: "/book-consultation" },
-    { label: "More", icon: MoreHorizontal, href: "/cart" }, // Replacing Cart label with More
+    { label: "More", icon: MoreHorizontal, href: "/more" },
   ]
 
   return (
