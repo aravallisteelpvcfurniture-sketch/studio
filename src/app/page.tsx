@@ -4,7 +4,7 @@
 import * as React from "react"
 import { useRouter } from "next/navigation"
 import { useUser, useAuth } from "@/firebase"
-import { Loader2, LogOut, ShoppingBag, LayoutGrid, Sparkles, MapPin, Bell, Download, Calculator, ChevronRight, User, ClipboardList } from "lucide-react"
+import { Loader2, LogOut, ShoppingBag, LayoutGrid, Sparkles, MapPin, Bell, Download, Calculator, ChevronRight, User, ClipboardList, PenTool } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { signOut } from "firebase/auth"
 import Link from "next/link"
@@ -107,7 +107,7 @@ export default function Home() {
       </div>
 
       <div className="flex-1 space-y-4 pt-6">
-        {/* Hero Section: AI Design Studio - NOW ON DASHBOARD */}
+        {/* Drawing & Design Studio Card */}
         <div className="px-6">
           <Card 
             onClick={() => router.push("/ai-designer")}
@@ -116,10 +116,10 @@ export default function Home() {
             <div className="absolute top-0 right-0 w-48 h-48 bg-accent/20 rounded-full blur-[70px] -mr-24 -mt-24" />
             <div className="relative z-10 space-y-2">
               <div className="inline-flex items-center gap-2 bg-accent px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest mb-2">
-                <Sparkles className="w-3 h-3 text-white" /> AI Design Studio
+                <PenTool className="w-3 h-3 text-white" /> Drawing & Design Studio
               </div>
-              <h3 className="text-3xl font-black tracking-tighter leading-none uppercase">Generate 2D/3D Designs</h3>
-              <p className="text-white/60 text-xs font-medium uppercase tracking-wider">Railings • Stairs • Interiors</p>
+              <h3 className="text-3xl font-black tracking-tighter leading-none uppercase">2D/3D Drawing Tool</h3>
+              <p className="text-white/60 text-xs font-medium uppercase tracking-wider">Railings • Stairs • Interior Plans</p>
             </div>
           </Card>
         </div>

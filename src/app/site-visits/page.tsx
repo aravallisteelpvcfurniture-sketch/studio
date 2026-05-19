@@ -79,6 +79,14 @@ export default function SiteVisitManager() {
     estimatedBudget: 0
   })
 
+  // Auto-open modal for new entry when page opens
+  React.useEffect(() => {
+    if (isAdmin && !isLoading && (!visits || visits.length === 0)) {
+       // Only open if empty or on mount? Let's follow user instruction: "khitte hi party details pop up"
+       setIsModalOpen(true)
+    }
+  }, [isAdmin, isLoading, visits])
+
   const handleCreate = async () => {
     if (!db) return
     if (!formData.customerName || !formData.phone) {
@@ -280,7 +288,7 @@ export default function SiteVisitManager() {
         </DialogContent>
       </Dialog>
 
-      {/* PARTY MANAGEMENT TOOLS (4 ICONS) */}
+      {/* PARTY MANAGEMENT TOOLS (5 ICONS now) */}
       {selectedVisit && (
         <div className="fixed inset-0 z-[100] bg-white animate-in slide-in-from-bottom duration-300 flex flex-col">
           <div className="p-6 flex items-center justify-between border-b bg-white/80 backdrop-blur-md sticky top-0 z-50">
@@ -300,7 +308,7 @@ export default function SiteVisitManager() {
 
           <ScrollArea className="flex-1">
             <div className="p-8 grid grid-cols-2 gap-6 pb-24">
-              {/* Tool 1: Edit Details - REAL WORKING */}
+              {/* Tool 1: Edit Details */}
               <Dialog>
                 <DialogTrigger asChild>
                   <button className="aspect-square bg-blue-50 rounded-[2.5rem] flex flex-col items-center justify-center gap-3 border-2 border-blue-100 active:scale-95 transition-all shadow-sm">
@@ -344,7 +352,7 @@ export default function SiteVisitManager() {
                 </DialogContent>
               </Dialog>
 
-              {/* Tool 2: Naap (Measurement) - REAL WORKING */}
+              {/* Tool 2: Naap (Measurement) */}
               <Dialog>
                 <DialogTrigger asChild>
                   <button className="aspect-square bg-orange-50 rounded-[2.5rem] flex flex-col items-center justify-center gap-3 border-2 border-orange-100 active:scale-95 transition-all shadow-sm">
@@ -372,7 +380,7 @@ export default function SiteVisitManager() {
                 </DialogContent>
               </Dialog>
 
-              {/* Tool 3: Status - REAL WORKING */}
+              {/* Tool 3: Kaam Status */}
               <Dialog>
                 <DialogTrigger asChild>
                   <button className="aspect-square bg-green-50 rounded-[2.5rem] flex flex-col items-center justify-center gap-3 border-2 border-green-100 active:scale-95 transition-all shadow-sm">
@@ -402,7 +410,7 @@ export default function SiteVisitManager() {
                 </DialogContent>
               </Dialog>
 
-              {/* Tool 4: Photos */}
+              {/* Tool 4: Site Photos */}
               <Dialog>
                 <DialogTrigger asChild>
                   <button className="aspect-square bg-purple-50 rounded-[2.5rem] flex flex-col items-center justify-center gap-3 border-2 border-purple-100 active:scale-95 transition-all shadow-sm">
