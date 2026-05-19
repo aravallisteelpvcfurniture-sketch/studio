@@ -17,11 +17,7 @@ import {
   Edit3, 
   Camera,
   CheckCircle2,
-  Calendar,
-  PenTool,
-  Box,
-  Layers,
-  Sparkles
+  Calendar
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
@@ -36,7 +32,6 @@ import { format } from "date-fns"
 import { useToast } from "@/hooks/use-toast"
 import { Badge } from "@/components/ui/badge"
 import { ScrollArea } from "@/components/ui/scroll-area"
-import { generateDesignIdeas } from "@/ai/flows/ai-design-idea-generator"
 
 const STATUS_COLORS: Record<string, string> = {
   "New": "bg-blue-100 text-blue-700",
@@ -59,8 +54,6 @@ export default function SiteVisitManager() {
   
   const [tempMeasurements, setTempMeasurements] = React.useState("")
   const [editFormData, setEditFormData] = React.useState<any>(null)
-  const [designLoading, setDesignLoading] = React.useState(false)
-  const [generatedDesign, setGeneratedDesign] = React.useState<any>(null)
 
   const isAdmin = React.useMemo(() => {
     if (!user || isUserLoading) return false;
@@ -164,26 +157,6 @@ export default function SiteVisitManager() {
     }
   }
 
-  const handleGenerateAIDesign = async (type: '2D' | '3D', category: string) => {
-    if (!selectedVisit) return
-    setDesignLoading(true)
-    try {
-      const result = await generateDesignIdeas({
-        spaceType: category,
-        roomSize: "Custom Site Size",
-        stylePreference: "Modern " + type,
-        colorPalette: ["Steel Grey", "Natural Wood"],
-        specificRequirements: `Create a ${type} drawing for ${category}. Focus on ${selectedVisit.measurements || 'site specifications'}.`
-      })
-      setGeneratedDesign(result)
-      toast({ title: `${type} Design Concept Ready!` })
-    } catch (error) {
-      toast({ variant: "destructive", title: "AI Design failed" })
-    } finally {
-      setDesignLoading(false)
-    }
-  }
-
   const deleteVisit = async (visitId: string) => {
     if (!db) return
     if(!confirm("Bhai, record delete kar dein?")) return
@@ -201,7 +174,6 @@ export default function SiteVisitManager() {
         email: selectedVisit.email,
         serviceType: selectedVisit.serviceType
       })
-      setGeneratedDesign(null)
     }
   }, [selectedVisit])
 
@@ -308,7 +280,7 @@ export default function SiteVisitManager() {
         </DialogContent>
       </Dialog>
 
-      {/* PARTY MANAGEMENT TOOLS (5 ICONS) */}
+      {/* PARTY MANAGEMENT TOOLS (4 ICONS) */}
       {selectedVisit && (
         <div className="fixed inset-0 z-[100] bg-white animate-in slide-in-from-bottom duration-300 flex flex-col">
           <div className="p-6 flex items-center justify-between border-b bg-white/80 backdrop-blur-md sticky top-0 z-50">
@@ -328,7 +300,7 @@ export default function SiteVisitManager() {
 
           <ScrollArea className="flex-1">
             <div className="p-8 grid grid-cols-2 gap-6 pb-24">
-              {/* Tool 1: Edit Details */}
+              {/* Tool 1: Edit Details - REAL WORKING */}
               <Dialog>
                 <DialogTrigger asChild>
                   <button className="aspect-square bg-blue-50 rounded-[2.5rem] flex flex-col items-center justify-center gap-3 border-2 border-blue-100 active:scale-95 transition-all shadow-sm">
@@ -372,7 +344,7 @@ export default function SiteVisitManager() {
                 </DialogContent>
               </Dialog>
 
-              {/* Tool 2: Naap (Measurement) */}
+              {/* Tool 2: Naap (Measurement) - REAL WORKING */}
               <Dialog>
                 <DialogTrigger asChild>
                   <button className="aspect-square bg-orange-50 rounded-[2.5rem] flex flex-col items-center justify-center gap-3 border-2 border-orange-100 active:scale-95 transition-all shadow-sm">
@@ -400,7 +372,7 @@ export default function SiteVisitManager() {
                 </DialogContent>
               </Dialog>
 
-              {/* Tool 3: Status */}
+              {/* Tool 3: Status - REAL WORKING */}
               <Dialog>
                 <DialogTrigger asChild>
                   <button className="aspect-square bg-green-50 rounded-[2.5rem] flex flex-col items-center justify-center gap-3 border-2 border-green-100 active:scale-95 transition-all shadow-sm">
@@ -452,81 +424,6 @@ export default function SiteVisitManager() {
                   </div>
                 </DialogContent>
               </Dialog>
-
-              {/* Tool 5: AI Design Drawing (2D/3D) */}
-              <Dialog>
-                <DialogTrigger asChild>
-                  <button className="aspect-square bg-primary/5 rounded-[2.5rem] flex flex-col items-center justify-center gap-3 border-2 border-primary/10 active:scale-95 transition-all shadow-sm group">
-                    <div className="w-16 h-16 bg-white rounded-3xl flex items-center justify-center shadow-md">
-                      <PenTool className="w-8 h-8 text-primary group-hover:rotate-12 transition-transform" />
-                    </div>
-                    <span className="font-black text-primary text-[10px] uppercase">Design Studio</span>
-                  </button>
-                </DialogTrigger>
-                <DialogContent className="rounded-[3rem] w-[95%] max-h-[85vh] overflow-y-auto no-scrollbar">
-                  <DialogHeader>
-                    <DialogTitle className="text-2xl font-black text-primary flex items-center gap-2 uppercase tracking-tight">
-                      <Sparkles className="w-6 h-6 text-accent" />
-                      Design Studio
-                    </DialogTitle>
-                  </DialogHeader>
-                  
-                  <div className="space-y-6 py-6">
-                    <div className="grid grid-cols-2 gap-4">
-                      <Button 
-                        onClick={() => handleGenerateAIDesign('2D', selectedVisit.serviceType)} 
-                        disabled={designLoading}
-                        variant="outline" 
-                        className="h-24 rounded-3xl flex flex-col gap-2 border-2 border-accent/20 bg-accent/5"
-                      >
-                        <Layers className="w-6 h-6 text-accent" />
-                        <span className="font-black text-[10px] uppercase">2D Drawing</span>
-                      </Button>
-                      <Button 
-                        onClick={() => handleGenerateAIDesign('3D', selectedVisit.serviceType)} 
-                        disabled={designLoading}
-                        variant="outline" 
-                        className="h-24 rounded-3xl flex flex-col gap-2 border-2 border-blue-200 bg-blue-50"
-                      >
-                        <Box className="w-6 h-6 text-blue-600" />
-                        <span className="font-black text-[10px] uppercase">3D Realistic</span>
-                      </Button>
-                    </div>
-
-                    <div className="bg-muted/30 p-4 rounded-2xl border border-dashed border-muted">
-                      <h4 className="text-[10px] font-black uppercase text-muted-foreground mb-3 tracking-widest">Drawing Subject</h4>
-                      <div className="flex flex-wrap gap-2">
-                        {['Stairs', 'Railing', 'Kitchen', 'Wardrobe', 'Ceiling'].map(cat => (
-                          <Badge key={cat} variant="secondary" className="px-3 py-1 font-bold text-[9px] uppercase">{cat}</Badge>
-                        ))}
-                      </div>
-                    </div>
-
-                    {designLoading && (
-                      <div className="flex flex-col items-center py-12 gap-4 animate-pulse">
-                        <div className="w-16 h-16 rounded-full border-4 border-accent border-t-transparent animate-spin" />
-                        <p className="font-black text-sm uppercase tracking-widest text-accent">Generating Drawing...</p>
-                      </div>
-                    )}
-
-                    {generatedDesign && (
-                      <div className="space-y-4 animate-in zoom-in-95 duration-500">
-                        <div className="bg-primary p-6 rounded-[2.5rem] text-white">
-                          <h4 className="text-lg font-black uppercase mb-2">{generatedDesign.designConceptTitle}</h4>
-                          <p className="text-white/70 text-xs leading-relaxed">{generatedDesign.designOverview}</p>
-                        </div>
-                        <div className="grid gap-2">
-                          {generatedDesign.designIdeas.slice(0, 3).map((idea: string, i: number) => (
-                            <div key={i} className="flex gap-2 text-[10px] font-bold text-primary/80 bg-muted/50 p-3 rounded-xl border border-muted">
-                              <span className="text-accent">•</span> {idea}
-                            </div>
-                          ))}
-                        </div>
-                      </div>
-                    )}
-                  </div>
-                </DialogContent>
-              </Dialog>
             </div>
           </ScrollArea>
 
@@ -552,4 +449,3 @@ export default function SiteVisitManager() {
     </div>
   )
 }
-

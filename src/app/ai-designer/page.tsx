@@ -3,7 +3,7 @@
 
 import * as React from "react"
 import Link from "next/link"
-import { ChevronLeft, Sparkles, Send, Loader2, Lightbulb, CheckCircle2 } from "lucide-react"
+import { ChevronLeft, Sparkles, Send, Loader2, Lightbulb, CheckCircle2, Box, Layers, Layout } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
@@ -17,10 +17,10 @@ export default function AIDesigner() {
   const [result, setResult] = React.useState<DesignIdeaGeneratorOutput | null>(null)
   
   const [formData, setFormData] = React.useState({
-    spaceType: "modular kitchen",
-    roomSize: "medium",
-    stylePreference: "modern",
-    colorPalette: ["white", "grey"],
+    spaceType: "Modular Kitchen",
+    roomSize: "Medium",
+    stylePreference: "Modern 3D Realistic",
+    colorPalette: ["Steel Grey", "Natural Wood"],
     specificRequirements: ""
   })
 
@@ -44,53 +44,56 @@ export default function AIDesigner() {
             <ChevronLeft className="w-6 h-6" />
           </Button>
         </Link>
-        <h1 className="text-xl font-bold text-primary flex items-center gap-2">
+        <h1 className="text-xl font-black text-primary flex items-center gap-2 uppercase tracking-tight">
           <Sparkles className="w-5 h-5 text-accent" />
-          AI Designer
+          Design Studio
         </h1>
       </div>
 
       <ScrollArea className="flex-1">
         <div className="p-6 space-y-6">
           {!result ? (
-            <Card className="p-6 border-none shadow-xl bg-white rounded-3xl space-y-6 animate-in slide-in-from-bottom-4">
-              <div className="space-y-4">
+            <Card className="p-8 border-none shadow-2xl bg-white rounded-[3rem] space-y-8 animate-in slide-in-from-bottom-4">
+              <div className="space-y-6">
                 <div className="space-y-2">
-                  <Label className="text-xs font-bold uppercase text-muted-foreground">Space Type</Label>
+                  <Label className="text-[10px] font-black uppercase text-muted-foreground tracking-widest ml-1">Drawing Subject</Label>
                   <Select value={formData.spaceType} onValueChange={(val) => setFormData({...formData, spaceType: val})}>
-                    <SelectTrigger className="rounded-xl h-12">
+                    <SelectTrigger className="rounded-2xl h-14 bg-muted/30 border-none px-4 font-bold">
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="modular kitchen">Modular Kitchen</SelectItem>
-                      <SelectItem value="wardrobe system">Wardrobe System</SelectItem>
-                      <SelectItem value="wall paneling">Wall Paneling</SelectItem>
+                      <SelectItem value="Modular Kitchen">Modular Kitchen</SelectItem>
+                      <SelectItem value="Wardrobe System">Wardrobe System</SelectItem>
+                      <SelectItem value="Wall Paneling">Wall Paneling</SelectItem>
+                      <SelectItem value="Railing Design">Railing Design</SelectItem>
+                      <SelectItem value="Stairs Drawing">Stairs Drawing</SelectItem>
+                      <SelectItem value="Full Interior">Home Interior</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
 
                 <div className="space-y-2">
-                  <Label className="text-xs font-bold uppercase text-muted-foreground">Style Preference</Label>
+                  <Label className="text-[10px] font-black uppercase text-muted-foreground tracking-widest ml-1">Output Format</Label>
                   <Select value={formData.stylePreference} onValueChange={(val) => setFormData({...formData, stylePreference: val})}>
-                    <SelectTrigger className="rounded-xl h-12">
+                    <SelectTrigger className="rounded-2xl h-14 bg-muted/30 border-none px-4 font-bold">
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="modern">Modern Minimalist</SelectItem>
-                      <SelectItem value="industrial">Industrial Chic</SelectItem>
-                      <SelectItem value="traditional">Traditional Classic</SelectItem>
-                      <SelectItem value="bohemian">Bohemian</SelectItem>
+                      <SelectItem value="2D Technical Drawing">2D Technical Drawing</SelectItem>
+                      <SelectItem value="Modern 3D Realistic">3D Realistic View</SelectItem>
+                      <SelectItem value="Minimalist Sketch">Minimalist Sketch</SelectItem>
+                      <SelectItem value="Luxury Concept">Premium Luxury View</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
 
                 <div className="space-y-2">
-                  <Label className="text-xs font-bold uppercase text-muted-foreground">Specific Requirements</Label>
+                  <Label className="text-[10px] font-black uppercase text-muted-foreground tracking-widest ml-1">Specific Requirements</Label>
                   <Input 
                     value={formData.specificRequirements}
                     onChange={(e) => setFormData({...formData, specificRequirements: e.target.value})}
-                    placeholder="e.g. Maximize storage, add island" 
-                    className="rounded-xl h-12"
+                    placeholder="e.g. Spiral stairs, Glass railing" 
+                    className="rounded-2xl h-14 bg-muted/30 border-none px-4 font-bold"
                   />
                 </div>
               </div>
@@ -98,45 +101,45 @@ export default function AIDesigner() {
               <Button 
                 onClick={handleSubmit} 
                 disabled={loading}
-                className="w-full bg-accent hover:bg-accent/90 text-white rounded-2xl h-14 font-bold flex gap-2"
+                className="w-full bg-accent hover:bg-accent/90 text-white rounded-[2rem] h-16 font-black text-lg flex gap-3 shadow-xl shadow-accent/20 active:scale-95 transition-all"
               >
-                {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : <Send className="w-5 h-5" />}
-                Generate My Design
+                {loading ? <Loader2 className="w-6 h-6 animate-spin" /> : <Send className="w-6 h-6" />}
+                Generate Design
               </Button>
             </Card>
           ) : (
             <div className="space-y-8 animate-in fade-in duration-500 pb-20">
-              <div className="space-y-2">
-                <span className="text-accent text-xs font-black uppercase tracking-widest">Concept Generated</span>
-                <h2 className="text-3xl font-black text-primary leading-tight">{result.designConceptTitle}</h2>
-                <p className="text-muted-foreground leading-relaxed">{result.designOverview}</p>
+              <div className="space-y-2 text-center">
+                <span className="text-accent text-[10px] font-black uppercase tracking-widest">Concept Generated</span>
+                <h2 className="text-3xl font-black text-primary leading-tight uppercase tracking-tighter">{result.designConceptTitle}</h2>
+                <p className="text-muted-foreground text-sm leading-relaxed">{result.designOverview}</p>
               </div>
 
               <div className="space-y-4">
-                <h3 className="text-sm font-bold flex items-center gap-2 text-primary">
+                <h3 className="text-xs font-black flex items-center gap-2 text-primary uppercase tracking-widest">
                   <Lightbulb className="w-4 h-4 text-accent" />
-                  Key Design Ideas
+                  Drawing Specifications
                 </h3>
                 <div className="grid gap-3">
                   {result.designIdeas.map((idea, idx) => (
                     <div key={idx} className="bg-white p-4 rounded-2xl shadow-sm border border-accent/10 flex gap-3">
                       <CheckCircle2 className="w-5 h-5 text-accent shrink-0" />
-                      <span className="text-sm text-primary/80">{idea}</span>
+                      <span className="text-sm font-medium text-primary/80">{idea}</span>
                     </div>
                   ))}
                 </div>
               </div>
 
               <div className="space-y-4">
-                <h3 className="text-sm font-bold flex items-center gap-2 text-primary">
+                <h3 className="text-xs font-black flex items-center gap-2 text-primary uppercase tracking-widest">
                   <Sparkles className="w-4 h-4 text-accent" />
-                  Pro Implementation Tips
+                  Implementation Tips
                 </h3>
-                <div className="bg-primary/5 p-6 rounded-3xl border border-primary/10">
+                <div className="bg-primary p-6 rounded-[2.5rem] border border-primary/10 text-white shadow-xl shadow-primary/10">
                   <ul className="space-y-4">
                     {result.designTips.map((tip, idx) => (
-                      <li key={idx} className="text-sm text-primary/70 flex gap-2">
-                        <span className="text-accent">•</span> {tip}
+                      <li key={idx} className="text-xs text-white/80 font-medium flex gap-2">
+                        <span className="text-accent font-black">•</span> {tip}
                       </li>
                     ))}
                   </ul>
@@ -145,10 +148,10 @@ export default function AIDesigner() {
 
               <Button 
                 variant="outline" 
-                className="w-full h-14 rounded-2xl border-accent text-accent hover:bg-accent hover:text-white font-bold"
+                className="w-full h-16 rounded-[2rem] border-2 border-accent text-accent hover:bg-accent hover:text-white font-black text-lg"
                 onClick={() => setResult(null)}
               >
-                Start New Consultation
+                Create New Drawing
               </Button>
             </div>
           )}

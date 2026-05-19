@@ -185,7 +185,7 @@ export default function LoginPage() {
             <div className="bg-blue-50 p-4 rounded-2xl flex flex-col gap-2 border border-blue-100">
               <div className="flex gap-2 items-center">
                 <Info className="w-4 h-4 text-blue-500 shrink-0" />
-                <span className="text-[10px] font-bold text-blue-700">FIREBASE SETUP STEP:</span>
+                <span className="text-[10px] font-black text-blue-700">FIREBASE SETUP STEP:</span>
               </div>
               <p className="text-[10px] text-blue-700 font-medium leading-relaxed">
                 Firebase Console mein Authentication &gt; Settings &gt; Authorized Domains mein jaaiye aur ye domain add karein:

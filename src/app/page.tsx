@@ -107,42 +107,40 @@ export default function Home() {
       </div>
 
       <div className="flex-1 space-y-4 pt-6">
-        {/* Hero Section: AI Design Studio */}
+        {/* Hero Section: AI Design Studio - NOW ON DASHBOARD */}
         <div className="px-6">
           <Card 
             onClick={() => router.push("/ai-designer")}
-            className="group relative overflow-hidden p-6 rounded-[2.5rem] border-none bg-primary text-white shadow-2xl shadow-primary/20 active:scale-[0.97] transition-all cursor-pointer h-48 flex flex-col justify-end"
+            className="group relative overflow-hidden p-8 rounded-[3rem] border-none bg-primary text-white shadow-2xl shadow-primary/20 active:scale-[0.97] transition-all cursor-pointer h-56 flex flex-col justify-end"
           >
-            <div className="absolute top-0 right-0 w-40 h-40 bg-accent/20 rounded-full blur-[60px] -mr-20 -mt-20" />
-            <div className="relative z-10 space-y-1">
-              <div className="inline-flex items-center gap-2 bg-accent px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest mb-1">
-                <Sparkles className="w-3 h-3 text-white" /> AI Powered Studio
+            <div className="absolute top-0 right-0 w-48 h-48 bg-accent/20 rounded-full blur-[70px] -mr-24 -mt-24" />
+            <div className="relative z-10 space-y-2">
+              <div className="inline-flex items-center gap-2 bg-accent px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest mb-2">
+                <Sparkles className="w-3 h-3 text-white" /> AI Design Studio
               </div>
-              <h3 className="text-2xl font-black tracking-tighter leading-none uppercase">AI Design Ideas</h3>
-              <p className="text-white/60 text-[10px] font-medium uppercase tracking-wider">Modular Furniture Designs</p>
+              <h3 className="text-3xl font-black tracking-tighter leading-none uppercase">Generate 2D/3D Designs</h3>
+              <p className="text-white/60 text-xs font-medium uppercase tracking-wider">Railings • Stairs • Interiors</p>
             </div>
           </Card>
         </div>
 
-        {/* Visitor Manager Tool - Directly Below AI Designer */}
+        {/* Visitor Manager Tool */}
         {isAdmin && (
           <div className="px-6">
             <button 
               onClick={() => router.push("/site-visits")}
-              className="w-full bg-accent p-6 rounded-[2.5rem] shadow-xl shadow-accent/20 flex items-center justify-between active:scale-[0.97] transition-all border-none text-white group"
+              className="w-full bg-white p-6 rounded-[2.5rem] shadow-sm border border-gray-100 flex items-center justify-between active:scale-[0.97] transition-all"
             >
               <div className="flex items-center gap-4">
-                <div className="w-12 h-12 bg-white/20 rounded-2xl flex items-center justify-center backdrop-blur-md">
-                  <ClipboardList className="w-6 h-6 text-white" />
+                <div className="w-12 h-12 bg-accent/5 rounded-2xl flex items-center justify-center shrink-0">
+                  <ClipboardList className="w-6 h-6 text-accent" />
                 </div>
                 <div className="text-left">
-                  <span className="block font-black text-white text-base uppercase tracking-tight">Visitor Manager</span>
-                  <span className="text-[9px] font-bold text-white/70 uppercase tracking-widest">Tracking & Measurements</span>
+                  <h4 className="font-black text-primary text-sm uppercase">Visitor Manager</h4>
+                  <p className="text-[9px] text-muted-foreground font-bold uppercase opacity-60">Track & Measurements</p>
                 </div>
               </div>
-              <div className="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center">
-                <ChevronRight className="w-4 h-4" />
-              </div>
+              <ChevronRight className="w-4 h-4 text-muted-foreground" />
             </button>
           </div>
         )}
