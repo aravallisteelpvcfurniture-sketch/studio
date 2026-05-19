@@ -2,7 +2,7 @@
 "use client"
 
 import * as React from "react"
-import { collection, query, where, orderBy, limit, onSnapshot } from "firebase/firestore"
+import { collection, query, orderBy, limit, onSnapshot } from "firebase/firestore"
 import { useFirestore, useUser } from "@/firebase"
 import { useToast } from "@/hooks/use-toast"
 import { Button } from "@/components/ui/button"
@@ -39,12 +39,12 @@ export function GlobalNotificationListener() {
   }, [isAdmin]);
 
   // 1. Listener for Quote Requests (Inquiries)
+  // Fix: Removed 'where' clause to avoid index requirement, filtering 'pending' status in callback.
   React.useEffect(() => {
     if (!db || !isAdmin || !user) return;
 
     const q = query(
       collection(db, "quoteRequests"),
-      where("status", "==", "pending"),
       orderBy("createdAt", "desc"),
       limit(1)
     );
@@ -56,6 +56,9 @@ export function GlobalNotificationListener() {
       }
       const latestDoc = snapshot.docs[0];
       const data = latestDoc.data();
+
+      // Only notify if status is pending
+      if (data.status !== "pending") return;
 
       if (isInitialLoadQuote.current) {
         setLastQuoteId(latestDoc.id);
@@ -128,7 +131,7 @@ export function GlobalNotificationListener() {
       ),
     });
 
-    // Slider Bar Notification
+    // Slider Bar Notification (System Notification)
     if (typeof window !== "undefined" && "Notification" in window && Notification.permission === "granted") {
       const systemNotification = new Notification(title, {
         body: body,

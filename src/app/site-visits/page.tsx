@@ -240,6 +240,7 @@ export default function SiteVisitManager() {
           </div>
 
           <div className="flex-1 p-8 grid grid-cols-2 gap-6 content-center">
+            {/* Tool 1: Naap (Measurement) - REAL WORKING */}
             <Dialog>
               <DialogTrigger asChild>
                 <button className="aspect-square bg-orange-50 rounded-[2.5rem] flex flex-col items-center justify-center gap-3 border-2 border-orange-100 active:scale-95 transition-all shadow-sm">
@@ -250,12 +251,14 @@ export default function SiteVisitManager() {
                 </button>
               </DialogTrigger>
               <DialogContent className="rounded-[2.5rem] w-[95%]">
-                <DialogHeader><DialogTitle className="font-black uppercase">Measurement Data</DialogTitle></DialogHeader>
+                <DialogHeader>
+                  <DialogTitle className="font-black uppercase">Measurement Data</DialogTitle>
+                </DialogHeader>
                 <div className="space-y-4">
                   <Textarea 
                     value={tempMeasurements}
                     onChange={(e) => setTempMeasurements(e.target.value)}
-                    placeholder="Kitchen L-Shape: 10x8ft..."
+                    placeholder="Kitchen L-Shape: 10x8ft, PVC 18mm..."
                     className="min-h-[200px] rounded-2xl bg-muted/30 border-none p-4 font-bold"
                   />
                   <Button onClick={handleSaveNaap} disabled={loading} className="w-full h-12 bg-accent text-white font-bold rounded-xl flex gap-2">
@@ -265,6 +268,7 @@ export default function SiteVisitManager() {
               </DialogContent>
             </Dialog>
 
+            {/* Tool 2: Budget (Estimate) - REAL WORKING */}
             <Dialog>
               <DialogTrigger asChild>
                 <button className="aspect-square bg-blue-50 rounded-[2.5rem] flex flex-col items-center justify-center gap-3 border-2 border-blue-100 active:scale-95 transition-all shadow-sm">
@@ -275,7 +279,9 @@ export default function SiteVisitManager() {
                 </button>
               </DialogTrigger>
               <DialogContent className="rounded-[2.5rem] w-[95%]">
-                <DialogHeader><DialogTitle className="font-black uppercase">Tentative Budget</DialogTitle></DialogHeader>
+                <DialogHeader>
+                  <DialogTitle className="font-black uppercase">Tentative Budget</DialogTitle>
+                </DialogHeader>
                 <div className="space-y-4">
                   <div className="space-y-1">
                     <Label className="text-xs font-bold uppercase">Estimated Amount (₹)</Label>
@@ -294,6 +300,7 @@ export default function SiteVisitManager() {
               </DialogContent>
             </Dialog>
 
+            {/* Tool 3: Status Update - REAL WORKING */}
             <Dialog>
               <DialogTrigger asChild>
                 <button className="aspect-square bg-green-50 rounded-[2.5rem] flex flex-col items-center justify-center gap-3 border-2 border-green-100 active:scale-95 transition-all shadow-sm">
@@ -304,10 +311,17 @@ export default function SiteVisitManager() {
                 </button>
               </DialogTrigger>
               <DialogContent className="rounded-[2.5rem] w-[95%]">
-                <DialogHeader><DialogTitle className="font-black uppercase">Update Status</DialogTitle></DialogHeader>
+                <DialogHeader>
+                  <DialogTitle className="font-black uppercase">Update Status</DialogTitle>
+                </DialogHeader>
                 <div className="grid grid-cols-1 gap-3 py-4">
                   {Object.keys(STATUS_COLORS).map(s => (
-                    <Button key={s} onClick={() => updateStatus(selectedVisit.id, s)} variant={selectedVisit.status === s ? "default" : "outline"} className="h-12 rounded-xl font-black uppercase text-xs">
+                    <Button 
+                      key={s} 
+                      onClick={() => updateStatus(selectedVisit.id, s)}
+                      variant={selectedVisit.status === s ? "default" : "outline"}
+                      className="h-12 rounded-xl font-black uppercase text-xs"
+                    >
                       {s}
                     </Button>
                   ))}
@@ -315,6 +329,7 @@ export default function SiteVisitManager() {
               </DialogContent>
             </Dialog>
 
+            {/* Tool 4: Delete Record */}
             <button 
               onClick={() => { if(confirm("Bhai, record delete kar dein?")) deleteVisit(selectedVisit.id) }}
               className="aspect-square bg-red-50 rounded-[2.5rem] flex flex-col items-center justify-center gap-3 border-2 border-red-100 active:scale-95 transition-all shadow-sm"
