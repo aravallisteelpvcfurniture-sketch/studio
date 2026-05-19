@@ -3,7 +3,23 @@
 
 import * as React from "react"
 import Link from "next/link"
-import { ChevronLeft, Ruler, MapPin, Phone, Calendar, Trash2, Loader2, Calculator, Settings2, UserPlus, X, Save, Mail, Briefcase } from "lucide-react"
+import { 
+  ChevronLeft, 
+  Ruler, 
+  Phone, 
+  Trash2, 
+  Loader2, 
+  Settings2, 
+  UserPlus, 
+  X, 
+  Save, 
+  Mail, 
+  Briefcase, 
+  Edit3, 
+  Camera,
+  CheckCircle2,
+  Calendar
+} from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
@@ -38,7 +54,7 @@ export default function SiteVisitManager() {
   const [selectedVisit, setSelectedVisit] = React.useState<any>(null)
   
   const [tempMeasurements, setTempMeasurements] = React.useState("")
-  const [tempBudget, setTempBudget] = React.useState("")
+  const [editFormData, setEditFormData] = React.useState<any>(null)
 
   const isAdmin = React.useMemo(() => {
     if (!user || isUserLoading) return false;
@@ -97,6 +113,23 @@ export default function SiteVisitManager() {
     }
   }
 
+  const handleUpdateDetails = async () => {
+    if (!db || !selectedVisit || !editFormData) return
+    setLoading(true)
+    try {
+      await updateDoc(doc(db, "siteVisits", selectedVisit.id), {
+        ...editFormData,
+        updatedAt: serverTimestamp()
+      })
+      toast({ title: "Details update ho gayi!" })
+      setSelectedVisit((prev: any) => ({ ...prev, ...editFormData }))
+    } catch (e) {
+      toast({ variant: "destructive", title: "Update failed" })
+    } finally {
+      setLoading(false)
+    }
+  }
+
   const updateStatus = async (visitId: string, newStatus: string) => {
     if (!db) return
     await updateDoc(doc(db, "siteVisits", visitId), {
@@ -125,24 +158,6 @@ export default function SiteVisitManager() {
     }
   }
 
-  const handleSaveBudget = async () => {
-    if (!db || !selectedVisit) return
-    setLoading(true)
-    try {
-      await updateDoc(doc(db, "siteVisits", selectedVisit.id), {
-        estimatedBudget: parseFloat(tempBudget) || 0,
-        status: "Quoted",
-        updatedAt: serverTimestamp()
-      })
-      toast({ title: "Budget update ho gaya!" })
-      setSelectedVisit((prev: any) => ({ ...prev, estimatedBudget: parseFloat(tempBudget) || 0, status: "Quoted" }))
-    } catch (e) {
-      toast({ variant: "destructive", title: "Save failed" })
-    } finally {
-      setLoading(false)
-    }
-  }
-
   const deleteVisit = async (visitId: string) => {
     if (!db) return
     await deleteDoc(doc(db, "siteVisits", visitId))
@@ -153,7 +168,12 @@ export default function SiteVisitManager() {
   React.useEffect(() => {
     if (selectedVisit) {
       setTempMeasurements(selectedVisit.measurements || "")
-      setTempBudget(selectedVisit.estimatedBudget?.toString() || "")
+      setEditFormData({
+        customerName: selectedVisit.customerName,
+        phone: selectedVisit.phone,
+        email: selectedVisit.email,
+        serviceType: selectedVisit.serviceType
+      })
     }
   }, [selectedVisit])
 
@@ -196,11 +216,6 @@ export default function SiteVisitManager() {
                       <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest flex items-center gap-1">
                         <Phone className="w-3 h-3 text-accent" /> {visit.phone}
                       </p>
-                      {visit.email && (
-                        <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest flex items-center gap-1">
-                          <Mail className="w-3 h-3 text-accent" /> {visit.email}
-                        </p>
-                      )}
                       <p className="text-[10px] font-bold text-primary uppercase tracking-widest flex items-center gap-1">
                         <Briefcase className="w-3 h-3 text-accent" /> {visit.serviceType}
                       </p>
@@ -221,6 +236,7 @@ export default function SiteVisitManager() {
         </div>
       </ScrollArea>
 
+      {/* NEW PARTY MODAL */}
       <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
         <DialogContent className="rounded-[2.5rem] w-[95%] max-w-md p-8">
           <DialogHeader>
@@ -250,7 +266,6 @@ export default function SiteVisitManager() {
                   <SelectItem value="Wardrobe System">Wardrobe System</SelectItem>
                   <SelectItem value="Wall Paneling">Wall Paneling</SelectItem>
                   <SelectItem value="PVC Ceiling">PVC Ceiling</SelectItem>
-                  <SelectItem value="Hardware Purchase">Hardware Purchase</SelectItem>
                   <SelectItem value="Full Interior">Full Interior</SelectItem>
                 </SelectContent>
               </Select>
@@ -264,19 +279,68 @@ export default function SiteVisitManager() {
         </DialogContent>
       </Dialog>
 
+      {/* PARTY MANAGEMENT TOOLS (4 ICONS) */}
       {selectedVisit && (
         <div className="fixed inset-0 z-[100] bg-white animate-in slide-in-from-bottom duration-300 flex flex-col">
-          <div className="p-6 flex items-center justify-between border-b">
+          <div className="p-6 flex items-center justify-between border-b bg-white/80 backdrop-blur-md sticky top-0 z-50">
             <div className="flex flex-col">
               <span className="text-[10px] font-black text-accent uppercase tracking-[0.2em]">Management Tools</span>
               <h2 className="text-xl font-black text-primary uppercase">{selectedVisit.customerName}</h2>
             </div>
-            <Button variant="ghost" size="icon" onClick={() => setSelectedVisit(null)} className="rounded-full bg-gray-50">
-              <X className="w-6 h-6" />
-            </Button>
+            <div className="flex items-center gap-2">
+              <Button variant="ghost" size="icon" onClick={() => { if(confirm("Bhai, record delete kar dein?")) deleteVisit(selectedVisit.id) }} className="rounded-full text-destructive">
+                <Trash2 className="w-5 h-5" />
+              </Button>
+              <Button variant="ghost" size="icon" onClick={() => setSelectedVisit(null)} className="rounded-full bg-gray-50">
+                <X className="w-6 h-6" />
+              </Button>
+            </div>
           </div>
 
           <div className="flex-1 p-8 grid grid-cols-2 gap-6 content-center">
+            {/* Tool 1: Edit Details */}
+            <Dialog>
+              <DialogTrigger asChild>
+                <button className="aspect-square bg-blue-50 rounded-[2.5rem] flex flex-col items-center justify-center gap-3 border-2 border-blue-100 active:scale-95 transition-all shadow-sm">
+                  <div className="w-16 h-16 bg-white rounded-3xl flex items-center justify-center shadow-md">
+                    <Edit3 className="w-8 h-8 text-blue-500" />
+                  </div>
+                  <span className="font-black text-blue-700 text-sm uppercase">Edit Details</span>
+                </button>
+              </DialogTrigger>
+              <DialogContent className="rounded-[2.5rem] w-[95%]">
+                <DialogHeader>
+                  <DialogTitle className="font-black uppercase">Update Details</DialogTitle>
+                </DialogHeader>
+                <div className="space-y-4 py-4">
+                  <div className="space-y-1">
+                    <Label className="text-xs font-bold uppercase">Name</Label>
+                    <Input value={editFormData?.customerName} onChange={e => setEditFormData({...editFormData, customerName: e.target.value})} className="h-12 rounded-xl bg-muted/30 border-none font-bold" />
+                  </div>
+                  <div className="space-y-1">
+                    <Label className="text-xs font-bold uppercase">Phone</Label>
+                    <Input value={editFormData?.phone} onChange={e => setEditFormData({...editFormData, phone: e.target.value})} className="h-12 rounded-xl bg-muted/30 border-none font-bold" />
+                  </div>
+                  <div className="space-y-1">
+                    <Label className="text-xs font-bold uppercase">Service</Label>
+                    <Select value={editFormData?.serviceType} onValueChange={(val) => setEditFormData({...editFormData, serviceType: val})}>
+                      <SelectTrigger className="h-12 rounded-xl bg-muted/30 border-none font-bold">
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="Modular Kitchen">Modular Kitchen</SelectItem>
+                        <SelectItem value="Wardrobe System">Wardrobe System</SelectItem>
+                        <SelectItem value="Wall Paneling">Wall Paneling</SelectItem>
+                        <SelectItem value="Full Interior">Full Interior</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <Button onClick={handleUpdateDetails} disabled={loading} className="w-full h-12 bg-blue-600 text-white font-bold rounded-xl">Save Changes</Button>
+                </div>
+              </DialogContent>
+            </Dialog>
+
+            {/* Tool 2: Naap (Measurement) */}
             <Dialog>
               <DialogTrigger asChild>
                 <button className="aspect-square bg-orange-50 rounded-[2.5rem] flex flex-col items-center justify-center gap-3 border-2 border-orange-100 active:scale-95 transition-all shadow-sm">
@@ -298,50 +362,20 @@ export default function SiteVisitManager() {
                     className="min-h-[200px] rounded-2xl bg-muted/30 border-none p-4 font-bold"
                   />
                   <Button onClick={handleSaveNaap} disabled={loading} className="w-full h-12 bg-accent text-white font-bold rounded-xl flex gap-2">
-                    <Save className="w-4 h-4" /> Save Measurements
+                    <Save className="w-4 h-4" /> Save Naap
                   </Button>
                 </div>
               </DialogContent>
             </Dialog>
 
-            <Dialog>
-              <DialogTrigger asChild>
-                <button className="aspect-square bg-blue-50 rounded-[2.5rem] flex flex-col items-center justify-center gap-3 border-2 border-blue-100 active:scale-95 transition-all shadow-sm">
-                  <div className="w-16 h-16 bg-white rounded-3xl flex items-center justify-center shadow-md">
-                    <Calculator className="w-8 h-8 text-blue-500" />
-                  </div>
-                  <span className="font-black text-blue-700 text-sm uppercase">Budget</span>
-                </button>
-              </DialogTrigger>
-              <DialogContent className="rounded-[2.5rem] w-[95%]">
-                <DialogHeader>
-                  <DialogTitle className="font-black uppercase">Tentative Budget</DialogTitle>
-                </DialogHeader>
-                <div className="space-y-4">
-                  <div className="space-y-1">
-                    <Label className="text-xs font-bold uppercase">Estimated Amount (₹)</Label>
-                    <Input 
-                      type="number"
-                      value={tempBudget}
-                      onChange={(e) => setTempBudget(e.target.value)}
-                      placeholder="e.g. 50000"
-                      className="h-12 rounded-xl bg-muted/30 border-none font-bold"
-                    />
-                  </div>
-                  <Button onClick={handleSaveBudget} disabled={loading} className="w-full h-12 bg-blue-600 text-white font-bold rounded-xl flex gap-2">
-                    <Save className="w-4 h-4" /> Save Budget
-                  </Button>
-                </div>
-              </DialogContent>
-            </Dialog>
-
+            {/* Tool 3: Status */}
             <Dialog>
               <DialogTrigger asChild>
                 <button className="aspect-square bg-green-50 rounded-[2.5rem] flex flex-col items-center justify-center gap-3 border-2 border-green-100 active:scale-95 transition-all shadow-sm">
                   <div className="w-16 h-16 bg-white rounded-3xl flex items-center justify-center shadow-md">
                     <Settings2 className="w-8 h-8 text-green-500" />
                   </div>
-                  <span className="font-black text-green-700 text-sm uppercase">Status</span>
+                  <span className="font-black text-green-700 text-sm uppercase">Kaam Status</span>
                 </button>
               </DialogTrigger>
               <DialogContent className="rounded-[2.5rem] w-[95%]">
@@ -356,6 +390,7 @@ export default function SiteVisitManager() {
                       variant={selectedVisit.status === s ? "default" : "outline"}
                       className="h-12 rounded-xl font-black uppercase text-xs"
                     >
+                      {selectedVisit.status === s && <CheckCircle2 className="w-4 h-4 mr-2" />}
                       {s}
                     </Button>
                   ))}
@@ -363,32 +398,46 @@ export default function SiteVisitManager() {
               </DialogContent>
             </Dialog>
 
-            <button 
-              onClick={() => { if(confirm("Bhai, record delete kar dein?")) deleteVisit(selectedVisit.id) }}
-              className="aspect-square bg-red-50 rounded-[2.5rem] flex flex-col items-center justify-center gap-3 border-2 border-red-100 active:scale-95 transition-all shadow-sm"
-            >
-              <div className="w-16 h-16 bg-white rounded-3xl flex items-center justify-center shadow-md">
-                <Trash2 className="w-8 h-8 text-red-500" />
-              </div>
-              <span className="font-black text-red-700 text-sm uppercase">Delete</span>
-            </button>
+            {/* Tool 4: Photos */}
+            <Dialog>
+              <DialogTrigger asChild>
+                <button className="aspect-square bg-purple-50 rounded-[2.5rem] flex flex-col items-center justify-center gap-3 border-2 border-purple-100 active:scale-95 transition-all shadow-sm">
+                  <div className="w-16 h-16 bg-white rounded-3xl flex items-center justify-center shadow-md">
+                    <Camera className="w-8 h-8 text-purple-500" />
+                  </div>
+                  <span className="font-black text-purple-700 text-sm uppercase">Site Photos</span>
+                </button>
+              </DialogTrigger>
+              <DialogContent className="rounded-[2.5rem] w-[95%]">
+                <DialogHeader>
+                  <DialogTitle className="font-black uppercase">Site Photos</DialogTitle>
+                </DialogHeader>
+                <div className="py-12 flex flex-col items-center justify-center text-center space-y-4 opacity-50">
+                  <div className="w-20 h-20 bg-muted rounded-full flex items-center justify-center">
+                    <Camera className="w-10 h-10" />
+                  </div>
+                  <p className="text-sm font-bold uppercase tracking-widest">Storage integration<br/>coming soon!</p>
+                </div>
+              </DialogContent>
+            </Dialog>
           </div>
 
-          <div className="p-8 bg-gray-50 border-t space-y-2">
-            <div className="flex items-center gap-3 text-primary/60">
-              <Phone className="w-4 h-4" />
-              <span className="text-xs font-bold uppercase truncate">{selectedVisit.phone}</span>
-            </div>
-            {selectedVisit.email && (
+          <div className="p-8 bg-gray-50 border-t space-y-4">
+            <div className="flex items-center justify-between">
               <div className="flex items-center gap-3 text-primary/60">
-                <Mail className="w-4 h-4" />
-                <span className="text-xs font-bold uppercase truncate">{selectedVisit.email}</span>
+                <Phone className="w-4 h-4" />
+                <span className="text-xs font-bold uppercase">{selectedVisit.phone}</span>
               </div>
-            )}
-            <div className="flex items-center gap-3 text-primary/60">
-              <Calendar className="w-4 h-4" />
-              <span className="text-xs font-bold uppercase">Registered: {selectedVisit.createdAt?.toDate ? format(selectedVisit.createdAt.toDate(), "dd MMM yyyy") : "Recent"}</span>
+              <div className="flex items-center gap-3 text-primary/60">
+                <Calendar className="w-4 h-4" />
+                <span className="text-xs font-bold uppercase">{selectedVisit.createdAt?.toDate ? format(selectedVisit.createdAt.toDate(), "dd MMM") : "Recent"}</span>
+              </div>
             </div>
+            <a href={`tel:${selectedVisit.phone}`} className="block">
+              <Button className="w-full h-14 rounded-2xl bg-primary text-white font-black uppercase tracking-tight shadow-xl shadow-primary/10">
+                Call Party Now
+              </Button>
+            </a>
           </div>
         </div>
       )}
