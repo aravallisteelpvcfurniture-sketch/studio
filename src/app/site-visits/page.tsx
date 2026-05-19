@@ -13,12 +13,15 @@ import {
   UserPlus, 
   X, 
   Save, 
-  Mail, 
   Briefcase, 
   Edit3, 
   Camera,
   CheckCircle2,
-  Calendar
+  Calendar,
+  PenTool,
+  Box,
+  Layers,
+  Sparkles
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
@@ -33,6 +36,7 @@ import { format } from "date-fns"
 import { useToast } from "@/hooks/use-toast"
 import { Badge } from "@/components/ui/badge"
 import { ScrollArea } from "@/components/ui/scroll-area"
+import { generateDesignIdeas } from "@/ai/flows/ai-design-idea-generator"
 
 const STATUS_COLORS: Record<string, string> = {
   "New": "bg-blue-100 text-blue-700",
@@ -49,12 +53,14 @@ export default function SiteVisitManager() {
   const { user, isUserLoading } = useUser()
   const { toast } = useToast()
   
-  const [isModalOpen, setIsModalOpen] = React.useState(true)
+  const [isModalOpen, setIsModalOpen] = React.useState(false)
   const [loading, setLoading] = React.useState(false)
   const [selectedVisit, setSelectedVisit] = React.useState<any>(null)
   
   const [tempMeasurements, setTempMeasurements] = React.useState("")
   const [editFormData, setEditFormData] = React.useState<any>(null)
+  const [designLoading, setDesignLoading] = React.useState(false)
+  const [generatedDesign, setGeneratedDesign] = React.useState<any>(null)
 
   const isAdmin = React.useMemo(() => {
     if (!user || isUserLoading) return false;
@@ -158,8 +164,29 @@ export default function SiteVisitManager() {
     }
   }
 
+  const handleGenerateAIDesign = async (type: '2D' | '3D', category: string) => {
+    if (!selectedVisit) return
+    setDesignLoading(true)
+    try {
+      const result = await generateDesignIdeas({
+        spaceType: category,
+        roomSize: "Custom Site Size",
+        stylePreference: "Modern " + type,
+        colorPalette: ["Steel Grey", "Natural Wood"],
+        specificRequirements: `Create a ${type} drawing for ${category}. Focus on ${selectedVisit.measurements || 'site specifications'}.`
+      })
+      setGeneratedDesign(result)
+      toast({ title: `${type} Design Concept Ready!` })
+    } catch (error) {
+      toast({ variant: "destructive", title: "AI Design failed" })
+    } finally {
+      setDesignLoading(false)
+    }
+  }
+
   const deleteVisit = async (visitId: string) => {
     if (!db) return
+    if(!confirm("Bhai, record delete kar dein?")) return
     await deleteDoc(doc(db, "siteVisits", visitId))
     toast({ title: "Record deleted" })
     setSelectedVisit(null)
@@ -174,6 +201,7 @@ export default function SiteVisitManager() {
         email: selectedVisit.email,
         serviceType: selectedVisit.serviceType
       })
+      setGeneratedDesign(null)
     }
   }, [selectedVisit])
 
@@ -189,7 +217,7 @@ export default function SiteVisitManager() {
               <ChevronLeft className="w-6 h-6" />
             </Button>
           </Link>
-          <h1 className="text-xl font-black text-primary">Visitor Manager</h1>
+          <h1 className="text-xl font-black text-primary uppercase tracking-tight">Visitor Manager</h1>
         </div>
         
         <Button onClick={() => setIsModalOpen(true)} size="icon" className="rounded-full bg-accent text-white shadow-lg">
@@ -265,7 +293,8 @@ export default function SiteVisitManager() {
                   <SelectItem value="Modular Kitchen">Modular Kitchen</SelectItem>
                   <SelectItem value="Wardrobe System">Wardrobe System</SelectItem>
                   <SelectItem value="Wall Paneling">Wall Paneling</SelectItem>
-                  <SelectItem value="PVC Ceiling">PVC Ceiling</SelectItem>
+                  <SelectItem value="Railing Design">Railing Design</SelectItem>
+                  <SelectItem value="Stairs Drawing">Stairs Drawing</SelectItem>
                   <SelectItem value="Full Interior">Full Interior</SelectItem>
                 </SelectContent>
               </Select>
@@ -279,7 +308,7 @@ export default function SiteVisitManager() {
         </DialogContent>
       </Dialog>
 
-      {/* PARTY MANAGEMENT TOOLS (4 ICONS) */}
+      {/* PARTY MANAGEMENT TOOLS (5 ICONS) */}
       {selectedVisit && (
         <div className="fixed inset-0 z-[100] bg-white animate-in slide-in-from-bottom duration-300 flex flex-col">
           <div className="p-6 flex items-center justify-between border-b bg-white/80 backdrop-blur-md sticky top-0 z-50">
@@ -288,7 +317,7 @@ export default function SiteVisitManager() {
               <h2 className="text-xl font-black text-primary uppercase">{selectedVisit.customerName}</h2>
             </div>
             <div className="flex items-center gap-2">
-              <Button variant="ghost" size="icon" onClick={() => { if(confirm("Bhai, record delete kar dein?")) deleteVisit(selectedVisit.id) }} className="rounded-full text-destructive">
+              <Button variant="ghost" size="icon" onClick={() => deleteVisit(selectedVisit.id)} className="rounded-full text-destructive">
                 <Trash2 className="w-5 h-5" />
               </Button>
               <Button variant="ghost" size="icon" onClick={() => setSelectedVisit(null)} className="rounded-full bg-gray-50">
@@ -297,132 +326,211 @@ export default function SiteVisitManager() {
             </div>
           </div>
 
-          <div className="flex-1 p-8 grid grid-cols-2 gap-6 content-center">
-            {/* Tool 1: Edit Details */}
-            <Dialog>
-              <DialogTrigger asChild>
-                <button className="aspect-square bg-blue-50 rounded-[2.5rem] flex flex-col items-center justify-center gap-3 border-2 border-blue-100 active:scale-95 transition-all shadow-sm">
-                  <div className="w-16 h-16 bg-white rounded-3xl flex items-center justify-center shadow-md">
-                    <Edit3 className="w-8 h-8 text-blue-500" />
+          <ScrollArea className="flex-1">
+            <div className="p-8 grid grid-cols-2 gap-6 pb-24">
+              {/* Tool 1: Edit Details */}
+              <Dialog>
+                <DialogTrigger asChild>
+                  <button className="aspect-square bg-blue-50 rounded-[2.5rem] flex flex-col items-center justify-center gap-3 border-2 border-blue-100 active:scale-95 transition-all shadow-sm">
+                    <div className="w-16 h-16 bg-white rounded-3xl flex items-center justify-center shadow-md">
+                      <Edit3 className="w-8 h-8 text-blue-500" />
+                    </div>
+                    <span className="font-black text-blue-700 text-[10px] uppercase">Edit Details</span>
+                  </button>
+                </DialogTrigger>
+                <DialogContent className="rounded-[2.5rem] w-[95%]">
+                  <DialogHeader>
+                    <DialogTitle className="font-black uppercase">Update Details</DialogTitle>
+                  </DialogHeader>
+                  <div className="space-y-4 py-4">
+                    <div className="space-y-1">
+                      <Label className="text-xs font-bold uppercase">Name</Label>
+                      <Input value={editFormData?.customerName} onChange={e => setEditFormData({...editFormData, customerName: e.target.value})} className="h-12 rounded-xl bg-muted/30 border-none font-bold" />
+                    </div>
+                    <div className="space-y-1">
+                      <Label className="text-xs font-bold uppercase">Phone</Label>
+                      <Input value={editFormData?.phone} onChange={e => setEditFormData({...editFormData, phone: e.target.value})} className="h-12 rounded-xl bg-muted/30 border-none font-bold" />
+                    </div>
+                    <div className="space-y-1">
+                      <Label className="text-xs font-bold uppercase">Service</Label>
+                      <Select value={editFormData?.serviceType} onValueChange={(val) => setEditFormData({...editFormData, serviceType: val})}>
+                        <SelectTrigger className="h-12 rounded-xl bg-muted/30 border-none font-bold">
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="Modular Kitchen">Modular Kitchen</SelectItem>
+                          <SelectItem value="Wardrobe System">Wardrobe System</SelectItem>
+                          <SelectItem value="Wall Paneling">Wall Paneling</SelectItem>
+                          <SelectItem value="Railing Design">Railing Design</SelectItem>
+                          <SelectItem value="Stairs Drawing">Stairs Drawing</SelectItem>
+                          <SelectItem value="Full Interior">Full Interior</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    <Button onClick={handleUpdateDetails} disabled={loading} className="w-full h-14 bg-blue-600 text-white font-bold rounded-2xl shadow-lg">Save Changes</Button>
                   </div>
-                  <span className="font-black text-blue-700 text-sm uppercase">Edit Details</span>
-                </button>
-              </DialogTrigger>
-              <DialogContent className="rounded-[2.5rem] w-[95%]">
-                <DialogHeader>
-                  <DialogTitle className="font-black uppercase">Update Details</DialogTitle>
-                </DialogHeader>
-                <div className="space-y-4 py-4">
-                  <div className="space-y-1">
-                    <Label className="text-xs font-bold uppercase">Name</Label>
-                    <Input value={editFormData?.customerName} onChange={e => setEditFormData({...editFormData, customerName: e.target.value})} className="h-12 rounded-xl bg-muted/30 border-none font-bold" />
-                  </div>
-                  <div className="space-y-1">
-                    <Label className="text-xs font-bold uppercase">Phone</Label>
-                    <Input value={editFormData?.phone} onChange={e => setEditFormData({...editFormData, phone: e.target.value})} className="h-12 rounded-xl bg-muted/30 border-none font-bold" />
-                  </div>
-                  <div className="space-y-1">
-                    <Label className="text-xs font-bold uppercase">Service</Label>
-                    <Select value={editFormData?.serviceType} onValueChange={(val) => setEditFormData({...editFormData, serviceType: val})}>
-                      <SelectTrigger className="h-12 rounded-xl bg-muted/30 border-none font-bold">
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="Modular Kitchen">Modular Kitchen</SelectItem>
-                        <SelectItem value="Wardrobe System">Wardrobe System</SelectItem>
-                        <SelectItem value="Wall Paneling">Wall Paneling</SelectItem>
-                        <SelectItem value="Full Interior">Full Interior</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-                  <Button onClick={handleUpdateDetails} disabled={loading} className="w-full h-12 bg-blue-600 text-white font-bold rounded-xl">Save Changes</Button>
-                </div>
-              </DialogContent>
-            </Dialog>
+                </DialogContent>
+              </Dialog>
 
-            {/* Tool 2: Naap (Measurement) */}
-            <Dialog>
-              <DialogTrigger asChild>
-                <button className="aspect-square bg-orange-50 rounded-[2.5rem] flex flex-col items-center justify-center gap-3 border-2 border-orange-100 active:scale-95 transition-all shadow-sm">
-                  <div className="w-16 h-16 bg-white rounded-3xl flex items-center justify-center shadow-md">
-                    <Ruler className="w-8 h-8 text-orange-500" />
-                  </div>
-                  <span className="font-black text-orange-700 text-sm uppercase">Naap / Size</span>
-                </button>
-              </DialogTrigger>
-              <DialogContent className="rounded-[2.5rem] w-[95%]">
-                <DialogHeader>
-                  <DialogTitle className="font-black uppercase">Measurement Data</DialogTitle>
-                </DialogHeader>
-                <div className="space-y-4">
-                  <Textarea 
-                    value={tempMeasurements}
-                    onChange={(e) => setTempMeasurements(e.target.value)}
-                    placeholder="Kitchen L-Shape: 10x8ft, PVC 18mm..."
-                    className="min-h-[200px] rounded-2xl bg-muted/30 border-none p-4 font-bold"
-                  />
-                  <Button onClick={handleSaveNaap} disabled={loading} className="w-full h-12 bg-accent text-white font-bold rounded-xl flex gap-2">
-                    <Save className="w-4 h-4" /> Save Naap
-                  </Button>
-                </div>
-              </DialogContent>
-            </Dialog>
-
-            {/* Tool 3: Status */}
-            <Dialog>
-              <DialogTrigger asChild>
-                <button className="aspect-square bg-green-50 rounded-[2.5rem] flex flex-col items-center justify-center gap-3 border-2 border-green-100 active:scale-95 transition-all shadow-sm">
-                  <div className="w-16 h-16 bg-white rounded-3xl flex items-center justify-center shadow-md">
-                    <Settings2 className="w-8 h-8 text-green-500" />
-                  </div>
-                  <span className="font-black text-green-700 text-sm uppercase">Kaam Status</span>
-                </button>
-              </DialogTrigger>
-              <DialogContent className="rounded-[2.5rem] w-[95%]">
-                <DialogHeader>
-                  <DialogTitle className="font-black uppercase">Update Status</DialogTitle>
-                </DialogHeader>
-                <div className="grid grid-cols-1 gap-3 py-4">
-                  {Object.keys(STATUS_COLORS).map(s => (
-                    <Button 
-                      key={s} 
-                      onClick={() => updateStatus(selectedVisit.id, s)}
-                      variant={selectedVisit.status === s ? "default" : "outline"}
-                      className="h-12 rounded-xl font-black uppercase text-xs"
-                    >
-                      {selectedVisit.status === s && <CheckCircle2 className="w-4 h-4 mr-2" />}
-                      {s}
+              {/* Tool 2: Naap (Measurement) */}
+              <Dialog>
+                <DialogTrigger asChild>
+                  <button className="aspect-square bg-orange-50 rounded-[2.5rem] flex flex-col items-center justify-center gap-3 border-2 border-orange-100 active:scale-95 transition-all shadow-sm">
+                    <div className="w-16 h-16 bg-white rounded-3xl flex items-center justify-center shadow-md">
+                      <Ruler className="w-8 h-8 text-orange-500" />
+                    </div>
+                    <span className="font-black text-orange-700 text-[10px] uppercase">Naap / Size</span>
+                  </button>
+                </DialogTrigger>
+                <DialogContent className="rounded-[2.5rem] w-[95%]">
+                  <DialogHeader>
+                    <DialogTitle className="font-black uppercase">Measurement Data</DialogTitle>
+                  </DialogHeader>
+                  <div className="space-y-4">
+                    <Textarea 
+                      value={tempMeasurements}
+                      onChange={(e) => setTempMeasurements(e.target.value)}
+                      placeholder="Kitchen L-Shape: 10x8ft, PVC 18mm..."
+                      className="min-h-[200px] rounded-2xl bg-muted/30 border-none p-4 font-bold"
+                    />
+                    <Button onClick={handleSaveNaap} disabled={loading} className="w-full h-14 bg-accent text-white font-bold rounded-2xl flex gap-2 shadow-lg">
+                      <Save className="w-4 h-4" /> Save Naap
                     </Button>
-                  ))}
-                </div>
-              </DialogContent>
-            </Dialog>
-
-            {/* Tool 4: Photos */}
-            <Dialog>
-              <DialogTrigger asChild>
-                <button className="aspect-square bg-purple-50 rounded-[2.5rem] flex flex-col items-center justify-center gap-3 border-2 border-purple-100 active:scale-95 transition-all shadow-sm">
-                  <div className="w-16 h-16 bg-white rounded-3xl flex items-center justify-center shadow-md">
-                    <Camera className="w-8 h-8 text-purple-500" />
                   </div>
-                  <span className="font-black text-purple-700 text-sm uppercase">Site Photos</span>
-                </button>
-              </DialogTrigger>
-              <DialogContent className="rounded-[2.5rem] w-[95%]">
-                <DialogHeader>
-                  <DialogTitle className="font-black uppercase">Site Photos</DialogTitle>
-                </DialogHeader>
-                <div className="py-12 flex flex-col items-center justify-center text-center space-y-4 opacity-50">
-                  <div className="w-20 h-20 bg-muted rounded-full flex items-center justify-center">
-                    <Camera className="w-10 h-10" />
-                  </div>
-                  <p className="text-sm font-bold uppercase tracking-widest">Storage integration<br/>coming soon!</p>
-                </div>
-              </DialogContent>
-            </Dialog>
-          </div>
+                </DialogContent>
+              </Dialog>
 
-          <div className="p-8 bg-gray-50 border-t space-y-4">
+              {/* Tool 3: Status */}
+              <Dialog>
+                <DialogTrigger asChild>
+                  <button className="aspect-square bg-green-50 rounded-[2.5rem] flex flex-col items-center justify-center gap-3 border-2 border-green-100 active:scale-95 transition-all shadow-sm">
+                    <div className="w-16 h-16 bg-white rounded-3xl flex items-center justify-center shadow-md">
+                      <Settings2 className="w-8 h-8 text-green-500" />
+                    </div>
+                    <span className="font-black text-green-700 text-[10px] uppercase">Kaam Status</span>
+                  </button>
+                </DialogTrigger>
+                <DialogContent className="rounded-[2.5rem] w-[95%]">
+                  <DialogHeader>
+                    <DialogTitle className="font-black uppercase">Update Status</DialogTitle>
+                  </DialogHeader>
+                  <div className="grid grid-cols-1 gap-3 py-4">
+                    {Object.keys(STATUS_COLORS).map(s => (
+                      <Button 
+                        key={s} 
+                        onClick={() => updateStatus(selectedVisit.id, s)}
+                        variant={selectedVisit.status === s ? "default" : "outline"}
+                        className="h-12 rounded-xl font-black uppercase text-xs"
+                      >
+                        {selectedVisit.status === s && <CheckCircle2 className="w-4 h-4 mr-2" />}
+                        {s}
+                      </Button>
+                    ))}
+                  </div>
+                </DialogContent>
+              </Dialog>
+
+              {/* Tool 4: Photos */}
+              <Dialog>
+                <DialogTrigger asChild>
+                  <button className="aspect-square bg-purple-50 rounded-[2.5rem] flex flex-col items-center justify-center gap-3 border-2 border-purple-100 active:scale-95 transition-all shadow-sm">
+                    <div className="w-16 h-16 bg-white rounded-3xl flex items-center justify-center shadow-md">
+                      <Camera className="w-8 h-8 text-purple-500" />
+                    </div>
+                    <span className="font-black text-purple-700 text-[10px] uppercase">Site Photos</span>
+                  </button>
+                </DialogTrigger>
+                <DialogContent className="rounded-[2.5rem] w-[95%]">
+                  <DialogHeader>
+                    <DialogTitle className="font-black uppercase">Site Photos</DialogTitle>
+                  </DialogHeader>
+                  <div className="py-12 flex flex-col items-center justify-center text-center space-y-4 opacity-50">
+                    <div className="w-20 h-20 bg-muted rounded-full flex items-center justify-center">
+                      <Camera className="w-10 h-10" />
+                    </div>
+                    <p className="text-sm font-bold uppercase tracking-widest">Coming Soon!</p>
+                  </div>
+                </DialogContent>
+              </Dialog>
+
+              {/* Tool 5: AI Design Drawing (2D/3D) */}
+              <Dialog>
+                <DialogTrigger asChild>
+                  <button className="aspect-square bg-primary/5 rounded-[2.5rem] flex flex-col items-center justify-center gap-3 border-2 border-primary/10 active:scale-95 transition-all shadow-sm group">
+                    <div className="w-16 h-16 bg-white rounded-3xl flex items-center justify-center shadow-md">
+                      <PenTool className="w-8 h-8 text-primary group-hover:rotate-12 transition-transform" />
+                    </div>
+                    <span className="font-black text-primary text-[10px] uppercase">Design Studio</span>
+                  </button>
+                </DialogTrigger>
+                <DialogContent className="rounded-[3rem] w-[95%] max-h-[85vh] overflow-y-auto no-scrollbar">
+                  <DialogHeader>
+                    <DialogTitle className="text-2xl font-black text-primary flex items-center gap-2 uppercase tracking-tight">
+                      <Sparkles className="w-6 h-6 text-accent" />
+                      Design Studio
+                    </DialogTitle>
+                  </DialogHeader>
+                  
+                  <div className="space-y-6 py-6">
+                    <div className="grid grid-cols-2 gap-4">
+                      <Button 
+                        onClick={() => handleGenerateAIDesign('2D', selectedVisit.serviceType)} 
+                        disabled={designLoading}
+                        variant="outline" 
+                        className="h-24 rounded-3xl flex flex-col gap-2 border-2 border-accent/20 bg-accent/5"
+                      >
+                        <Layers className="w-6 h-6 text-accent" />
+                        <span className="font-black text-[10px] uppercase">2D Drawing</span>
+                      </Button>
+                      <Button 
+                        onClick={() => handleGenerateAIDesign('3D', selectedVisit.serviceType)} 
+                        disabled={designLoading}
+                        variant="outline" 
+                        className="h-24 rounded-3xl flex flex-col gap-2 border-2 border-blue-200 bg-blue-50"
+                      >
+                        <Box className="w-6 h-6 text-blue-600" />
+                        <span className="font-black text-[10px] uppercase">3D Realistic</span>
+                      </Button>
+                    </div>
+
+                    <div className="bg-muted/30 p-4 rounded-2xl border border-dashed border-muted">
+                      <h4 className="text-[10px] font-black uppercase text-muted-foreground mb-3 tracking-widest">Drawing Subject</h4>
+                      <div className="flex flex-wrap gap-2">
+                        {['Stairs', 'Railing', 'Kitchen', 'Wardrobe', 'Ceiling'].map(cat => (
+                          <Badge key={cat} variant="secondary" className="px-3 py-1 font-bold text-[9px] uppercase">{cat}</Badge>
+                        ))}
+                      </div>
+                    </div>
+
+                    {designLoading && (
+                      <div className="flex flex-col items-center py-12 gap-4 animate-pulse">
+                        <div className="w-16 h-16 rounded-full border-4 border-accent border-t-transparent animate-spin" />
+                        <p className="font-black text-sm uppercase tracking-widest text-accent">Generating Drawing...</p>
+                      </div>
+                    )}
+
+                    {generatedDesign && (
+                      <div className="space-y-4 animate-in zoom-in-95 duration-500">
+                        <div className="bg-primary p-6 rounded-[2.5rem] text-white">
+                          <h4 className="text-lg font-black uppercase mb-2">{generatedDesign.designConceptTitle}</h4>
+                          <p className="text-white/70 text-xs leading-relaxed">{generatedDesign.designOverview}</p>
+                        </div>
+                        <div className="grid gap-2">
+                          {generatedDesign.designIdeas.slice(0, 3).map((idea: string, i: number) => (
+                            <div key={i} className="flex gap-2 text-[10px] font-bold text-primary/80 bg-muted/50 p-3 rounded-xl border border-muted">
+                              <span className="text-accent">•</span> {idea}
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                </DialogContent>
+              </Dialog>
+            </div>
+          </ScrollArea>
+
+          <div className="p-8 bg-gray-50 border-t space-y-4 sticky bottom-0 z-50">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-3 text-primary/60">
                 <Phone className="w-4 h-4" />
@@ -434,7 +542,7 @@ export default function SiteVisitManager() {
               </div>
             </div>
             <a href={`tel:${selectedVisit.phone}`} className="block">
-              <Button className="w-full h-14 rounded-2xl bg-primary text-white font-black uppercase tracking-tight shadow-xl shadow-primary/10">
+              <Button className="w-full h-14 rounded-2xl bg-primary text-white font-black uppercase tracking-tight shadow-xl shadow-primary/10 active:scale-95 transition-all">
                 Call Party Now
               </Button>
             </a>
@@ -444,3 +552,4 @@ export default function SiteVisitManager() {
     </div>
   )
 }
+
