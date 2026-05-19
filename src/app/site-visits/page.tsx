@@ -3,7 +3,7 @@
 
 import * as React from "react"
 import Link from "next/link"
-import { ChevronLeft, Ruler, MapPin, Phone, Calendar, Trash2, Loader2, Calculator, Settings2, UserPlus, X, Save } from "lucide-react"
+import { ChevronLeft, Ruler, MapPin, Phone, Calendar, Trash2, Loader2, Calculator, Settings2, UserPlus, X, Save, Mail, Briefcase } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
@@ -12,6 +12,7 @@ import { Textarea } from "@/components/ui/textarea"
 import { useFirestore, useCollection, useUser, useMemoFirebase } from "@/firebase"
 import { collection, addDoc, updateDoc, deleteDoc, doc, query, orderBy, serverTimestamp } from "firebase/firestore"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogTrigger } from "@/components/ui/dialog"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { format } from "date-fns"
 import { useToast } from "@/hooks/use-toast"
 import { Badge } from "@/components/ui/badge"
@@ -36,7 +37,6 @@ export default function SiteVisitManager() {
   const [loading, setLoading] = React.useState(false)
   const [selectedVisit, setSelectedVisit] = React.useState<any>(null)
   
-  // States for the individual tool editing
   const [tempMeasurements, setTempMeasurements] = React.useState("")
   const [tempBudget, setTempBudget] = React.useState("")
 
@@ -55,8 +55,9 @@ export default function SiteVisitManager() {
   const [formData, setFormData] = React.useState({
     customerName: "",
     phone: "",
+    email: "",
     address: "",
-    serviceType: "Kitchen",
+    serviceType: "Modular Kitchen",
     status: "New",
     notes: "",
     measurements: "",
@@ -76,11 +77,21 @@ export default function SiteVisitManager() {
         createdAt: serverTimestamp(),
         updatedAt: serverTimestamp()
       })
-      toast({ title: "Visitor added successfully" })
+      toast({ title: "Party details save ho gayi!" })
       setIsModalOpen(false)
-      setFormData({ customerName: "", phone: "", address: "", serviceType: "Kitchen", status: "New", notes: "", measurements: "", estimatedBudget: 0 })
+      setFormData({ 
+        customerName: "", 
+        phone: "", 
+        email: "", 
+        address: "", 
+        serviceType: "Modular Kitchen", 
+        status: "New", 
+        notes: "", 
+        measurements: "", 
+        estimatedBudget: 0 
+      })
     } catch (e) {
-      toast({ variant: "destructive", title: "Failed to add visitor" })
+      toast({ variant: "destructive", title: "Save failed" })
     } finally {
       setLoading(false)
     }
@@ -92,7 +103,7 @@ export default function SiteVisitManager() {
       status: newStatus,
       updatedAt: serverTimestamp()
     })
-    toast({ title: `Status updated to ${newStatus}` })
+    toast({ title: `Status updated: ${newStatus}` })
     setSelectedVisit((prev: any) => ({ ...prev, status: newStatus }))
   }
 
@@ -181,9 +192,19 @@ export default function SiteVisitManager() {
                 <div className="flex justify-between items-start relative z-10">
                   <div className="space-y-1">
                     <h3 className="text-lg font-black text-primary leading-none uppercase tracking-tight">{visit.customerName}</h3>
-                    <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest flex items-center gap-1">
-                      <Phone className="w-3 h-3 text-accent" /> {visit.phone}
-                    </p>
+                    <div className="flex flex-col gap-1 mt-2">
+                      <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest flex items-center gap-1">
+                        <Phone className="w-3 h-3 text-accent" /> {visit.phone}
+                      </p>
+                      {visit.email && (
+                        <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest flex items-center gap-1">
+                          <Mail className="w-3 h-3 text-accent" /> {visit.email}
+                        </p>
+                      )}
+                      <p className="text-[10px] font-bold text-primary uppercase tracking-widest flex items-center gap-1">
+                        <Briefcase className="w-3 h-3 text-accent" /> {visit.serviceType}
+                      </p>
+                    </div>
                   </div>
                   <Badge className={`rounded-full border-none px-3 py-1 text-[8px] font-black ${STATUS_COLORS[visit.status] || "bg-gray-100"}`}>
                     {visit.status.toUpperCase()}
@@ -207,16 +228,32 @@ export default function SiteVisitManager() {
           </DialogHeader>
           <div className="space-y-4 py-4">
             <div className="space-y-1">
-              <Label className="text-[10px] font-black uppercase text-muted-foreground ml-1">Customer Name</Label>
+              <Label className="text-[10px] font-black uppercase text-muted-foreground ml-1">Party Name</Label>
               <Input placeholder="Bhai ka Naam..." value={formData.customerName} onChange={e => setFormData({...formData, customerName: e.target.value})} className="h-12 rounded-xl bg-muted/30 border-none px-4 font-bold" />
             </div>
             <div className="space-y-1">
-              <Label className="text-[10px] font-black uppercase text-muted-foreground ml-1">Phone Number</Label>
+              <Label className="text-[10px] font-black uppercase text-muted-foreground ml-1">Mobile Number</Label>
               <Input placeholder="9999999999" type="tel" value={formData.phone} onChange={e => setFormData({...formData, phone: e.target.value})} className="h-12 rounded-xl bg-muted/30 border-none px-4 font-bold" />
             </div>
             <div className="space-y-1">
-              <Label className="text-[10px] font-black uppercase text-muted-foreground ml-1">Full Address</Label>
-              <Input placeholder="Sahi Pata likhein..." value={formData.address} onChange={e => setFormData({...formData, address: e.target.value})} className="h-12 rounded-xl bg-muted/30 border-none px-4 font-bold" />
+              <Label className="text-[10px] font-black uppercase text-muted-foreground ml-1">Email Address</Label>
+              <Input placeholder="party@email.com" type="email" value={formData.email} onChange={e => setFormData({...formData, email: e.target.value})} className="h-12 rounded-xl bg-muted/30 border-none px-4 font-bold" />
+            </div>
+            <div className="space-y-1">
+              <Label className="text-[10px] font-black uppercase text-muted-foreground ml-1">Kis kaam se aaye?</Label>
+              <Select value={formData.serviceType} onValueChange={(val) => setFormData({...formData, serviceType: val})}>
+                <SelectTrigger className="h-12 rounded-xl bg-muted/30 border-none px-4 font-bold">
+                  <SelectValue placeholder="Select Purpose" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="Modular Kitchen">Modular Kitchen</SelectItem>
+                  <SelectItem value="Wardrobe System">Wardrobe System</SelectItem>
+                  <SelectItem value="Wall Paneling">Wall Paneling</SelectItem>
+                  <SelectItem value="PVC Ceiling">PVC Ceiling</SelectItem>
+                  <SelectItem value="Hardware Purchase">Hardware Purchase</SelectItem>
+                  <SelectItem value="Full Interior">Full Interior</SelectItem>
+                </SelectContent>
+              </Select>
             </div>
           </div>
           <DialogFooter>
@@ -240,7 +277,6 @@ export default function SiteVisitManager() {
           </div>
 
           <div className="flex-1 p-8 grid grid-cols-2 gap-6 content-center">
-            {/* Tool 1: Naap (Measurement) - REAL WORKING */}
             <Dialog>
               <DialogTrigger asChild>
                 <button className="aspect-square bg-orange-50 rounded-[2.5rem] flex flex-col items-center justify-center gap-3 border-2 border-orange-100 active:scale-95 transition-all shadow-sm">
@@ -268,7 +304,6 @@ export default function SiteVisitManager() {
               </DialogContent>
             </Dialog>
 
-            {/* Tool 2: Budget (Estimate) - REAL WORKING */}
             <Dialog>
               <DialogTrigger asChild>
                 <button className="aspect-square bg-blue-50 rounded-[2.5rem] flex flex-col items-center justify-center gap-3 border-2 border-blue-100 active:scale-95 transition-all shadow-sm">
@@ -300,7 +335,6 @@ export default function SiteVisitManager() {
               </DialogContent>
             </Dialog>
 
-            {/* Tool 3: Status Update - REAL WORKING */}
             <Dialog>
               <DialogTrigger asChild>
                 <button className="aspect-square bg-green-50 rounded-[2.5rem] flex flex-col items-center justify-center gap-3 border-2 border-green-100 active:scale-95 transition-all shadow-sm">
@@ -329,7 +363,6 @@ export default function SiteVisitManager() {
               </DialogContent>
             </Dialog>
 
-            {/* Tool 4: Delete Record */}
             <button 
               onClick={() => { if(confirm("Bhai, record delete kar dein?")) deleteVisit(selectedVisit.id) }}
               className="aspect-square bg-red-50 rounded-[2.5rem] flex flex-col items-center justify-center gap-3 border-2 border-red-100 active:scale-95 transition-all shadow-sm"
@@ -343,9 +376,15 @@ export default function SiteVisitManager() {
 
           <div className="p-8 bg-gray-50 border-t space-y-2">
             <div className="flex items-center gap-3 text-primary/60">
-              <MapPin className="w-4 h-4" />
-              <span className="text-xs font-bold uppercase truncate">{selectedVisit.address || "No Address Added"}</span>
+              <Phone className="w-4 h-4" />
+              <span className="text-xs font-bold uppercase truncate">{selectedVisit.phone}</span>
             </div>
+            {selectedVisit.email && (
+              <div className="flex items-center gap-3 text-primary/60">
+                <Mail className="w-4 h-4" />
+                <span className="text-xs font-bold uppercase truncate">{selectedVisit.email}</span>
+              </div>
+            )}
             <div className="flex items-center gap-3 text-primary/60">
               <Calendar className="w-4 h-4" />
               <span className="text-xs font-bold uppercase">Registered: {selectedVisit.createdAt?.toDate ? format(selectedVisit.createdAt.toDate(), "dd MMM yyyy") : "Recent"}</span>

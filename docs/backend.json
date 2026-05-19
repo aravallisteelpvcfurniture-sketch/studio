@@ -78,6 +78,7 @@
       "properties": {
         "customerName": { "type": "string" },
         "phone": { "type": "string" },
+        "email": { "type": "string", "format": "email" },
         "address": { "type": "string" },
         "serviceType": { "type": "string" },
         "scheduledDate": { "type": "string", "format": "date-time" },
