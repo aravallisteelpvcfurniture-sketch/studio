@@ -4,7 +4,7 @@
 import * as React from "react"
 import { useRouter } from "next/navigation"
 import { useUser, useAuth } from "@/firebase"
-import { Loader2, LogOut, ShoppingBag, LayoutGrid, Sparkles, MapPin, Bell, Download, Calculator, ChevronRight, User, ClipboardList, PenTool } from "lucide-react"
+import { Loader2, LogOut, ShoppingBag, LayoutGrid, Sparkles, MapPin, Bell, Download, Calculator, ChevronRight, User, ClipboardList, PenTool, Layout } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { signOut } from "firebase/auth"
 import Link from "next/link"
@@ -107,20 +107,39 @@ export default function Home() {
       </div>
 
       <div className="flex-1 space-y-4 pt-6">
-        {/* Drawing & Design Studio Card */}
+        {/* New Dedicated Drawing Tool Card */}
         <div className="px-6">
           <Card 
-            onClick={() => router.push("/ai-designer")}
+            onClick={() => router.push("/drawing-tool")}
             className="group relative overflow-hidden p-8 rounded-[3rem] border-none bg-primary text-white shadow-2xl shadow-primary/20 active:scale-[0.97] transition-all cursor-pointer h-56 flex flex-col justify-end"
           >
             <div className="absolute top-0 right-0 w-48 h-48 bg-accent/20 rounded-full blur-[70px] -mr-24 -mt-24" />
             <div className="relative z-10 space-y-2">
               <div className="inline-flex items-center gap-2 bg-accent px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest mb-2">
-                <PenTool className="w-3 h-3 text-white" /> Drawing & Design Studio
+                <PenTool className="w-3 h-3 text-white" /> 2D/3D Drawing Tool
               </div>
-              <h3 className="text-3xl font-black tracking-tighter leading-none uppercase">2D/3D Drawing Tool</h3>
-              <p className="text-white/60 text-xs font-medium uppercase tracking-wider">Railings • Stairs • Interior Plans</p>
+              <h3 className="text-3xl font-black tracking-tighter leading-none uppercase">Technical Plans</h3>
+              <p className="text-white/60 text-xs font-medium uppercase tracking-wider">Railings • Stairs • Interior Layouts</p>
             </div>
+          </Card>
+        </div>
+
+        {/* AI Design Studio Card */}
+        <div className="px-6">
+          <Card 
+            onClick={() => router.push("/ai-designer")}
+            className="group relative overflow-hidden p-6 rounded-[2.5rem] border-none bg-white text-primary shadow-lg active:scale-[0.98] transition-all cursor-pointer flex items-center justify-between"
+          >
+            <div className="flex items-center gap-4">
+              <div className="w-12 h-12 bg-accent/10 rounded-2xl flex items-center justify-center shrink-0">
+                <Sparkles className="w-6 h-6 text-accent" />
+              </div>
+              <div className="text-left">
+                <h4 className="font-black text-primary text-sm uppercase">AI Design Studio</h4>
+                <p className="text-[9px] text-muted-foreground font-bold uppercase opacity-60">Personalized Ideas & Tips</p>
+              </div>
+            </div>
+            <ChevronRight className="w-4 h-4 text-muted-foreground" />
           </Card>
         </div>
 
@@ -132,8 +151,8 @@ export default function Home() {
               className="w-full bg-white p-6 rounded-[2.5rem] shadow-sm border border-gray-100 flex items-center justify-between active:scale-[0.97] transition-all"
             >
               <div className="flex items-center gap-4">
-                <div className="w-12 h-12 bg-accent/5 rounded-2xl flex items-center justify-center shrink-0">
-                  <ClipboardList className="w-6 h-6 text-accent" />
+                <div className="w-12 h-12 bg-blue-50 rounded-2xl flex items-center justify-center shrink-0">
+                  <ClipboardList className="w-6 h-6 text-blue-500" />
                 </div>
                 <div className="text-left">
                   <h4 className="font-black text-primary text-sm uppercase">Visitor Manager</h4>
