@@ -24,11 +24,12 @@ import { PlaceHolderImages } from "@/lib/placeholder-images"
 const FESTIVAL_TEMPLATES = [
   { id: "diwali", title: "Diwali Special", url: "https://picsum.photos/seed/diwali/800/800", hint: "diwali festival" },
   { id: "holi", title: "Holi Greetings", url: "https://picsum.photos/seed/holi/800/800", hint: "holi festival" },
-  { id: "eid", title: "Eid Mubarak", url: "https://picsum.photos/seed/eid/800/800", hint: "eid festival" },
   { id: "rakhi", title: "Raksha Bandhan", url: "https://picsum.photos/seed/rakhi/800/800", hint: "rakhi festival" },
   { id: "ganesh", title: "Ganesh Chaturthi", url: "https://picsum.photos/seed/ganesh/800/800", hint: "ganesh festival" },
   { id: "independence", title: "Independence Day", url: "https://picsum.photos/seed/india/800/800", hint: "india flag" },
-  { id: "newyear", title: "New Year 2025", url: "https://picsum.photos/seed/newyear/800/800", hint: "new year party" },
+  { id: "republic", title: "Republic Day", url: "https://picsum.photos/seed/republic/800/800", hint: "india celebration" },
+  { id: "ramnavami", title: "Ram Navami", url: "https://picsum.photos/seed/rama/800/800", hint: "lord rama" },
+  { id: "janmashtami", title: "Janmashtami", url: "https://picsum.photos/seed/krishna/800/800", hint: "lord krishna" },
 ]
 
 export default function GreetingsTool() {
@@ -100,7 +101,6 @@ export default function GreetingsTool() {
 
       <ScrollArea className="flex-1">
         <div className="p-6 space-y-6">
-          {/* Main Editor Canvas */}
           <div className="space-y-4">
             <div className="flex justify-between items-center px-2">
               <Label className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">
@@ -128,7 +128,6 @@ export default function GreetingsTool() {
                 data-ai-hint={selectedTemplate.hint}
               />
 
-              {/* Aravalli Logo */}
               <div 
                 onMouseDown={() => setIsDraggingLogo(true)}
                 onTouchStart={() => setIsDraggingLogo(true)}
@@ -138,7 +137,6 @@ export default function GreetingsTool() {
                 <Image src={logoImg} alt="Logo" width={50} height={50} className="object-contain pointer-events-none" />
               </div>
 
-              {/* Info Box */}
               <div 
                 onMouseDown={() => setIsDraggingInfo(true)}
                 onTouchStart={() => setIsDraggingInfo(true)}
@@ -158,10 +156,9 @@ export default function GreetingsTool() {
             </div>
           </div>
 
-          {/* Photo Gallery Grid */}
           <div className="space-y-4">
             <h3 className="text-[10px] font-black text-muted-foreground uppercase tracking-widest flex items-center gap-2 ml-2">
-              <Camera className="w-3 h-3 text-accent" /> Select Festival Template
+              <Camera className="w-3 h-3 text-accent" /> Select Indian Festival Template
             </h3>
             <div className="grid grid-cols-2 gap-4">
               {FESTIVAL_TEMPLATES.map((tpl) => (
@@ -173,7 +170,7 @@ export default function GreetingsTool() {
                   }`}
                 >
                   <Image src={tpl.url} alt={tpl.title} fill className="object-cover" />
-                  <div className="absolute bottom-0 left-0 right-0 bg-black/60 backdrop-blur-sm p-2">
+                  <div className="absolute bottom-0 left-0 right-0 bg-black/60 backdrop-blur-sm p-2 text-left">
                     <span className="text-[8px] font-black text-white uppercase tracking-widest">{tpl.title}</span>
                   </div>
                 </button>
