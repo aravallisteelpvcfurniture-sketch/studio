@@ -18,7 +18,7 @@ import {
   User, 
   ClipboardList, 
   PenTool, 
-  Settings 
+  MessageSquareHeart 
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { signOut } from "firebase/auth"
@@ -122,58 +122,39 @@ export default function Home() {
       </div>
 
       <div className="flex-1 space-y-4 pt-6">
+        {/* Greetings Tools Card */}
+        <div className="px-6">
+          <Card 
+            onClick={() => router.push("/greetings")}
+            className="group relative overflow-hidden p-8 rounded-[3rem] border-none bg-accent text-white shadow-2xl shadow-accent/20 active:scale-[0.97] transition-all cursor-pointer h-48 flex flex-col justify-end"
+          >
+            <div className="absolute top-0 right-0 w-48 h-48 bg-white/20 rounded-full blur-[70px] -mr-24 -mt-24" />
+            <div className="relative z-10 space-y-2">
+              <div className="inline-flex items-center gap-2 bg-white/20 backdrop-blur-md px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest mb-2">
+                <MessageSquareHeart className="w-3 h-3 text-white" /> Greetings Tools
+              </div>
+              <h3 className="text-3xl font-black tracking-tighter leading-none uppercase">Customer Marketing</h3>
+              <p className="text-white/80 text-[10px] font-bold uppercase tracking-wider">Welcome • Festival • Follow-up</p>
+            </div>
+          </Card>
+        </div>
+
         {/* Drawing Tool Card */}
         <div className="px-6">
           <Card 
             onClick={() => router.push("/drawing-tool")}
-            className="group relative overflow-hidden p-8 rounded-[3rem] border-none bg-primary text-white shadow-2xl shadow-primary/20 active:scale-[0.97] transition-all cursor-pointer h-56 flex flex-col justify-end"
-          >
-            <div className="absolute top-0 right-0 w-48 h-48 bg-accent/20 rounded-full blur-[70px] -mr-24 -mt-24" />
-            <div className="relative z-10 space-y-2">
-              <div className="inline-flex items-center gap-2 bg-accent px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest mb-2">
-                <PenTool className="w-3 h-3 text-white" /> 2D/3D Drawing Tool
-              </div>
-              <h3 className="text-3xl font-black tracking-tighter leading-none uppercase">Technical Plans</h3>
-              <p className="text-white/60 text-xs font-medium uppercase tracking-wider">Railings • Stairs • Interior Layouts</p>
-            </div>
-          </Card>
-        </div>
-
-        {/* Getting Tools Card (Real Working) */}
-        <div className="px-6">
-          <Card 
-            onClick={() => router.push("/settings")}
-            className="group relative overflow-hidden p-6 rounded-[2.5rem] border-none bg-white text-primary shadow-lg active:scale-[0.98] transition-all cursor-pointer flex items-center justify-between"
+            className="group relative overflow-hidden p-6 rounded-[2.5rem] border-none bg-primary text-white shadow-lg active:scale-[0.98] transition-all cursor-pointer flex items-center justify-between"
           >
             <div className="flex items-center gap-4">
-              <div className="w-12 h-12 bg-blue-50 rounded-2xl flex items-center justify-center shrink-0">
-                <Settings className="w-6 h-6 text-blue-600" />
+              <div className="w-12 h-12 bg-white/10 rounded-2xl flex items-center justify-center shrink-0">
+                <PenTool className="w-6 h-6 text-white" />
               </div>
               <div className="text-left">
-                <h4 className="font-black text-primary text-sm uppercase">Getting Tools</h4>
-                <p className="text-[9px] text-muted-foreground font-bold uppercase opacity-60">Account & Business Settings</p>
+                <h4 className="font-black text-white text-sm uppercase">Drawing Tool</h4>
+                <p className="text-[9px] text-white/50 font-bold uppercase tracking-widest leading-none">2D/3D Technical Plans</p>
               </div>
             </div>
-            <ChevronRight className="w-4 h-4 text-muted-foreground" />
-          </Card>
-        </div>
-
-        {/* AI Design Studio Card */}
-        <div className="px-6">
-          <Card 
-            onClick={() => router.push("/ai-designer")}
-            className="group relative overflow-hidden p-6 rounded-[2.5rem] border-none bg-white text-primary shadow-lg active:scale-[0.98] transition-all cursor-pointer flex items-center justify-between"
-          >
-            <div className="flex items-center gap-4">
-              <div className="w-12 h-12 bg-accent/10 rounded-2xl flex items-center justify-center shrink-0">
-                <Sparkles className="w-6 h-6 text-accent" />
-              </div>
-              <div className="text-left">
-                <h4 className="font-black text-primary text-sm uppercase">AI Design Studio</h4>
-                <p className="text-[9px] text-muted-foreground font-bold uppercase opacity-60">Personalized Ideas & Tips</p>
-              </div>
-            </div>
-            <ChevronRight className="w-4 h-4 text-muted-foreground" />
+            <ChevronRight className="w-4 h-4 text-white/50" />
           </Card>
         </div>
 
@@ -199,9 +180,9 @@ export default function Home() {
         )}
 
         <div className="px-6 grid grid-cols-3 gap-3">
-          <button onClick={() => router.push("/shop")} className="bg-white p-4 rounded-[2rem] shadow-sm flex flex-col items-center gap-2 active:scale-95 border border-gray-100">
-            <div className="w-10 h-10 bg-orange-50 rounded-xl flex items-center justify-center"><ShoppingBag className="w-5 h-5 text-accent" /></div>
-            <span className="font-black text-primary text-[9px] uppercase">Shop</span>
+          <button onClick={() => router.push("/ai-designer")} className="bg-white p-4 rounded-[2rem] shadow-sm flex flex-col items-center gap-2 active:scale-95 border border-gray-100">
+            <div className="w-10 h-10 bg-accent/5 rounded-xl flex items-center justify-center"><Sparkles className="w-5 h-5 text-accent" /></div>
+            <span className="font-black text-primary text-[9px] uppercase">AI Ideas</span>
           </button>
           <button onClick={() => router.push("/categories")} className="bg-white p-4 rounded-[2rem] shadow-sm flex flex-col items-center gap-2 active:scale-95 border border-gray-100">
             <div className="w-10 h-10 bg-blue-50 rounded-xl flex items-center justify-center"><LayoutGrid className="w-5 h-5 text-blue-500" /></div>
