@@ -32,10 +32,10 @@ const FESTIVAL_TEMPLATES = [
 ]
 
 const INFO_STYLES = [
-  { id: "glass", name: "Glassmorphism", classes: "bg-black/40 backdrop-blur-md text-white border-white/20" },
-  { id: "dark", name: "Modern Dark", classes: "bg-black text-white border-white/10" },
-  { id: "gold", name: "Royal Gold", classes: "bg-amber-900/80 text-amber-100 border-amber-500/50" },
-  { id: "white", name: "Minimal White", classes: "bg-white/90 text-primary border-primary/10 shadow-xl" },
+  { id: "glass", name: "Glass", classes: "bg-black/40 backdrop-blur-md text-white border-white/20" },
+  { id: "dark", name: "Dark", classes: "bg-black text-white border-white/10" },
+  { id: "gold", name: "Gold", classes: "bg-amber-900/80 text-amber-100 border-amber-500/50" },
+  { id: "white", name: "White", classes: "bg-white/90 text-primary border-primary/10 shadow-xl" },
 ]
 
 export default function GreetingsTool() {
@@ -107,7 +107,8 @@ export default function GreetingsTool() {
       </div>
 
       <ScrollArea className="flex-1">
-        <div className="p-6 space-y-8">
+        <div className="p-6 space-y-6">
+          {/* Main Editor Canvas */}
           <div className="space-y-4">
             <div className="flex justify-between items-center px-2">
               <h3 className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">Ungli se drag karke set karein</h3>
@@ -133,7 +134,7 @@ export default function GreetingsTool() {
                 data-ai-hint={selectedTemplate.hint}
               />
 
-              {/* Logo Overlay */}
+              {/* Aravalli Logo - Fixed Branding */}
               <div 
                 onMouseDown={() => setIsDraggingLogo(true)}
                 onTouchStart={() => setIsDraggingLogo(true)}
@@ -141,100 +142,99 @@ export default function GreetingsTool() {
                 className={`absolute w-16 h-16 bg-white/90 backdrop-blur-md rounded-2xl p-2 shadow-lg flex items-center justify-center cursor-move border border-white/50 z-20 transition-transform ${isDraggingLogo ? 'scale-110 shadow-2xl ring-2 ring-accent' : ''}`}
               >
                 <Image src={logoImg} alt="Logo" width={50} height={50} className="object-contain pointer-events-none" />
-                <div className="absolute -top-2 -right-2 bg-accent text-white rounded-full p-1">
-                   <Move className="w-2 h-2" />
-                </div>
               </div>
 
-              {/* Info Overlay with Dynamic Styles */}
+              {/* Dynamic Info Box */}
               <div 
                 onMouseDown={() => setIsDraggingInfo(true)}
                 onTouchStart={() => setIsDraggingInfo(true)}
                 style={{ left: `${infoPos.x}%`, top: `${infoPos.y}%` }}
-                className={`absolute max-w-[75%] rounded-2xl p-4 shadow-xl border cursor-move z-10 transition-transform ${selectedStyle.classes} ${isDraggingInfo ? 'scale-105 shadow-2xl ring-2 ring-accent' : ''}`}
+                className={`absolute max-w-[80%] rounded-2xl p-4 shadow-xl border cursor-move z-10 transition-transform ${selectedStyle.classes} ${isDraggingInfo ? 'scale-105 shadow-2xl ring-2 ring-accent' : ''}`}
               >
-                <h4 className="font-black text-[10px] uppercase tracking-tight truncate leading-none">
+                <h4 className="font-black text-[11px] uppercase tracking-tight truncate leading-none">
                   {profile?.displayName || user?.displayName || "Aravalli Steel User"}
                 </h4>
-                <p className="text-[7px] font-bold uppercase tracking-wider opacity-80 flex items-center gap-1 mt-1 leading-none">
-                  <MapPin className="w-2 h-2" /> {profile?.shippingAddress || "Main Workshop Area"}
+                <p className="text-[8px] font-bold uppercase tracking-wider opacity-80 flex items-center gap-1 mt-1.5 leading-none">
+                  <MapPin className="w-2.5 h-2.5" /> {profile?.shippingAddress || "Main Workshop Area"}
                 </p>
-                <p className="text-[7px] font-bold uppercase tracking-wider opacity-80 flex items-center gap-1 mt-0.5 leading-none">
-                  <Phone className="w-2 h-2" /> {profile?.phone || "999-999-9999"}
+                <p className="text-[8px] font-bold uppercase tracking-wider opacity-80 flex items-center gap-1 mt-1 leading-none">
+                  <Phone className="w-2.5 h-2.5" /> {profile?.phone || "999-999-9999"}
                 </p>
               </div>
             </div>
           </div>
 
-          <Card className="p-6 rounded-[2.5rem] border-none shadow-xl bg-white space-y-8">
-            <div className="space-y-6">
-              {/* Style Selection */}
+          {/* Gallery View - 4 Photos at Once */}
+          <div className="space-y-4">
+            <h3 className="text-[10px] font-black text-muted-foreground uppercase tracking-widest flex items-center gap-2 ml-2">
+              <Camera className="w-3 h-3 text-accent" /> Select Template
+            </h3>
+            <div className="grid grid-cols-2 gap-4">
+              {FESTIVAL_TEMPLATES.map((tpl) => (
+                <button
+                  key={tpl.id}
+                  onClick={() => setSelectedTemplate(tpl)}
+                  className={`relative aspect-square rounded-[2rem] overflow-hidden border-4 transition-all active:scale-95 ${
+                    selectedTemplate.id === tpl.id ? "border-accent shadow-xl" : "border-transparent opacity-80"
+                  }`}
+                >
+                  <Image src={tpl.url} alt={tpl.title} fill className="object-cover" />
+                  <div className="absolute bottom-0 left-0 right-0 bg-black/40 backdrop-blur-sm p-2">
+                    <span className="text-[8px] font-black text-white uppercase tracking-widest">{tpl.title}</span>
+                  </div>
+                </button>
+              ))}
+            </div>
+          </div>
+
+          <Card className="p-6 rounded-[2.5rem] border-none shadow-xl bg-white space-y-6">
+            {/* Style Selection */}
+            <div className="space-y-4">
+              <h3 className="text-[10px] font-black text-muted-foreground uppercase tracking-widest flex items-center gap-2">
+                <Palette className="w-3 h-3 text-accent" /> Box Ka Design
+              </h3>
+              <div className="grid grid-cols-4 gap-2">
+                {INFO_STYLES.map((style) => (
+                  <button
+                    key={style.id}
+                    onClick={() => setSelectedStyle(style)}
+                    className={`p-2 rounded-xl border-2 text-[9px] font-black transition-all ${
+                      selectedStyle.id === style.id ? "border-accent bg-accent/5 text-accent" : "border-muted text-muted-foreground"
+                    }`}
+                  >
+                    {style.name}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Precision Controls */}
+            <div className="space-y-4 pt-4 border-t">
+              <span className="text-[10px] font-black uppercase text-primary/40 tracking-widest flex items-center gap-2">
+                <Move className="w-3 h-3" /> Precision Adjustment
+              </span>
+              
               <div className="space-y-4">
-                <h3 className="text-[10px] font-black text-muted-foreground uppercase tracking-widest flex items-center gap-2">
-                  <Palette className="w-3 h-3 text-accent" /> Box Ka Design
-                </h3>
-                <div className="grid grid-cols-2 gap-2">
-                  {INFO_STYLES.map((style) => (
-                    <button
-                      key={style.id}
-                      onClick={() => setSelectedStyle(style)}
-                      className={`p-3 rounded-xl border-2 text-[10px] font-black transition-all ${
-                        selectedStyle.id === style.id ? "border-accent bg-accent/5 text-accent" : "border-muted text-muted-foreground"
-                      }`}
-                    >
-                      {style.name}
-                    </button>
-                  ))}
-                </div>
-              </div>
-
-              {/* Position Sliders */}
-              <div className="space-y-4 pt-4 border-t">
-                <span className="text-[10px] font-black uppercase text-primary/40 tracking-widest flex items-center gap-2">
-                  <Move className="w-3 h-3" /> Precision Adjustment
-                </span>
-                
-                <div className="space-y-6">
-                  <div className="space-y-2">
-                    <Label className="text-[8px] font-black uppercase flex justify-between">
-                      <span>Logo Position</span>
-                      <span className="text-accent">{logoPos.x.toFixed(0)}% , {logoPos.y.toFixed(0)}%</span>
-                    </Label>
-                    <div className="space-y-4 pt-2">
-                       <Slider value={[logoPos.x]} onValueChange={(val) => setLogoPos({...logoPos, x: val[0]})} max={90} step={1} />
-                       <Slider value={[logoPos.y]} onValueChange={(val) => setLogoPos({...logoPos, y: val[0]})} max={90} step={1} />
-                    </div>
-                  </div>
-
-                  <div className="space-y-2">
-                    <Label className="text-[8px] font-black uppercase flex justify-between">
-                      <span>My Info Position</span>
-                      <span className="text-accent">{infoPos.x.toFixed(0)}% , {infoPos.y.toFixed(0)}%</span>
-                    </Label>
-                    <div className="space-y-4 pt-2">
-                       <Slider value={[infoPos.x]} onValueChange={(val) => setInfoPos({...infoPos, x: val[0]})} max={90} step={1} />
-                       <Slider value={[infoPos.y]} onValueChange={(val) => setInfoPos({...infoPos, y: val[0]})} max={90} step={1} />
-                    </div>
+                <div className="space-y-2">
+                  <Label className="text-[8px] font-black uppercase flex justify-between">
+                    <span>Logo Pos</span>
+                    <span className="text-accent">{logoPos.x.toFixed(0)}% , {logoPos.y.toFixed(0)}%</span>
+                  </Label>
+                  <div className="grid grid-cols-2 gap-4">
+                     <Slider value={[logoPos.x]} onValueChange={(val) => setLogoPos({...logoPos, x: val[0]})} max={90} step={1} />
+                     <Slider value={[logoPos.y]} onValueChange={(val) => setLogoPos({...logoPos, y: val[0]})} max={90} step={1} />
                   </div>
                 </div>
-              </div>
 
-              <div className="space-y-4 pt-4 border-t">
-                <h3 className="text-[10px] font-black text-muted-foreground uppercase tracking-widest flex items-center gap-2">
-                  <Camera className="w-3 h-3 text-accent" /> Change Template
-                </h3>
-                <div className="grid grid-cols-4 gap-3">
-                  {FESTIVAL_TEMPLATES.map((tpl) => (
-                    <button
-                      key={tpl.id}
-                      onClick={() => setSelectedTemplate(tpl)}
-                      className={`relative aspect-square rounded-2xl overflow-hidden border-4 transition-all ${
-                        selectedTemplate.id === tpl.id ? "border-accent scale-105 shadow-xl" : "border-transparent opacity-60"
-                      }`}
-                    >
-                      <Image src={tpl.url} alt={tpl.title} fill className="object-cover" />
-                    </button>
-                  ))}
+                <div className="space-y-2">
+                  <Label className="text-[8px] font-black uppercase flex justify-between">
+                    <span>Info Box Pos</span>
+                    <span className="text-accent">{infoPos.x.toFixed(0)}% , {infoPos.y.toFixed(0)}%</span>
+                  </Label>
+                  <div className="grid grid-cols-2 gap-4">
+                     <Slider value={[infoPos.x]} onValueChange={(val) => setInfoPos({...infoPos, x: val[0]})} max={90} step={1} />
+                     <Slider value={[infoPos.y]} onValueChange={(val) => setInfoPos({...infoPos, y: val[0]})} max={90} step={1} />
+                  </div>
                 </div>
               </div>
             </div>
@@ -244,7 +244,7 @@ export default function GreetingsTool() {
               className="w-full h-16 bg-[#25D366] hover:bg-[#128C7E] text-white rounded-2xl font-black text-lg flex gap-3 shadow-xl shadow-[#25D366]/20 active:scale-95 transition-all"
             >
               <Send className="w-6 h-6" />
-              Share on WhatsApp
+              WhatsApp Par Bhejein
             </Button>
           </Card>
         </div>
