@@ -139,7 +139,7 @@ export default function Home() {
           </Card>
         </div>
 
-        {/* Setting Tools Card (Real Working) */}
+        {/* Getting Tools Card (Real Working) */}
         <div className="px-6">
           <Card 
             onClick={() => router.push("/settings")}
@@ -150,7 +150,7 @@ export default function Home() {
                 <Settings className="w-6 h-6 text-blue-600" />
               </div>
               <div className="text-left">
-                <h4 className="font-black text-primary text-sm uppercase">Setting Tools</h4>
+                <h4 className="font-black text-primary text-sm uppercase">Getting Tools</h4>
                 <p className="text-[9px] text-muted-foreground font-bold uppercase opacity-60">Account & Business Settings</p>
               </div>
             </div>
