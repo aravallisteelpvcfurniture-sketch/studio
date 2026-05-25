@@ -21,6 +21,7 @@ import { useFirestore, useUser, useDoc, useMemoFirebase } from "@/firebase"
 import { doc } from "firebase/firestore"
 import { PlaceHolderImages } from "@/lib/placeholder-images"
 import { Slider } from "@/components/ui/slider"
+import { Label } from "@/components/ui/label"
 
 const FESTIVAL_TEMPLATES = [
   { id: "diwali", title: "Diwali Special", url: "https://picsum.photos/seed/diwali/800/800", hint: "diwali festival" },
@@ -38,10 +39,40 @@ export default function GreetingsTool() {
   const [logoPos, setLogoPos] = React.useState({ x: 5, y: 5 })
   const [infoPos, setInfoPos] = React.useState({ x: 5, y: 80 })
 
+  const containerRef = React.useRef<HTMLDivElement>(null)
+  const [isDraggingLogo, setIsDraggingLogo] = React.useState(false)
+  const [isDraggingInfo, setIsDraggingInfo] = React.useState(false)
+
   const userDocRef = useMemoFirebase(() => (db && user) ? doc(db, "users", user.uid) : null, [db, user])
   const { data: profile } = useDoc(userDocRef)
 
   const logoImg = PlaceHolderImages.find(i => i.id === "company-logo")?.imageUrl || "https://picsum.photos/seed/aravalli-logo/200/200"
+
+  const handleDrag = (e: React.MouseEvent | React.TouchEvent) => {
+    if (!containerRef.current || (!isDraggingLogo && !isDraggingInfo)) return
+
+    const rect = containerRef.current.getBoundingClientRect()
+    const clientX = 'touches' in e ? e.touches[0].clientX : e.clientX
+    const clientY = 'touches' in e ? e.touches[0].clientY : e.clientY
+
+    const x = ((clientX - rect.left) / rect.width) * 100
+    const y = ((clientY - rect.top) / rect.height) * 100
+
+    // Constrain within 0-90% to prevent going off-screen
+    const constrainedX = Math.max(0, Math.min(x, 90))
+    const constrainedY = Math.max(0, Math.min(y, 90))
+
+    if (isDraggingLogo) {
+      setLogoPos({ x: constrainedX, y: constrainedY })
+    } else if (isDraggingInfo) {
+      setInfoPos({ x: constrainedX, y: constrainedY })
+    }
+  }
+
+  const stopDragging = () => {
+    setIsDraggingLogo(false)
+    setIsDraggingInfo(false)
+  }
 
   const sendWhatsApp = () => {
     const message = `Namaste! Aravalli Steel ki taraf se aapko ${selectedTemplate.title} ki hardik shubhkamnayein!\n\nRegards:\n${profile?.displayName || user?.displayName}\n${profile?.shippingAddress || "Aravalli Steel Workshop"}\nPhone: ${profile?.phone || "Contact us"}`;
@@ -55,7 +86,7 @@ export default function GreetingsTool() {
   }
 
   return (
-    <div className="min-h-screen bg-[#F8F9FA] flex flex-col font-body pb-24">
+    <div className="min-h-screen bg-[#F8F9FA] flex flex-col font-body pb-24 select-none">
       <div className="p-6 flex items-center gap-4 bg-white border-b sticky top-0 z-50">
         <Link href="/">
           <Button variant="ghost" size="icon" className="rounded-full">
@@ -70,16 +101,23 @@ export default function GreetingsTool() {
 
       <ScrollArea className="flex-1">
         <div className="p-6 space-y-8">
-          {/* 1. The Poster Preview Area */}
           <div className="space-y-4">
             <div className="flex justify-between items-center px-2">
-              <h3 className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">Poster Editor</h3>
+              <h3 className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">Ungli se drag karke set karein</h3>
               <Button variant="ghost" size="sm" onClick={resetPositions} className="text-[10px] font-bold text-accent h-6 gap-1">
                 <RotateCcw className="w-3 h-3" /> Reset
               </Button>
             </div>
             
-            <div className="relative aspect-square w-full rounded-[2.5rem] overflow-hidden shadow-2xl border-4 border-white bg-gray-200">
+            <div 
+              ref={containerRef}
+              onMouseMove={handleDrag}
+              onMouseUp={stopDragging}
+              onMouseLeave={stopDragging}
+              onTouchMove={handleDrag}
+              onTouchEnd={stopDragging}
+              className="relative aspect-square w-full rounded-[2.5rem] overflow-hidden shadow-2xl border-4 border-white bg-gray-200 touch-none"
+            >
               <Image 
                 src={selectedTemplate.url} 
                 alt="Template" 
@@ -88,10 +126,12 @@ export default function GreetingsTool() {
                 data-ai-hint={selectedTemplate.hint}
               />
 
-              {/* Aravalli Steel Logo Overlay - Absolutely positioned by state */}
+              {/* Aravalli Steel Logo Overlay */}
               <div 
+                onMouseDown={() => setIsDraggingLogo(true)}
+                onTouchStart={() => setIsDraggingLogo(true)}
                 style={{ left: `${logoPos.x}%`, top: `${logoPos.y}%` }}
-                className="absolute w-16 h-16 bg-white/90 backdrop-blur-md rounded-2xl p-2 shadow-lg flex items-center justify-center cursor-move border border-white/50"
+                className={`absolute w-16 h-16 bg-white/90 backdrop-blur-md rounded-2xl p-2 shadow-lg flex items-center justify-center cursor-move border border-white/50 z-20 transition-transform ${isDraggingLogo ? 'scale-110 shadow-2xl ring-2 ring-accent' : ''}`}
               >
                 <Image src={logoImg} alt="Logo" width={50} height={50} className="object-contain pointer-events-none" />
                 <div className="absolute -top-2 -right-2 bg-accent text-white rounded-full p-1">
@@ -99,10 +139,12 @@ export default function GreetingsTool() {
                 </div>
               </div>
 
-              {/* User Info Overlay - Absolutely positioned by state */}
+              {/* User Info Overlay */}
               <div 
+                onMouseDown={() => setIsDraggingInfo(true)}
+                onTouchStart={() => setIsDraggingInfo(true)}
                 style={{ left: `${infoPos.x}%`, top: `${infoPos.y}%` }}
-                className="absolute max-w-[70%] bg-black/40 backdrop-blur-md rounded-2xl p-4 text-white shadow-xl border border-white/20 cursor-move"
+                className={`absolute max-w-[70%] bg-black/40 backdrop-blur-md rounded-2xl p-4 text-white shadow-xl border border-white/20 cursor-move z-10 transition-transform ${isDraggingInfo ? 'scale-105 shadow-2xl ring-2 ring-accent' : ''}`}
               >
                 <h4 className="font-black text-[10px] uppercase tracking-tight truncate leading-none">
                   {profile?.displayName || user?.displayName || "Aravalli Steel User"}
@@ -117,34 +159,33 @@ export default function GreetingsTool() {
             </div>
           </div>
 
-          {/* 2. Controls Section */}
           <Card className="p-6 rounded-[2.5rem] border-none shadow-xl bg-white space-y-8">
             <div className="space-y-6">
               <div className="space-y-4">
                 <span className="text-[10px] font-black uppercase text-primary/40 tracking-widest flex items-center gap-2">
-                  <Move className="w-3 h-3" /> Adjust Positions (X & Y)
+                  <Move className="w-3 h-3" /> Precision Adjustment
                 </span>
                 
                 <div className="space-y-6">
                   <div className="space-y-2">
                     <Label className="text-[8px] font-black uppercase flex justify-between">
                       <span>Logo Position</span>
-                      <span className="text-accent">{logoPos.x}% , {logoPos.y}%</span>
+                      <span className="text-accent">{logoPos.x.toFixed(0)}% , {logoPos.y.toFixed(0)}%</span>
                     </Label>
                     <div className="space-y-4 pt-2">
-                       <Slider value={[logoPos.x]} onValueChange={(val) => setLogoPos({...logoPos, x: val[0]})} max={80} step={1} />
-                       <Slider value={[logoPos.y]} onValueChange={(val) => setLogoPos({...logoPos, y: val[0]})} max={80} step={1} />
+                       <Slider value={[logoPos.x]} onValueChange={(val) => setLogoPos({...logoPos, x: val[0]})} max={90} step={1} />
+                       <Slider value={[logoPos.y]} onValueChange={(val) => setLogoPos({...logoPos, y: val[0]})} max={90} step={1} />
                     </div>
                   </div>
 
                   <div className="space-y-2">
                     <Label className="text-[8px] font-black uppercase flex justify-between">
                       <span>My Info Position</span>
-                      <span className="text-accent">{infoPos.x}% , {infoPos.y}%</span>
+                      <span className="text-accent">{infoPos.x.toFixed(0)}% , {infoPos.y.toFixed(0)}%</span>
                     </Label>
                     <div className="space-y-4 pt-2">
-                       <Slider value={[infoPos.x]} onValueChange={(val) => setInfoPos({...infoPos, x: val[0]})} max={60} step={1} />
-                       <Slider value={[infoPos.y]} onValueChange={(val) => setInfoPos({...infoPos, y: val[0]})} max={80} step={1} />
+                       <Slider value={[infoPos.x]} onValueChange={(val) => setInfoPos({...infoPos, x: val[0]})} max={90} step={1} />
+                       <Slider value={[infoPos.y]} onValueChange={(val) => setInfoPos({...infoPos, y: val[0]})} max={90} step={1} />
                     </div>
                   </div>
                 </div>
@@ -152,7 +193,7 @@ export default function GreetingsTool() {
 
               <div className="space-y-4 pt-4 border-t">
                 <h3 className="text-[10px] font-black text-muted-foreground uppercase tracking-widest flex items-center gap-2">
-                  <Camera className="w-3 h-3 text-accent" /> Select Event Template
+                  <Camera className="w-3 h-3 text-accent" /> Change Template
                 </h3>
                 <div className="grid grid-cols-4 gap-3">
                   {FESTIVAL_TEMPLATES.map((tpl) => (
