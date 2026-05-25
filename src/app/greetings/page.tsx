@@ -12,7 +12,8 @@ import {
   MapPin,
   Phone,
   Camera,
-  RotateCcw
+  RotateCcw,
+  Palette
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
@@ -30,12 +31,19 @@ const FESTIVAL_TEMPLATES = [
   { id: "newyear", title: "New Year 2025", url: "https://picsum.photos/seed/newyear/800/800", hint: "new year party" },
 ]
 
+const INFO_STYLES = [
+  { id: "glass", name: "Glassmorphism", classes: "bg-black/40 backdrop-blur-md text-white border-white/20" },
+  { id: "dark", name: "Modern Dark", classes: "bg-black text-white border-white/10" },
+  { id: "gold", name: "Royal Gold", classes: "bg-amber-900/80 text-amber-100 border-amber-500/50" },
+  { id: "white", name: "Minimal White", classes: "bg-white/90 text-primary border-primary/10 shadow-xl" },
+]
+
 export default function GreetingsTool() {
   const db = useFirestore()
   const { user } = useUser()
   const [selectedTemplate, setSelectedTemplate] = React.useState(FESTIVAL_TEMPLATES[0])
+  const [selectedStyle, setSelectedStyle] = React.useState(INFO_STYLES[0])
   
-  // States for manual positioning (percentages 0-100)
   const [logoPos, setLogoPos] = React.useState({ x: 5, y: 5 })
   const [infoPos, setInfoPos] = React.useState({ x: 5, y: 80 })
 
@@ -52,13 +60,12 @@ export default function GreetingsTool() {
     if (!containerRef.current || (!isDraggingLogo && !isDraggingInfo)) return
 
     const rect = containerRef.current.getBoundingClientRect()
-    const clientX = 'touches' in e ? e.touches[0].clientX : e.clientX
-    const clientY = 'touches' in e ? e.touches[0].clientY : e.clientY
+    const clientX = 'touches' in e ? e.touches[0].clientX : (e as React.MouseEvent).clientX
+    const clientY = 'touches' in e ? e.touches[0].clientY : (e as React.MouseEvent).clientY
 
     const x = ((clientX - rect.left) / rect.width) * 100
     const y = ((clientY - rect.top) / rect.height) * 100
 
-    // Constrain within 0-90% to prevent going off-screen
     const constrainedX = Math.max(0, Math.min(x, 90))
     const constrainedY = Math.max(0, Math.min(y, 90))
 
@@ -126,7 +133,7 @@ export default function GreetingsTool() {
                 data-ai-hint={selectedTemplate.hint}
               />
 
-              {/* Aravalli Steel Logo Overlay */}
+              {/* Logo Overlay */}
               <div 
                 onMouseDown={() => setIsDraggingLogo(true)}
                 onTouchStart={() => setIsDraggingLogo(true)}
@@ -139,21 +146,21 @@ export default function GreetingsTool() {
                 </div>
               </div>
 
-              {/* User Info Overlay */}
+              {/* Info Overlay with Dynamic Styles */}
               <div 
                 onMouseDown={() => setIsDraggingInfo(true)}
                 onTouchStart={() => setIsDraggingInfo(true)}
                 style={{ left: `${infoPos.x}%`, top: `${infoPos.y}%` }}
-                className={`absolute max-w-[70%] bg-black/40 backdrop-blur-md rounded-2xl p-4 text-white shadow-xl border border-white/20 cursor-move z-10 transition-transform ${isDraggingInfo ? 'scale-105 shadow-2xl ring-2 ring-accent' : ''}`}
+                className={`absolute max-w-[75%] rounded-2xl p-4 shadow-xl border cursor-move z-10 transition-transform ${selectedStyle.classes} ${isDraggingInfo ? 'scale-105 shadow-2xl ring-2 ring-accent' : ''}`}
               >
                 <h4 className="font-black text-[10px] uppercase tracking-tight truncate leading-none">
                   {profile?.displayName || user?.displayName || "Aravalli Steel User"}
                 </h4>
                 <p className="text-[7px] font-bold uppercase tracking-wider opacity-80 flex items-center gap-1 mt-1 leading-none">
-                  <MapPin className="w-2 h-2 text-accent" /> {profile?.shippingAddress || "Main Workshop Area"}
+                  <MapPin className="w-2 h-2" /> {profile?.shippingAddress || "Main Workshop Area"}
                 </p>
                 <p className="text-[7px] font-bold uppercase tracking-wider opacity-80 flex items-center gap-1 mt-0.5 leading-none">
-                  <Phone className="w-2 h-2 text-accent" /> {profile?.phone || "999-999-9999"}
+                  <Phone className="w-2 h-2" /> {profile?.phone || "999-999-9999"}
                 </p>
               </div>
             </div>
@@ -161,7 +168,28 @@ export default function GreetingsTool() {
 
           <Card className="p-6 rounded-[2.5rem] border-none shadow-xl bg-white space-y-8">
             <div className="space-y-6">
+              {/* Style Selection */}
               <div className="space-y-4">
+                <h3 className="text-[10px] font-black text-muted-foreground uppercase tracking-widest flex items-center gap-2">
+                  <Palette className="w-3 h-3 text-accent" /> Box Ka Design
+                </h3>
+                <div className="grid grid-cols-2 gap-2">
+                  {INFO_STYLES.map((style) => (
+                    <button
+                      key={style.id}
+                      onClick={() => setSelectedStyle(style)}
+                      className={`p-3 rounded-xl border-2 text-[10px] font-black transition-all ${
+                        selectedStyle.id === style.id ? "border-accent bg-accent/5 text-accent" : "border-muted text-muted-foreground"
+                      }`}
+                    >
+                      {style.name}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Position Sliders */}
+              <div className="space-y-4 pt-4 border-t">
                 <span className="text-[10px] font-black uppercase text-primary/40 tracking-widest flex items-center gap-2">
                   <Move className="w-3 h-3" /> Precision Adjustment
                 </span>
