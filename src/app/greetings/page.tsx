@@ -25,6 +25,9 @@ const FESTIVAL_TEMPLATES = [
   { id: "diwali", title: "Diwali Special", url: "https://picsum.photos/seed/diwali/800/800", hint: "diwali festival" },
   { id: "holi", title: "Holi Greetings", url: "https://picsum.photos/seed/holi/800/800", hint: "holi festival" },
   { id: "eid", title: "Eid Mubarak", url: "https://picsum.photos/seed/eid/800/800", hint: "eid festival" },
+  { id: "rakhi", title: "Raksha Bandhan", url: "https://picsum.photos/seed/rakhi/800/800", hint: "rakhi festival" },
+  { id: "ganesh", title: "Ganesh Chaturthi", url: "https://picsum.photos/seed/ganesh/800/800", hint: "ganesh festival" },
+  { id: "independence", title: "Independence Day", url: "https://picsum.photos/seed/india/800/800", hint: "india flag" },
   { id: "newyear", title: "New Year 2025", url: "https://picsum.photos/seed/newyear/800/800", hint: "new year party" },
 ]
 
@@ -91,16 +94,18 @@ export default function GreetingsTool() {
         </Link>
         <h1 className="text-xl font-black text-primary uppercase tracking-tight flex items-center gap-2">
           <MessageSquareHeart className="w-5 h-5 text-accent" />
-          Greeting Gallery
+          Live Greetings
         </h1>
       </div>
 
       <ScrollArea className="flex-1">
-        <div className="p-6 space-y-8">
-          {/* Main Editor Canvas - Finger Drag Working */}
+        <div className="p-6 space-y-6">
+          {/* Main Editor Canvas */}
           <div className="space-y-4">
             <div className="flex justify-between items-center px-2">
-              <h3 className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">Ungli se drag karke set karein</h3>
+              <Label className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">
+                Poster par ungli se drag karein
+              </Label>
               <Button variant="ghost" size="sm" onClick={resetPositions} className="text-[10px] font-bold text-accent h-6 gap-1">
                 <RotateCcw className="w-3 h-3" /> Reset
               </Button>
@@ -153,7 +158,7 @@ export default function GreetingsTool() {
             </div>
           </div>
 
-          {/* Photo Gallery - 4 Photos on Screen */}
+          {/* Photo Gallery Grid */}
           <div className="space-y-4">
             <h3 className="text-[10px] font-black text-muted-foreground uppercase tracking-widest flex items-center gap-2 ml-2">
               <Camera className="w-3 h-3 text-accent" /> Select Festival Template
