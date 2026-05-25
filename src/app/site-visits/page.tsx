@@ -86,12 +86,6 @@ export default function SiteVisitManager() {
     estimatedBudget: 0
   })
 
-  React.useEffect(() => {
-    if (isAdmin && !isLoading && (!visits || visits.length === 0)) {
-       setIsModalOpen(true)
-    }
-  }, [isAdmin, isLoading, visits])
-
   const handleCreate = async () => {
     if (!db) return
     if (!formData.customerName || !formData.phone) {
@@ -205,9 +199,49 @@ export default function SiteVisitManager() {
           <h1 className="text-xl font-black text-primary uppercase tracking-tight">Visitor Manager</h1>
         </div>
         
-        <Button onClick={() => setIsModalOpen(true)} size="icon" className="rounded-full bg-accent text-white shadow-lg">
-          <UserPlus className="w-6 h-6" />
-        </Button>
+        <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
+          <DialogTrigger asChild>
+            <Button size="icon" className="rounded-full bg-accent text-white shadow-lg">
+              <UserPlus className="w-6 h-6" />
+            </Button>
+          </DialogTrigger>
+          <DialogContent className="rounded-[2.5rem] w-[95%] max-w-md p-8">
+            <DialogHeader>
+              <DialogTitle className="text-2xl font-black text-primary uppercase tracking-tighter">Nayi Party Details</DialogTitle>
+            </DialogHeader>
+            <div className="space-y-4 py-4">
+              <div className="space-y-1">
+                <Label className="text-[10px] font-black uppercase text-muted-foreground ml-1">Party Name</Label>
+                <Input placeholder="Bhai ka Naam..." value={formData.customerName} onChange={e => setFormData({...formData, customerName: e.target.value})} className="h-12 rounded-xl bg-muted/30 border-none px-4 font-bold" />
+              </div>
+              <div className="space-y-1">
+                <Label className="text-[10px] font-black uppercase text-muted-foreground ml-1">Mobile Number</Label>
+                <Input placeholder="9999999999" type="tel" value={formData.phone} onChange={e => setFormData({...formData, phone: e.target.value})} className="h-12 rounded-xl bg-muted/30 border-none px-4 font-bold" />
+              </div>
+              <div className="space-y-1">
+                <Label className="text-[10px] font-black uppercase text-muted-foreground ml-1">Kis kaam se aaye?</Label>
+                <Select value={formData.serviceType} onValueChange={(val) => setFormData({...formData, serviceType: val})}>
+                  <SelectTrigger className="h-12 rounded-xl bg-muted/30 border-none px-4 font-bold">
+                    <SelectValue placeholder="Select Purpose" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="Modular Kitchen">Modular Kitchen</SelectItem>
+                    <SelectItem value="Wardrobe System">Wardrobe System</SelectItem>
+                    <SelectItem value="Wall Paneling">Wall Paneling</SelectItem>
+                    <SelectItem value="Railing Design">Railing Design</SelectItem>
+                    <SelectItem value="Stairs Drawing">Stairs Drawing</SelectItem>
+                    <SelectItem value="Full Interior">Full Interior</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+            <DialogFooter>
+              <Button onClick={handleCreate} disabled={loading} className="w-full h-14 rounded-2xl bg-accent font-black text-white shadow-xl shadow-accent/20">
+                {loading ? <Loader2 className="animate-spin" /> : "Party Save Karein"}
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
       </div>
 
       <ScrollArea className="flex-1">
@@ -248,49 +282,6 @@ export default function SiteVisitManager() {
           )}
         </div>
       </ScrollArea>
-
-      <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
-        <DialogContent className="rounded-[2.5rem] w-[95%] max-w-md p-8">
-          <DialogHeader>
-            <DialogTitle className="text-2xl font-black text-primary uppercase tracking-tighter">Nayi Party Details</DialogTitle>
-          </DialogHeader>
-          <div className="space-y-4 py-4">
-            <div className="space-y-1">
-              <Label className="text-[10px] font-black uppercase text-muted-foreground ml-1">Party Name</Label>
-              <Input placeholder="Bhai ka Naam..." value={formData.customerName} onChange={e => setFormData({...formData, customerName: e.target.value})} className="h-12 rounded-xl bg-muted/30 border-none px-4 font-bold" />
-            </div>
-            <div className="space-y-1">
-              <Label className="text-[10px] font-black uppercase text-muted-foreground ml-1">Mobile Number</Label>
-              <Input placeholder="9999999999" type="tel" value={formData.phone} onChange={e => setFormData({...formData, phone: e.target.value})} className="h-12 rounded-xl bg-muted/30 border-none px-4 font-bold" />
-            </div>
-            <div className="space-y-1">
-              <Label className="text-[10px] font-black uppercase text-muted-foreground ml-1">Email Address</Label>
-              <Input placeholder="party@email.com" type="email" value={formData.email} onChange={e => setFormData({...formData, email: e.target.value})} className="h-12 rounded-xl bg-muted/30 border-none px-4 font-bold" />
-            </div>
-            <div className="space-y-1">
-              <Label className="text-[10px] font-black uppercase text-muted-foreground ml-1">Kis kaam se aaye?</Label>
-              <Select value={formData.serviceType} onValueChange={(val) => setFormData({...formData, serviceType: val})}>
-                <SelectTrigger className="h-12 rounded-xl bg-muted/30 border-none px-4 font-bold">
-                  <SelectValue placeholder="Select Purpose" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="Modular Kitchen">Modular Kitchen</SelectItem>
-                  <SelectItem value="Wardrobe System">Wardrobe System</SelectItem>
-                  <SelectItem value="Wall Paneling">Wall Paneling</SelectItem>
-                  <SelectItem value="Railing Design">Railing Design</SelectItem>
-                  <SelectItem value="Stairs Drawing">Stairs Drawing</SelectItem>
-                  <SelectItem value="Full Interior">Full Interior</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-          </div>
-          <DialogFooter>
-            <Button onClick={handleCreate} disabled={loading} className="w-full h-14 rounded-2xl bg-accent font-black text-white shadow-xl shadow-accent/20">
-              {loading ? <Loader2 className="animate-spin" /> : "Party Save Karein"}
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
 
       {selectedVisit && (
         <div className="fixed inset-0 z-[100] bg-white animate-in slide-in-from-bottom duration-300 flex flex-col">

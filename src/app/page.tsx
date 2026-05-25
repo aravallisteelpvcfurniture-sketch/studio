@@ -12,13 +12,13 @@ import {
   Sparkles, 
   MapPin, 
   Bell, 
-  Download, 
   Calculator, 
-  ChevronRight, 
   User, 
   ClipboardList, 
   PenTool, 
-  MessageSquareHeart 
+  MessageSquareHeart,
+  Settings,
+  ChevronRight
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { signOut } from "firebase/auth"
@@ -31,30 +31,11 @@ export default function Home() {
   const { user, isUserLoading } = useUser()
   const auth = useAuth()
   const router = useRouter()
-  const [deferredPrompt, setDeferredPrompt] = React.useState<any>(null)
 
   const isAdmin = React.useMemo(() => {
     if (!user) return false;
     return user.email === "aravallisteelpvcfurniture@gmail.com" || user.uid === "Qmcch2NXxmg47Zf28Wh0KTp9Njt1";
   }, [user]);
-
-  React.useEffect(() => {
-    const handler = (e: any) => {
-      e.preventDefault();
-      setDeferredPrompt(e);
-    };
-    window.addEventListener('beforeinstallprompt', handler);
-    return () => window.removeEventListener('beforeinstallprompt', handler);
-  }, []);
-
-  const handleInstallClick = async () => {
-    if (!deferredPrompt) return;
-    deferredPrompt.prompt();
-    const { outcome } = await deferredPrompt.userChoice;
-    if (outcome === 'accepted') {
-      setDeferredPrompt(null);
-    }
-  };
 
   React.useEffect(() => {
     if (!isUserLoading && !user) {
@@ -84,12 +65,23 @@ export default function Home() {
 
   if (!user) return null
 
+  const mainTools = [
+    { label: "Greetings", icon: MessageSquareHeart, color: "bg-pink-50 text-pink-600", href: "/greetings" },
+    { label: "Draw Tool", icon: PenTool, color: "bg-blue-50 text-blue-600", href: "/drawing-tool" },
+    { label: "AI Ideas", icon: Sparkles, color: "bg-orange-50 text-orange-600", href: "/ai-designer" },
+    { label: "Budget", icon: Calculator, color: "bg-green-50 text-green-600", href: "/estimator" },
+    { label: "Shop", icon: ShoppingBag, color: "bg-purple-50 text-purple-600", href: "/shop" },
+    { label: "Explore", icon: LayoutGrid, color: "bg-indigo-50 text-indigo-600", href: "/categories" },
+    { label: "Visit", icon: MapPin, color: "bg-emerald-50 text-emerald-600", href: "/book-consultation" },
+    { label: "Settings", icon: Settings, color: "bg-slate-50 text-slate-600", href: "/settings" },
+  ]
+
   return (
     <div className="min-h-screen bg-[#F8F9FA] flex flex-col font-body pb-20">
       {/* App Header */}
-      <div className="px-6 pt-8 pb-4 flex items-center justify-between bg-white/80 backdrop-blur-xl sticky top-0 z-50 border-b">
+      <div className="px-6 pt-8 pb-6 flex items-center justify-between bg-white border-b sticky top-0 z-50">
         <div className="flex items-center gap-3">
-          <Avatar className="h-10 w-10 border-2 border-accent/20">
+          <Avatar className="h-12 w-12 border-2 border-accent/20 shadow-sm">
             <AvatarImage src={user.photoURL || ""} alt={user.displayName || "User"} />
             <AvatarFallback className="bg-accent/10 text-accent font-bold">
               {user.displayName?.charAt(0) || <User className="w-5 h-5" />}
@@ -100,7 +92,7 @@ export default function Home() {
               <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest leading-none">Namaste,</span>
               {isAdmin && <Badge className="h-4 px-1.5 text-[8px] bg-accent text-white border-none font-black">ADMIN</Badge>}
             </div>
-            <h1 className="text-sm font-black text-primary tracking-tight leading-none truncate max-w-[120px] mt-1">
+            <h1 className="text-base font-black text-primary tracking-tight leading-none mt-1">
               {user.displayName?.split(' ')[0] || "Dost"}
             </h1>
           </div>
@@ -115,112 +107,60 @@ export default function Home() {
               </Button>
             </Link>
           )}
-          <Button variant="ghost" size="icon" onClick={handleLogout} className="rounded-full text-muted-foreground active:scale-90 transition-all">
+          <Button variant="ghost" size="icon" onClick={handleLogout} className="rounded-full text-muted-foreground">
             <LogOut className="w-5 h-5" />
           </Button>
         </div>
       </div>
 
-      <div className="flex-1 space-y-4 pt-6">
-        {/* Greetings Tools Card */}
-        <div className="px-6">
+      <div className="p-6 space-y-8">
+        {/* Admin Quick View */}
+        {isAdmin && (
           <Card 
-            onClick={() => router.push("/greetings")}
-            className="group relative overflow-hidden p-8 rounded-[3rem] border-none bg-accent text-white shadow-2xl shadow-accent/20 active:scale-[0.97] transition-all cursor-pointer h-48 flex flex-col justify-end"
-          >
-            <div className="absolute top-0 right-0 w-48 h-48 bg-white/20 rounded-full blur-[70px] -mr-24 -mt-24" />
-            <div className="relative z-10 space-y-2">
-              <div className="inline-flex items-center gap-2 bg-white/20 backdrop-blur-md px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest mb-2">
-                <MessageSquareHeart className="w-3 h-3 text-white" /> Greetings Tools
-              </div>
-              <h3 className="text-3xl font-black tracking-tighter leading-none uppercase">Customer Marketing</h3>
-              <p className="text-white/80 text-[10px] font-bold uppercase tracking-wider">Welcome • Festival • Follow-up</p>
-            </div>
-          </Card>
-        </div>
-
-        {/* Drawing Tool Card */}
-        <div className="px-6">
-          <Card 
-            onClick={() => router.push("/drawing-tool")}
-            className="group relative overflow-hidden p-6 rounded-[2.5rem] border-none bg-primary text-white shadow-lg active:scale-[0.98] transition-all cursor-pointer flex items-center justify-between"
+            onClick={() => router.push("/site-visits")}
+            className="p-6 rounded-[2.5rem] bg-primary text-white border-none shadow-xl shadow-primary/10 flex items-center justify-between cursor-pointer active:scale-95 transition-all"
           >
             <div className="flex items-center gap-4">
-              <div className="w-12 h-12 bg-white/10 rounded-2xl flex items-center justify-center shrink-0">
-                <PenTool className="w-6 h-6 text-white" />
+              <div className="w-14 h-14 bg-white/10 rounded-full flex items-center justify-center">
+                <ClipboardList className="w-7 h-7" />
               </div>
-              <div className="text-left">
-                <h4 className="font-black text-white text-sm uppercase">Drawing Tool</h4>
-                <p className="text-[9px] text-white/50 font-bold uppercase tracking-widest leading-none">2D/3D Technical Plans</p>
+              <div>
+                <h3 className="font-black text-lg uppercase leading-none">Visitor Manager</h3>
+                <p className="text-[10px] text-white/50 font-bold uppercase tracking-widest mt-1">Track Daily Measurements</p>
               </div>
             </div>
-            <ChevronRight className="w-4 h-4 text-white/50" />
+            <ChevronRight className="w-5 h-5 opacity-30" />
           </Card>
-        </div>
-
-        {/* Visitor Manager Tool */}
-        {isAdmin && (
-          <div className="px-6">
-            <button 
-              onClick={() => router.push("/site-visits")}
-              className="w-full bg-white p-6 rounded-[2.5rem] shadow-sm border border-gray-100 flex items-center justify-between active:scale-[0.97] transition-all"
-            >
-              <div className="flex items-center gap-4">
-                <div className="w-12 h-12 bg-orange-50 rounded-2xl flex items-center justify-center shrink-0">
-                  <ClipboardList className="w-6 h-6 text-orange-600" />
-                </div>
-                <div className="text-left">
-                  <h4 className="font-black text-primary text-sm uppercase">Visitor Manager</h4>
-                  <p className="text-[9px] text-muted-foreground font-bold uppercase opacity-60">Track & Measurements</p>
-                </div>
-              </div>
-              <ChevronRight className="w-4 h-4 text-muted-foreground" />
-            </button>
-          </div>
         )}
 
-        <div className="px-6 grid grid-cols-3 gap-3">
-          <button onClick={() => router.push("/ai-designer")} className="bg-white p-4 rounded-[2rem] shadow-sm flex flex-col items-center gap-2 active:scale-95 border border-gray-100">
-            <div className="w-10 h-10 bg-accent/5 rounded-xl flex items-center justify-center"><Sparkles className="w-5 h-5 text-accent" /></div>
-            <span className="font-black text-primary text-[9px] uppercase">AI Ideas</span>
-          </button>
-          <button onClick={() => router.push("/categories")} className="bg-white p-4 rounded-[2rem] shadow-sm flex flex-col items-center gap-2 active:scale-95 border border-gray-100">
-            <div className="w-10 h-10 bg-blue-50 rounded-xl flex items-center justify-center"><LayoutGrid className="w-5 h-5 text-blue-500" /></div>
-            <span className="font-black text-primary text-[9px] uppercase">Explore</span>
-          </button>
-          <button onClick={() => router.push("/estimator")} className="bg-white p-4 rounded-[2rem] shadow-sm flex flex-col items-center gap-2 active:scale-95 border border-gray-100">
-            <div className="w-10 h-10 bg-green-50 rounded-xl flex items-center justify-center"><Calculator className="w-5 h-5 text-green-500" /></div>
-            <span className="font-black text-primary text-[9px] uppercase">Budget</span>
-          </button>
-        </div>
-
-        <div className="px-6 space-y-3">
-          <button onClick={() => router.push("/book-consultation")} className="w-full bg-white p-5 rounded-[2rem] shadow-sm border border-gray-100 flex items-center justify-between active:scale-[0.98]">
-            <div className="flex items-center gap-4">
-              <div className="w-12 h-12 bg-green-50 rounded-2xl flex items-center justify-center shrink-0"><MapPin className="w-6 h-6 text-green-600" /></div>
-              <div className="text-left">
-                <h4 className="font-black text-primary text-sm uppercase">Free Site Visit</h4>
-                <p className="text-[9px] text-muted-foreground font-bold uppercase opacity-60">Book Expert Today</p>
+        {/* Round Sote Icons Grid */}
+        <div className="grid grid-cols-4 gap-y-8 gap-x-4 px-2">
+          {mainTools.map((tool) => (
+            <button
+              key={tool.label}
+              onClick={() => router.push(tool.href)}
+              className="flex flex-col items-center gap-2 group"
+            >
+              <div className={`w-14 h-14 rounded-full ${tool.color} flex items-center justify-center shadow-sm border border-black/5 group-active:scale-90 transition-all`}>
+                <tool.icon className="w-6 h-6" />
               </div>
-            </div>
-            <ChevronRight className="w-4 h-4 text-muted-foreground" />
-          </button>
-
-          {deferredPrompt && (
-            <button onClick={handleInstallClick} className="w-full bg-primary/5 p-4 rounded-[2rem] border border-primary/10 flex items-center justify-center gap-3 active:scale-95">
-              <Download className="w-5 h-5 text-primary" />
-              <span className="font-black text-primary text-[10px] uppercase">Install Fast App</span>
+              <span className="text-[9px] font-black text-primary uppercase tracking-tight text-center">
+                {tool.label}
+              </span>
             </button>
-          )}
+          ))}
         </div>
-      </div>
 
-      <div className="mt-10 mb-6 flex flex-col items-center gap-2 opacity-20">
-        <div className="flex items-center gap-2">
-          <div className="w-6 h-6 bg-primary rounded-lg flex items-center justify-center p-1"><span className="text-white text-[10px] font-black">AS</span></div>
-          <span className="text-[10px] font-black tracking-[0.3em] uppercase">Aravalli Steel</span>
+        {/* Branding Footer */}
+        <div className="pt-12 flex flex-col items-center gap-2 opacity-20">
+          <div className="flex items-center gap-2">
+            <div className="w-6 h-6 bg-primary rounded-lg flex items-center justify-center p-1">
+              <span className="text-white text-[10px] font-black">AS</span>
+            </div>
+            <span className="text-[10px] font-black tracking-[0.3em] uppercase">Aravalli Steel</span>
+          </div>
+          <p className="text-[8px] font-bold uppercase tracking-widest">Premium Modular Solutions • Since 1998</p>
         </div>
-        <p className="text-[8px] font-bold uppercase tracking-widest">Premium Modular Solutions • Since 1998</p>
       </div>
     </div>
   )
