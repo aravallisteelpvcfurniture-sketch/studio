@@ -4,7 +4,22 @@
 import * as React from "react"
 import { useRouter } from "next/navigation"
 import { useUser, useAuth } from "@/firebase"
-import { Loader2, LogOut, ShoppingBag, LayoutGrid, Sparkles, MapPin, Bell, Download, Calculator, ChevronRight, User, ClipboardList, PenTool, Layout } from "lucide-react"
+import { 
+  Loader2, 
+  LogOut, 
+  ShoppingBag, 
+  LayoutGrid, 
+  Sparkles, 
+  MapPin, 
+  Bell, 
+  Download, 
+  Calculator, 
+  ChevronRight, 
+  User, 
+  ClipboardList, 
+  PenTool, 
+  Settings 
+} from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { signOut } from "firebase/auth"
 import Link from "next/link"
@@ -107,7 +122,7 @@ export default function Home() {
       </div>
 
       <div className="flex-1 space-y-4 pt-6">
-        {/* New Dedicated Drawing Tool Card */}
+        {/* Drawing Tool Card */}
         <div className="px-6">
           <Card 
             onClick={() => router.push("/drawing-tool")}
@@ -121,6 +136,25 @@ export default function Home() {
               <h3 className="text-3xl font-black tracking-tighter leading-none uppercase">Technical Plans</h3>
               <p className="text-white/60 text-xs font-medium uppercase tracking-wider">Railings • Stairs • Interior Layouts</p>
             </div>
+          </Card>
+        </div>
+
+        {/* Setting Tools Card (Real Working) */}
+        <div className="px-6">
+          <Card 
+            onClick={() => router.push("/settings")}
+            className="group relative overflow-hidden p-6 rounded-[2.5rem] border-none bg-white text-primary shadow-lg active:scale-[0.98] transition-all cursor-pointer flex items-center justify-between"
+          >
+            <div className="flex items-center gap-4">
+              <div className="w-12 h-12 bg-blue-50 rounded-2xl flex items-center justify-center shrink-0">
+                <Settings className="w-6 h-6 text-blue-600" />
+              </div>
+              <div className="text-left">
+                <h4 className="font-black text-primary text-sm uppercase">Setting Tools</h4>
+                <p className="text-[9px] text-muted-foreground font-bold uppercase opacity-60">Account & Business Settings</p>
+              </div>
+            </div>
+            <ChevronRight className="w-4 h-4 text-muted-foreground" />
           </Card>
         </div>
 
@@ -151,8 +185,8 @@ export default function Home() {
               className="w-full bg-white p-6 rounded-[2.5rem] shadow-sm border border-gray-100 flex items-center justify-between active:scale-[0.97] transition-all"
             >
               <div className="flex items-center gap-4">
-                <div className="w-12 h-12 bg-blue-50 rounded-2xl flex items-center justify-center shrink-0">
-                  <ClipboardList className="w-6 h-6 text-blue-500" />
+                <div className="w-12 h-12 bg-orange-50 rounded-2xl flex items-center justify-center shrink-0">
+                  <ClipboardList className="w-6 h-6 text-orange-600" />
                 </div>
                 <div className="text-left">
                   <h4 className="font-black text-primary text-sm uppercase">Visitor Manager</h4>

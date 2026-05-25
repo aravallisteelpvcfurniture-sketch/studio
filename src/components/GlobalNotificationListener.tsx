@@ -11,7 +11,7 @@ import { useRouter } from "next/navigation"
 /**
  * GlobalNotificationListener
  * Background listener that alerts the admin of new events.
- * Handles System Tray (Slider Bar) notifications for mobile/desktop.
+ * Handles System Tray notifications without requiring complex composite indexes.
  */
 export function GlobalNotificationListener() {
   const db = useFirestore()
@@ -39,7 +39,7 @@ export function GlobalNotificationListener() {
   }, [isAdmin]);
 
   // 1. Listener for Quote Requests (Inquiries)
-  // Fix: Removed 'where' clause to avoid index requirement, filtering 'pending' status in callback.
+  // Simple query without status filter to avoid composite index requirement
   React.useEffect(() => {
     if (!db || !isAdmin || !user) return;
 
@@ -57,9 +57,6 @@ export function GlobalNotificationListener() {
       const latestDoc = snapshot.docs[0];
       const data = latestDoc.data();
 
-      // Only notify if status is pending
-      if (data.status !== "pending") return;
-
       if (isInitialLoadQuote.current) {
         setLastQuoteId(latestDoc.id);
         isInitialLoadQuote.current = false;
@@ -68,11 +65,14 @@ export function GlobalNotificationListener() {
 
       if (latestDoc.id !== lastQuoteId) {
         setLastQuoteId(latestDoc.id);
-        triggerSystemNotification(
-          "New Inquiry Received! 🚨",
-          `${data.name} wants ${data.serviceType}.`,
-          "/notifications"
-        );
+        // Only notify if status is pending (client-side filter)
+        if (data.status === "pending") {
+          triggerSystemNotification(
+            "New Inquiry Received! 🚨",
+            `${data.name} wants ${data.serviceType}.`,
+            "/notifications"
+          );
+        }
       }
     });
     return () => unsubscribe();
