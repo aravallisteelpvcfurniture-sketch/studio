@@ -158,7 +158,7 @@ export default function LoginPage() {
     <div className="min-h-screen bg-background flex flex-col items-center justify-center p-6 relative overflow-hidden font-body">
       <div className="absolute top-[-20%] left-[-20%] w-[600px] h-[600px] bg-accent/10 rounded-full blur-[120px]" />
       
-      <Card className="w-full max-md p-8 border-none shadow-2xl bg-white/95 backdrop-blur-xl rounded-[3rem] flex flex-col space-y-8 animate-in zoom-in duration-500">
+      <Card className="w-full max-w-md p-8 border-none shadow-2xl bg-white/95 backdrop-blur-xl rounded-[3rem] flex flex-col space-y-8 animate-in zoom-in duration-500">
         <div className="text-center space-y-4">
           <div className="w-20 h-20 bg-white rounded-3xl flex items-center justify-center mx-auto shadow-lg p-3 border border-accent/10">
             {logoImg ? (

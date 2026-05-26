@@ -6,7 +6,6 @@ import Link from "next/link"
 import Image from "next/image"
 import { 
   ChevronLeft, 
-  MessageSquareHeart, 
   Send, 
   RotateCcw,
   MapPin,
@@ -103,7 +102,6 @@ export default function GreetingsTool() {
 
       <ScrollArea className="flex-1">
         <div className="p-6 space-y-8">
-          {/* Canvas Section */}
           <div 
             ref={containerRef}
             onMouseMove={handleDrag}
@@ -121,7 +119,6 @@ export default function GreetingsTool() {
               data-ai-hint={selectedTemplate.hint}
             />
 
-            {/* Logo Layer */}
             <div 
               onMouseDown={() => setIsDraggingLogo(true)}
               onTouchStart={() => setIsDraggingLogo(true)}
@@ -131,7 +128,6 @@ export default function GreetingsTool() {
               <Image src={logoImg} alt="Logo" width={50} height={50} className="object-contain pointer-events-none" />
             </div>
 
-            {/* Info Layer */}
             <div 
               onMouseDown={() => setIsDraggingInfo(true)}
               onTouchStart={() => setIsDraggingInfo(true)}
@@ -150,7 +146,6 @@ export default function GreetingsTool() {
             </div>
           </div>
 
-          {/* Box Style Selector */}
           <div className="space-y-3">
             <Label className="text-[10px] font-black uppercase text-muted-foreground tracking-widest ml-2 flex items-center gap-2">
               <Layout className="w-3 h-3" /> Select Info Box Style
@@ -171,7 +166,6 @@ export default function GreetingsTool() {
             </div>
           </div>
 
-          {/* Festival Gallery */}
           <div className="space-y-4">
             <Label className="text-[10px] font-black uppercase text-muted-foreground tracking-widest ml-2">Indian Festival Gallery</Label>
             <div className="grid grid-cols-2 gap-4">
