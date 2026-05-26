@@ -69,7 +69,7 @@ export default function Home() {
     { label: "Greetings", icon: MessageSquareHeart, color: "bg-pink-50 text-pink-600", href: "/greetings" },
     { label: "Draw Tool", icon: PenTool, color: "bg-blue-50 text-blue-600", href: "/drawing-tool" },
     { label: "AI Ideas", icon: Sparkles, color: "bg-orange-50 text-orange-600", href: "/ai-designer" },
-    { label: "Budget", icon: Calculator, color: "bg-green-50 text-green-600", href: "/estimator" },
+    { label: "Estimate", icon: Calculator, color: "bg-green-50 text-green-600", href: "/estimator" },
     { label: "Shop", icon: ShoppingBag, color: "bg-purple-50 text-purple-600", href: "/shop" },
     { label: "Explore", icon: LayoutGrid, color: "bg-indigo-50 text-indigo-600", href: "/categories" },
     { label: "Visit", icon: MapPin, color: "bg-emerald-50 text-emerald-600", href: "/book-consultation" },
@@ -133,7 +133,7 @@ export default function Home() {
           </Card>
         )}
 
-        {/* Round Sote Icons Grid */}
+        {/* Round Icons Grid */}
         <div className="grid grid-cols-4 gap-y-8 gap-x-4 px-2">
           {mainTools.map((tool) => (
             <button
