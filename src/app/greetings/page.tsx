@@ -86,14 +86,14 @@ export default function GreetingsTool() {
 
   return (
     <div className="min-h-screen bg-background flex flex-col select-none pb-24">
-      <div className="p-6 flex items-center justify-between bg-white border-b sticky top-0 z-50">
+      <div className="p-6 flex items-center justify-between bg-card border-b border-white/5 sticky top-0 z-50">
         <div className="flex items-center gap-4">
           <Link href="/">
             <Button variant="ghost" size="icon" className="rounded-full">
-              <ChevronLeft className="w-6 h-6" />
+              <ChevronLeft className="w-6 h-6 text-white" />
             </Button>
           </Link>
-          <h1 className="text-xl font-black text-primary uppercase tracking-tight">Greeting Tool</h1>
+          <h1 className="text-xl font-black text-white uppercase tracking-tight">Greeting Tool</h1>
         </div>
         <Button variant="ghost" size="icon" onClick={() => { setLogoPos({ x: 5, y: 5 }); setInfoPos({ x: 5, y: 80 }); }} className="text-accent">
           <RotateCcw className="w-5 h-5" />
@@ -109,7 +109,7 @@ export default function GreetingsTool() {
             onMouseLeave={stopDragging}
             onTouchMove={handleDrag}
             onTouchEnd={stopDragging}
-            className="relative aspect-square w-full rounded-[3rem] overflow-hidden shadow-2xl border-4 border-white bg-muted touch-none"
+            className="relative aspect-square w-full rounded-[3rem] overflow-hidden shadow-2xl border-4 border-white/5 bg-black touch-none"
           >
             <Image 
               src={selectedTemplate.url} 
@@ -148,7 +148,7 @@ export default function GreetingsTool() {
 
           <div className="space-y-3">
             <Label className="text-[10px] font-black uppercase text-muted-foreground tracking-widest ml-2 flex items-center gap-2">
-              <Layout className="w-3 h-3" /> Select Info Box Style
+              <Layout className="w-3 h-3 text-accent" /> Select Info Box Style
             </Label>
             <div className="grid grid-cols-2 gap-2">
               {BOX_STYLES.map((style) => (
@@ -157,7 +157,7 @@ export default function GreetingsTool() {
                   variant="outline"
                   onClick={() => setSelectedStyle(style)}
                   className={`h-12 rounded-xl text-[10px] font-black uppercase transition-all ${
-                    selectedStyle.id === style.id ? "border-accent bg-accent/5 text-accent" : "border-gray-100"
+                    selectedStyle.id === style.id ? "border-accent bg-accent/5 text-accent" : "border-white/10 bg-card text-white"
                   }`}
                 >
                   {style.name}

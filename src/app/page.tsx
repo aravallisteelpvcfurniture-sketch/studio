@@ -66,20 +66,20 @@ export default function Home() {
   if (!user) return null
 
   const mainTools = [
-    { label: "Greetings", icon: MessageSquareHeart, color: "bg-pink-50 text-pink-600", href: "/greetings" },
-    { label: "Draw Tool", icon: PenTool, color: "bg-blue-50 text-blue-600", href: "/drawing-tool" },
-    { label: "AI Ideas", icon: Sparkles, color: "bg-orange-50 text-orange-600", href: "/ai-designer" },
-    { label: "Estimate", icon: Calculator, color: "bg-green-50 text-green-600", href: "/estimator" },
-    { label: "Shop", icon: ShoppingBag, color: "bg-purple-50 text-purple-600", href: "/shop" },
-    { label: "Explore", icon: LayoutGrid, color: "bg-indigo-50 text-indigo-600", href: "/categories" },
-    { label: "Visit", icon: MapPin, color: "bg-emerald-50 text-emerald-600", href: "/book-consultation" },
-    { label: "Settings", icon: Settings, color: "bg-slate-50 text-slate-600", href: "/settings" },
+    { label: "Greetings", icon: MessageSquareHeart, color: "bg-pink-500/10 text-pink-500", href: "/greetings" },
+    { label: "Draw Tool", icon: PenTool, color: "bg-blue-500/10 text-blue-500", href: "/drawing-tool" },
+    { label: "AI Ideas", icon: Sparkles, color: "bg-orange-500/10 text-orange-500", href: "/ai-designer" },
+    { label: "Estimate", icon: Calculator, color: "bg-green-500/10 text-green-500", href: "/estimator" },
+    { label: "Shop", icon: ShoppingBag, color: "bg-purple-500/10 text-purple-500", href: "/shop" },
+    { label: "Explore", icon: LayoutGrid, color: "bg-indigo-500/10 text-indigo-500", href: "/categories" },
+    { label: "Visit", icon: MapPin, color: "bg-emerald-500/10 text-emerald-500", href: "/book-consultation" },
+    { label: "Settings", icon: Settings, color: "bg-slate-500/10 text-slate-400", href: "/settings" },
   ]
 
   return (
-    <div className="min-h-screen bg-[#F8F9FA] flex flex-col font-body pb-20">
+    <div className="min-h-screen bg-background flex flex-col font-body pb-20">
       {/* App Header */}
-      <div className="px-6 pt-8 pb-6 flex items-center justify-between bg-white border-b sticky top-0 z-50">
+      <div className="px-6 pt-8 pb-6 flex items-center justify-between bg-card border-b border-white/5 sticky top-0 z-50">
         <div className="flex items-center gap-3">
           <Avatar className="h-12 w-12 border-2 border-accent/20 shadow-sm">
             <AvatarImage src={user.photoURL || ""} alt={user.displayName || "User"} />
@@ -92,7 +92,7 @@ export default function Home() {
               <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest leading-none">Namaste,</span>
               {isAdmin && <Badge className="h-4 px-1.5 text-[8px] bg-accent text-white border-none font-black">ADMIN</Badge>}
             </div>
-            <h1 className="text-base font-black text-primary tracking-tight leading-none mt-1">
+            <h1 className="text-base font-black text-foreground tracking-tight leading-none mt-1">
               {user.displayName?.split(' ')[0] || "Dost"}
             </h1>
           </div>
@@ -103,7 +103,7 @@ export default function Home() {
             <Link href="/notifications">
               <Button variant="ghost" size="icon" className="rounded-full bg-accent/5 text-accent relative">
                 <Bell className="w-5 h-5" />
-                <span className="absolute top-2.5 right-2.5 w-2 h-2 bg-red-500 rounded-full border-2 border-white"></span>
+                <span className="absolute top-2.5 right-2.5 w-2 h-2 bg-red-500 rounded-full border-2 border-background"></span>
               </Button>
             </Link>
           )}
@@ -118,7 +118,7 @@ export default function Home() {
         {isAdmin && (
           <Card 
             onClick={() => router.push("/site-visits")}
-            className="p-6 rounded-[2.5rem] bg-primary text-white border-none shadow-xl shadow-primary/10 flex items-center justify-between cursor-pointer active:scale-95 transition-all"
+            className="p-6 rounded-[2.5rem] bg-accent text-white border-none shadow-xl shadow-accent/10 flex items-center justify-between cursor-pointer active:scale-95 transition-all"
           >
             <div className="flex items-center gap-4">
               <div className="w-14 h-14 bg-white/10 rounded-full flex items-center justify-center">
@@ -134,17 +134,17 @@ export default function Home() {
         )}
 
         {/* Round Icons Grid */}
-        <div className="grid grid-cols-4 gap-y-8 gap-x-4 px-2">
+        <div className="grid grid-cols-4 gap-y-10 gap-x-4 px-2">
           {mainTools.map((tool) => (
             <button
               key={tool.label}
               onClick={() => router.push(tool.href)}
-              className="flex flex-col items-center gap-2 group"
+              className="flex flex-col items-center gap-3 group"
             >
-              <div className={`w-14 h-14 rounded-full ${tool.color} flex items-center justify-center shadow-sm border border-black/5 group-active:scale-90 transition-all`}>
-                <tool.icon className="w-6 h-6" />
+              <div className={`w-16 h-16 rounded-full ${tool.color} flex items-center justify-center shadow-lg border border-white/5 group-active:scale-90 transition-all`}>
+                <tool.icon className="w-7 h-7" />
               </div>
-              <span className="text-[9px] font-black text-primary uppercase tracking-tight text-center">
+              <span className="text-[10px] font-black text-muted-foreground uppercase tracking-tight text-center">
                 {tool.label}
               </span>
             </button>
@@ -154,12 +154,12 @@ export default function Home() {
         {/* Branding Footer */}
         <div className="pt-12 flex flex-col items-center gap-2 opacity-20">
           <div className="flex items-center gap-2">
-            <div className="w-6 h-6 bg-primary rounded-lg flex items-center justify-center p-1">
+            <div className="w-6 h-6 bg-accent rounded-lg flex items-center justify-center p-1">
               <span className="text-white text-[10px] font-black">AS</span>
             </div>
-            <span className="text-[10px] font-black tracking-[0.3em] uppercase">Aravalli Steel</span>
+            <span className="text-[10px] font-black tracking-[0.3em] uppercase text-white">Aravalli Steel</span>
           </div>
-          <p className="text-[8px] font-bold uppercase tracking-widest">Premium Modular Solutions • Since 1998</p>
+          <p className="text-[8px] font-bold uppercase tracking-widest text-white">Premium Modular Solutions • Since 1998</p>
         </div>
       </div>
     </div>

@@ -41,13 +41,13 @@ import { Badge } from "@/components/ui/badge"
 import { ScrollArea } from "@/components/ui/scroll-area"
 
 const STATUS_COLORS: Record<string, string> = {
-  "New": "bg-blue-100 text-blue-700",
-  "Scheduled": "bg-yellow-100 text-yellow-700",
-  "Visited": "bg-purple-100 text-purple-700",
-  "Measured": "bg-orange-100 text-orange-700",
-  "Quoted": "bg-indigo-100 text-indigo-700",
-  "Started": "bg-cyan-100 text-cyan-700",
-  "Completed": "bg-green-100 text-green-700"
+  "New": "bg-blue-500/10 text-blue-400",
+  "Scheduled": "bg-yellow-500/10 text-yellow-400",
+  "Visited": "bg-purple-500/10 text-purple-400",
+  "Measured": "bg-orange-500/10 text-orange-400",
+  "Quoted": "bg-indigo-500/10 text-indigo-400",
+  "Started": "bg-cyan-500/10 text-cyan-400",
+  "Completed": "bg-green-500/10 text-green-400"
 }
 
 export default function SiteVisitManager() {
@@ -184,19 +184,19 @@ export default function SiteVisitManager() {
     }
   }, [selectedVisit])
 
-  if (isUserLoading) return <div className="h-screen flex items-center justify-center"><Loader2 className="animate-spin text-accent" /></div>
-  if (!isAdmin) return <div className="p-20 text-center font-bold">Admin Access Only</div>
+  if (isUserLoading) return <div className="h-screen flex items-center justify-center bg-black"><Loader2 className="animate-spin text-accent" /></div>
+  if (!isAdmin) return <div className="p-20 text-center font-bold text-white">Admin Access Only</div>
 
   return (
-    <div className="min-h-screen bg-[#F8F9FA] flex flex-col font-body pb-24">
-      <div className="p-6 flex items-center justify-between bg-white border-b sticky top-0 z-50">
+    <div className="min-h-screen bg-background flex flex-col font-body pb-24 text-white">
+      <div className="p-6 flex items-center justify-between bg-card border-b border-white/5 sticky top-0 z-50">
         <div className="flex items-center gap-4">
           <Link href="/">
             <Button variant="ghost" size="icon" className="rounded-full">
-              <ChevronLeft className="w-6 h-6" />
+              <ChevronLeft className="w-6 h-6 text-white" />
             </Button>
           </Link>
-          <h1 className="text-xl font-black text-primary uppercase tracking-tight">Visitor Manager</h1>
+          <h1 className="text-xl font-black text-white uppercase tracking-tight">Visitor Manager</h1>
         </div>
         
         <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
@@ -205,26 +205,26 @@ export default function SiteVisitManager() {
               <UserPlus className="w-6 h-6" />
             </Button>
           </DialogTrigger>
-          <DialogContent className="rounded-[2.5rem] w-[95%] max-w-md p-8">
+          <DialogContent className="rounded-[2.5rem] w-[95%] max-w-md p-8 bg-card border-white/10 text-white">
             <DialogHeader>
-              <DialogTitle className="text-2xl font-black text-primary uppercase tracking-tighter">Nayi Party Details</DialogTitle>
+              <DialogTitle className="text-2xl font-black text-white uppercase tracking-tighter">Nayi Party Details</DialogTitle>
             </DialogHeader>
             <div className="space-y-4 py-4">
               <div className="space-y-1">
                 <Label className="text-[10px] font-black uppercase text-muted-foreground ml-1">Party Name</Label>
-                <Input placeholder="Bhai ka Naam..." value={formData.customerName} onChange={e => setFormData({...formData, customerName: e.target.value})} className="h-12 rounded-xl bg-muted/30 border-none px-4 font-bold" />
+                <Input placeholder="Bhai ka Naam..." value={formData.customerName} onChange={e => setFormData({...formData, customerName: e.target.value})} className="h-12 rounded-xl bg-black/30 border-white/10 px-4 font-bold text-white" />
               </div>
               <div className="space-y-1">
                 <Label className="text-[10px] font-black uppercase text-muted-foreground ml-1">Mobile Number</Label>
-                <Input placeholder="9999999999" type="tel" value={formData.phone} onChange={e => setFormData({...formData, phone: e.target.value})} className="h-12 rounded-xl bg-muted/30 border-none px-4 font-bold" />
+                <Input placeholder="9999999999" type="tel" value={formData.phone} onChange={e => setFormData({...formData, phone: e.target.value})} className="h-12 rounded-xl bg-black/30 border-white/10 px-4 font-bold text-white" />
               </div>
               <div className="space-y-1">
                 <Label className="text-[10px] font-black uppercase text-muted-foreground ml-1">Kis kaam se aaye?</Label>
                 <Select value={formData.serviceType} onValueChange={(val) => setFormData({...formData, serviceType: val})}>
-                  <SelectTrigger className="h-12 rounded-xl bg-muted/30 border-none px-4 font-bold">
+                  <SelectTrigger className="h-12 rounded-xl bg-black/30 border-white/10 px-4 font-bold text-white">
                     <SelectValue placeholder="Select Purpose" />
                   </SelectTrigger>
-                  <SelectContent>
+                  <SelectContent className="bg-card border-white/10 text-white">
                     <SelectItem value="Modular Kitchen">Modular Kitchen</SelectItem>
                     <SelectItem value="Wardrobe System">Wardrobe System</SelectItem>
                     <SelectItem value="Wall Paneling">Wall Paneling</SelectItem>
@@ -253,22 +253,22 @@ export default function SiteVisitManager() {
               <Card 
                 key={visit.id} 
                 onClick={() => setSelectedVisit(visit)}
-                className="p-6 border-none shadow-sm bg-white rounded-[2rem] active:scale-[0.98] transition-all cursor-pointer relative overflow-hidden group"
+                className="p-6 border-none shadow-sm bg-card rounded-[2rem] active:scale-[0.98] transition-all cursor-pointer relative overflow-hidden group border border-white/5"
               >
                 <div className="absolute top-0 right-0 w-24 h-24 bg-accent/5 rounded-full -mr-12 -mt-12 group-hover:bg-accent/10 transition-colors" />
                 <div className="flex justify-between items-start relative z-10">
                   <div className="space-y-1">
-                    <h3 className="text-lg font-black text-primary leading-none uppercase tracking-tight">{visit.customerName}</h3>
+                    <h3 className="text-lg font-black text-white leading-none uppercase tracking-tight">{visit.customerName}</h3>
                     <div className="flex flex-col gap-1 mt-2">
                       <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest flex items-center gap-1">
                         <Phone className="w-3 h-3 text-accent" /> {visit.phone}
                       </p>
-                      <p className="text-[10px] font-bold text-primary uppercase tracking-widest flex items-center gap-1">
+                      <p className="text-[10px] font-bold text-white uppercase tracking-widest flex items-center gap-1">
                         <Briefcase className="w-3 h-3 text-accent" /> {visit.serviceType}
                       </p>
                     </div>
                   </div>
-                  <Badge className={`rounded-full border-none px-3 py-1 text-[8px] font-black ${STATUS_COLORS[visit.status] || "bg-gray-100"}`}>
+                  <Badge className={`rounded-full border-none px-3 py-1 text-[8px] font-black ${STATUS_COLORS[visit.status] || "bg-gray-800"}`}>
                     {visit.status.toUpperCase()}
                   </Badge>
                 </div>
@@ -284,18 +284,18 @@ export default function SiteVisitManager() {
       </ScrollArea>
 
       {selectedVisit && (
-        <div className="fixed inset-0 z-[100] bg-white animate-in slide-in-from-bottom duration-300 flex flex-col">
-          <div className="p-6 flex items-center justify-between border-b bg-white/80 backdrop-blur-md sticky top-0 z-50">
+        <div className="fixed inset-0 z-[100] bg-background animate-in slide-in-from-bottom duration-300 flex flex-col text-white">
+          <div className="p-6 flex items-center justify-between border-b border-white/5 bg-card/80 backdrop-blur-md sticky top-0 z-50">
             <div className="flex flex-col">
               <span className="text-[10px] font-black text-accent uppercase tracking-[0.2em]">Management Tools</span>
-              <h2 className="text-xl font-black text-primary uppercase">{selectedVisit.customerName}</h2>
+              <h2 className="text-xl font-black text-white uppercase">{selectedVisit.customerName}</h2>
             </div>
             <div className="flex items-center gap-2">
               <Button variant="ghost" size="icon" onClick={() => deleteVisit(selectedVisit.id)} className="rounded-full text-destructive">
                 <Trash2 className="w-5 h-5" />
               </Button>
-              <Button variant="ghost" size="icon" onClick={() => setSelectedVisit(null)} className="rounded-full bg-gray-50">
-                <X className="w-6 h-6" />
+              <Button variant="ghost" size="icon" onClick={() => setSelectedVisit(null)} className="rounded-full bg-white/5">
+                <X className="w-6 h-6 text-white" />
               </Button>
             </div>
           </div>
@@ -304,33 +304,33 @@ export default function SiteVisitManager() {
             <div className="p-8 grid grid-cols-2 gap-6 pb-24">
               <Dialog>
                 <DialogTrigger asChild>
-                  <button className="aspect-square bg-blue-50 rounded-[2.5rem] flex flex-col items-center justify-center gap-3 border-2 border-blue-100 active:scale-95 transition-all shadow-sm">
-                    <div className="w-16 h-16 bg-white rounded-3xl flex items-center justify-center shadow-md">
-                      <Edit3 className="w-8 h-8 text-blue-500" />
+                  <button className="aspect-square bg-blue-500/5 rounded-[2.5rem] flex flex-col items-center justify-center gap-3 border-2 border-blue-500/10 active:scale-95 transition-all shadow-sm">
+                    <div className="w-16 h-16 bg-card rounded-3xl flex items-center justify-center shadow-md">
+                      <Edit3 className="w-8 h-8 text-blue-400" />
                     </div>
-                    <span className="font-black text-blue-700 text-[10px] uppercase">Edit Details</span>
+                    <span className="font-black text-blue-400 text-[10px] uppercase">Edit Details</span>
                   </button>
                 </DialogTrigger>
-                <DialogContent className="rounded-[2.5rem] w-[95%]">
+                <DialogContent className="rounded-[2.5rem] w-[95%] bg-card border-white/10 text-white">
                   <DialogHeader>
                     <DialogTitle className="font-black uppercase">Update Details</DialogTitle>
                   </DialogHeader>
                   <div className="space-y-4 py-4">
                     <div className="space-y-1">
                       <Label className="text-xs font-bold uppercase">Name</Label>
-                      <Input value={editFormData?.customerName} onChange={e => setEditFormData({...editFormData, customerName: e.target.value})} className="h-12 rounded-xl bg-muted/30 border-none font-bold" />
+                      <Input value={editFormData?.customerName} onChange={e => setEditFormData({...editFormData, customerName: e.target.value})} className="h-12 rounded-xl bg-black/30 border-white/10 font-bold" />
                     </div>
                     <div className="space-y-1">
                       <Label className="text-xs font-bold uppercase">Phone</Label>
-                      <Input value={editFormData?.phone} onChange={e => setEditFormData({...editFormData, phone: e.target.value})} className="h-12 rounded-xl bg-muted/30 border-none font-bold" />
+                      <Input value={editFormData?.phone} onChange={e => setEditFormData({...editFormData, phone: e.target.value})} className="h-12 rounded-xl bg-black/30 border-white/10 font-bold" />
                     </div>
                     <div className="space-y-1">
                       <Label className="text-xs font-bold uppercase">Service</Label>
                       <Select value={editFormData?.serviceType} onValueChange={(val) => setEditFormData({...editFormData, serviceType: val})}>
-                        <SelectTrigger className="h-12 rounded-xl bg-muted/30 border-none font-bold">
+                        <SelectTrigger className="h-12 rounded-xl bg-black/30 border-white/10 font-bold">
                           <SelectValue />
                         </SelectTrigger>
-                        <SelectContent>
+                        <SelectContent className="bg-card border-white/10 text-white">
                           <SelectItem value="Modular Kitchen">Modular Kitchen</SelectItem>
                           <SelectItem value="Wardrobe System">Wardrobe System</SelectItem>
                           <SelectItem value="Wall Paneling">Wall Paneling</SelectItem>
@@ -347,14 +347,14 @@ export default function SiteVisitManager() {
 
               <Dialog>
                 <DialogTrigger asChild>
-                  <button className="aspect-square bg-orange-50 rounded-[2.5rem] flex flex-col items-center justify-center gap-3 border-2 border-orange-100 active:scale-95 transition-all shadow-sm">
-                    <div className="w-16 h-16 bg-white rounded-3xl flex items-center justify-center shadow-md">
-                      <Ruler className="w-8 h-8 text-orange-500" />
+                  <button className="aspect-square bg-orange-500/5 rounded-[2.5rem] flex flex-col items-center justify-center gap-3 border-2 border-orange-500/10 active:scale-95 transition-all shadow-sm">
+                    <div className="w-16 h-16 bg-card rounded-3xl flex items-center justify-center shadow-md">
+                      <Ruler className="w-8 h-8 text-orange-400" />
                     </div>
-                    <span className="font-black text-orange-700 text-[10px] uppercase">Naap / Size</span>
+                    <span className="font-black text-orange-400 text-[10px] uppercase">Naap / Size</span>
                   </button>
                 </DialogTrigger>
-                <DialogContent className="rounded-[2.5rem] w-[95%]">
+                <DialogContent className="rounded-[2.5rem] w-[95%] bg-card border-white/10 text-white">
                   <DialogHeader>
                     <DialogTitle className="font-black uppercase">Measurement Data</DialogTitle>
                   </DialogHeader>
@@ -363,7 +363,7 @@ export default function SiteVisitManager() {
                       value={tempMeasurements}
                       onChange={(e) => setTempMeasurements(e.target.value)}
                       placeholder="Kitchen L-Shape: 10x8ft, PVC 18mm..."
-                      className="min-h-[200px] rounded-2xl bg-muted/30 border-none p-4 font-bold"
+                      className="min-h-[200px] rounded-2xl bg-black/30 border-white/10 p-4 font-bold text-white"
                     />
                     <Button onClick={handleSaveNaap} disabled={loading} className="w-full h-14 bg-accent text-white font-bold rounded-2xl flex gap-2 shadow-lg">
                       <Save className="w-4 h-4" /> Save Naap
@@ -374,14 +374,14 @@ export default function SiteVisitManager() {
 
               <Dialog>
                 <DialogTrigger asChild>
-                  <button className="aspect-square bg-green-50 rounded-[2.5rem] flex flex-col items-center justify-center gap-3 border-2 border-green-100 active:scale-95 transition-all shadow-sm">
-                    <div className="w-16 h-16 bg-white rounded-3xl flex items-center justify-center shadow-md">
-                      <Settings2 className="w-8 h-8 text-green-500" />
+                  <button className="aspect-square bg-green-500/5 rounded-[2.5rem] flex flex-col items-center justify-center gap-3 border-2 border-green-500/10 active:scale-95 transition-all shadow-sm">
+                    <div className="w-16 h-16 bg-card rounded-3xl flex items-center justify-center shadow-md">
+                      <Settings2 className="w-8 h-8 text-green-400" />
                     </div>
-                    <span className="font-black text-green-700 text-[10px] uppercase">Kaam Status</span>
+                    <span className="font-black text-green-400 text-[10px] uppercase">Kaam Status</span>
                   </button>
                 </DialogTrigger>
-                <DialogContent className="rounded-[2.5rem] w-[95%]">
+                <DialogContent className="rounded-[2.5rem] w-[95%] bg-card border-white/10 text-white">
                   <DialogHeader>
                     <DialogTitle className="font-black uppercase">Update Status</DialogTitle>
                   </DialogHeader>
@@ -403,14 +403,14 @@ export default function SiteVisitManager() {
 
               <Dialog>
                 <DialogTrigger asChild>
-                  <button className="aspect-square bg-purple-50 rounded-[2.5rem] flex flex-col items-center justify-center gap-3 border-2 border-purple-100 active:scale-95 transition-all shadow-sm">
-                    <div className="w-16 h-16 bg-white rounded-3xl flex items-center justify-center shadow-md">
-                      <Camera className="w-8 h-8 text-purple-500" />
+                  <button className="aspect-square bg-purple-500/5 rounded-[2.5rem] flex flex-col items-center justify-center gap-3 border-2 border-purple-500/10 active:scale-95 transition-all shadow-sm">
+                    <div className="w-16 h-16 bg-card rounded-3xl flex items-center justify-center shadow-md">
+                      <Camera className="w-8 h-8 text-purple-400" />
                     </div>
-                    <span className="font-black text-purple-700 text-[10px] uppercase">Site Photos</span>
+                    <span className="font-black text-purple-400 text-[10px] uppercase">Site Photos</span>
                   </button>
                 </DialogTrigger>
-                <DialogContent className="rounded-[2.5rem] w-[95%]">
+                <DialogContent className="rounded-[2.5rem] w-[95%] bg-card border-white/10 text-white">
                   <DialogHeader>
                     <DialogTitle className="font-black uppercase">Site Photos</DialogTitle>
                   </DialogHeader>
@@ -425,19 +425,19 @@ export default function SiteVisitManager() {
             </div>
           </ScrollArea>
 
-          <div className="p-8 bg-gray-50 border-t space-y-4 sticky bottom-0 z-50">
+          <div className="p-8 bg-card border-t border-white/5 space-y-4 sticky bottom-0 z-50">
             <div className="flex items-center justify-between">
-              <div className="flex items-center gap-3 text-primary/60">
+              <div className="flex items-center gap-3 text-white/60">
                 <Phone className="w-4 h-4" />
                 <span className="text-xs font-bold uppercase">{selectedVisit.phone}</span>
               </div>
-              <div className="flex items-center gap-3 text-primary/60">
+              <div className="flex items-center gap-3 text-white/60">
                 <Calendar className="w-4 h-4" />
                 <span className="text-xs font-bold uppercase">{selectedVisit.createdAt?.toDate ? format(selectedVisit.createdAt.toDate(), "dd MMM") : "Recent"}</span>
               </div>
             </div>
             <a href={`tel:${selectedVisit.phone}`} className="block">
-              <Button className="w-full h-14 rounded-2xl bg-primary text-white font-black uppercase tracking-tight shadow-xl shadow-primary/10 active:scale-95 transition-all">
+              <Button className="w-full h-14 rounded-2xl bg-accent text-white font-black uppercase tracking-tight shadow-xl shadow-accent/10 active:scale-95 transition-all">
                 Call Party Now
               </Button>
             </a>
