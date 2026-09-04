@@ -160,16 +160,12 @@ export default function LoginPage() {
       
       <Card className="w-full max-w-md p-8 border border-white/5 shadow-2xl bg-card rounded-[3rem] flex flex-col space-y-8 animate-in zoom-in duration-500">
         <div className="text-center space-y-4">
-          <div className="w-20 h-20 bg-black/20 rounded-3xl flex items-center justify-center mx-auto shadow-lg p-3 border border-accent/10">
+          <div className="w-24 h-24 bg-black/20 rounded-3xl flex items-center justify-center mx-auto shadow-lg p-3 border border-accent/10">
             {logoImg ? (
-              <Image src={logoImg.imageUrl} alt="Logo" width={60} height={60} className="object-contain" />
+              <Image src={logoImg.imageUrl} alt="Logo" width={80} height={80} className="object-contain" />
             ) : (
-              <Sparkles className="w-8 h-8 text-accent" />
+              <Sparkles className="w-12 h-12 text-accent" />
             )}
-          </div>
-          <div>
-            <h1 className="text-3xl font-black text-white tracking-tighter uppercase leading-none">ARAVALLI <span className="text-accent">STEEL</span></h1>
-            <p className="text-muted-foreground text-[10px] font-bold tracking-widest uppercase opacity-60 mt-1">Premium Modular Solutions</p>
           </div>
         </div>
 

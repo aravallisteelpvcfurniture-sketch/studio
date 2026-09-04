@@ -85,7 +85,7 @@ export default function GreetingsTool() {
   }
 
   return (
-    <div className="min-h-screen bg-background flex flex-col select-none pb-24">
+    <div className="min-h-screen bg-background flex flex-col select-none pb-24 text-white">
       <div className="p-6 flex items-center justify-between bg-card border-b border-white/5 sticky top-0 z-50">
         <div className="flex items-center gap-4">
           <Link href="/">
