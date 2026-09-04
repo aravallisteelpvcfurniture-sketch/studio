@@ -14,7 +14,6 @@ import {
 import { doc, setDoc, serverTimestamp } from "firebase/firestore"
 import { useAuth, useFirestore, useUser } from "@/firebase"
 import { Button } from "@/components/ui/button"
-import { Card } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Loader2, Sparkles, LogIn, AlertCircle, Info, Copy, Check } from "lucide-react"
