@@ -64,7 +64,7 @@ export default function LoginPage() {
       .catch((error) => {
         setRedirectChecking(false)
         if (error.code === 'auth/unauthorized-domain') {
-          setAuthError(`Domain Error: Google Login allow karne ke liye domain add karein.`)
+          setAuthError("Domain Error: Google Login allow karne ke liye domain add karein.")
         }
       })
   }, [auth, db, router, toast])
@@ -86,7 +86,7 @@ export default function LoginPage() {
     } catch (error: any) {
       setLoading(false)
       if (error.code === 'auth/unauthorized-domain') {
-        setAuthError(`Domain Error: Firebase Console mein domain whitelist karein.`)
+        setAuthError("Domain Error: Firebase Console mein domain whitelist karein.")
       } else {
         setAuthError(error.message)
       }
