@@ -4,8 +4,8 @@
     {
       "id": "company-logo",
       "description": "Aravalli Steel Official Logo",
-      "imageUrl": "https://picsum.photos/seed/aravalli-logo/200/200",
-      "imageHint": "industrial logo"
+      "imageUrl": "https://firebasestorage.googleapis.com/v0/b/studio-4892458321-e617b.appspot.com/o/logo.png?alt=media",
+      "imageHint": "aravali steel logo"
     },
     {
       "id": "hero-kitchen",
@@ -24,6 +24,30 @@
       "description": "Premium Wall Paneling",
       "imageUrl": "https://picsum.photos/seed/wall1/1200/800",
       "imageHint": "wall paneling"
+    },
+    {
+      "id": "cat-kitchen",
+      "description": "Modular Kitchen Category",
+      "imageUrl": "https://picsum.photos/seed/kitchen/800/1200",
+      "imageHint": "modular kitchen"
+    },
+    {
+      "id": "cat-wardrobe",
+      "description": "Wardrobe Category",
+      "imageUrl": "https://picsum.photos/seed/wardrobe/800/1200",
+      "imageHint": "luxury wardrobe"
+    },
+    {
+      "id": "cat-paneling",
+      "description": "Wall Paneling Category",
+      "imageUrl": "https://picsum.photos/seed/wall/800/1200",
+      "imageHint": "wall paneling"
+    },
+    {
+      "id": "cat-hardware",
+      "description": "Hardware Category",
+      "imageUrl": "https://picsum.photos/seed/hardware/800/1200",
+      "imageHint": "kitchen hardware"
     }
   ]
 }

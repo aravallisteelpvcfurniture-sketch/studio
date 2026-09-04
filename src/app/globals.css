@@ -33,6 +33,6 @@
     @apply border-border;
   }
   body {
-    @apply bg-background text-foreground font-body antialiased;
+    @apply bg-black text-foreground font-body antialiased;
   }
 }

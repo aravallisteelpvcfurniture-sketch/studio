@@ -147,7 +147,7 @@ export default function LoginPage() {
 
   if (redirectChecking && isUserLoading) {
     return (
-      <div className="min-h-screen bg-background flex flex-col items-center justify-center p-6">
+      <div className="min-h-screen bg-black flex flex-col items-center justify-center p-6">
         <Loader2 className="w-10 h-10 animate-spin text-accent" />
         <p className="mt-4 text-sm font-bold text-muted-foreground">Checking Session...</p>
       </div>
@@ -155,14 +155,14 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="min-h-screen bg-background flex flex-col items-center justify-center p-6 relative overflow-hidden font-body">
+    <div className="min-h-screen bg-black flex flex-col items-center justify-center p-6 relative overflow-hidden font-body">
       <div className="absolute top-[-20%] left-[-20%] w-[600px] h-[600px] bg-accent/10 rounded-full blur-[120px]" />
       
       <Card className="w-full max-w-md p-8 border border-white/5 shadow-2xl bg-card rounded-[3rem] flex flex-col space-y-8 animate-in zoom-in duration-500">
         <div className="text-center space-y-4">
-          <div className="w-24 h-24 bg-black/20 rounded-3xl flex items-center justify-center mx-auto shadow-lg p-3 border border-accent/10">
+          <div className="w-32 h-32 bg-black/20 rounded-3xl flex items-center justify-center mx-auto shadow-lg p-3 border border-accent/10">
             {logoImg ? (
-              <Image src={logoImg.imageUrl} alt="Logo" width={80} height={80} className="object-contain" />
+              <Image src={logoImg.imageUrl} alt="Logo" width={100} height={100} className="object-contain" />
             ) : (
               <Sparkles className="w-12 h-12 text-accent" />
             )}

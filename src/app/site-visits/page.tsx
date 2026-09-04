@@ -188,7 +188,7 @@ export default function SiteVisitManager() {
   if (!isAdmin) return <div className="p-20 text-center font-bold text-white">Admin Access Only</div>
 
   return (
-    <div className="min-h-screen bg-background flex flex-col font-body pb-24 text-white">
+    <div className="min-h-screen bg-black flex flex-col font-body pb-24 text-white">
       <div className="p-6 flex items-center justify-between bg-card border-b border-white/5 sticky top-0 z-50">
         <div className="flex items-center gap-4">
           <Link href="/">
@@ -284,7 +284,7 @@ export default function SiteVisitManager() {
       </ScrollArea>
 
       {selectedVisit && (
-        <div className="fixed inset-0 z-[100] bg-background animate-in slide-in-from-bottom duration-300 flex flex-col text-white">
+        <div className="fixed inset-0 z-[100] bg-black animate-in slide-in-from-bottom duration-300 flex flex-col text-white">
           <div className="p-6 flex items-center justify-between border-b border-white/5 bg-card/80 backdrop-blur-md sticky top-0 z-50">
             <div className="flex flex-col">
               <span className="text-[10px] font-black text-accent uppercase tracking-[0.2em]">Management Tools</span>
