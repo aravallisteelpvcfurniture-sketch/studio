@@ -8,6 +8,36 @@
       "imageHint": "aravali steel logo"
     },
     {
+      "id": "slider-1",
+      "description": "Modern Modular Kitchen Design",
+      "imageUrl": "https://picsum.photos/seed/kitchen-slider-1/800/600",
+      "imageHint": "modern kitchen"
+    },
+    {
+      "id": "slider-2",
+      "description": "Premium Wardrobe Setup",
+      "imageUrl": "https://picsum.photos/seed/wardrobe-slider-2/800/600",
+      "imageHint": "luxury wardrobe"
+    },
+    {
+      "id": "slider-3",
+      "description": "Architectural Railing Design",
+      "imageUrl": "https://picsum.photos/seed/railing-slider-3/800/600",
+      "imageHint": "steel railing"
+    },
+    {
+      "id": "slider-4",
+      "description": "Contemporary Wall Paneling",
+      "imageUrl": "https://picsum.photos/seed/wall-slider-4/800/600",
+      "imageHint": "wall paneling"
+    },
+    {
+      "id": "slider-5",
+      "description": "Full Home Interior View",
+      "imageUrl": "https://picsum.photos/seed/interior-slider-5/800/600",
+      "imageHint": "home interior"
+    },
+    {
       "id": "hero-kitchen",
       "description": "Modern Minimalist Modular Kitchen",
       "imageUrl": "https://picsum.photos/seed/kitchen1/1200/800",
