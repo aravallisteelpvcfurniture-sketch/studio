@@ -155,36 +155,34 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="min-h-screen bg-black flex flex-col items-center justify-center p-6 relative overflow-hidden font-body">
-      <div className="absolute top-[-20%] left-[-20%] w-[600px] h-[600px] bg-accent/10 rounded-full blur-[120px]" />
-      
-      <Card className="w-full max-w-md p-8 border border-white/5 shadow-2xl bg-card rounded-[3rem] flex flex-col space-y-8 animate-in zoom-in duration-500">
-        <div className="text-center space-y-4">
-          <div className="w-32 h-32 bg-black/20 rounded-3xl flex items-center justify-center mx-auto shadow-lg p-3 border border-accent/10">
+    <div className="min-h-screen bg-black flex flex-col items-center justify-center p-6 relative font-body">
+      <Card className="w-full max-w-md p-8 border-none shadow-none bg-black flex flex-col space-y-8 animate-in zoom-in duration-500">
+        <div className="text-center">
+          <div className="w-32 h-32 bg-white/5 rounded-3xl flex items-center justify-center mx-auto shadow-xl p-4 border border-white/5">
             {logoImg ? (
-              <Image src={logoImg.imageUrl} alt="Logo" width={100} height={100} className="object-contain" />
+              <Image src={logoImg.imageUrl} alt="Logo" width={120} height={120} className="object-contain" />
             ) : (
-              <Sparkles className="w-12 h-12 text-accent" />
+              <Sparkles className="w-16 h-16 text-accent" />
             )}
           </div>
         </div>
 
         {authError && (
           <div className="space-y-4">
-            <Alert variant="destructive" className="rounded-2xl border-destructive/50 bg-destructive/5">
+            <Alert variant="destructive" className="rounded-2xl border-destructive/50 bg-destructive/10">
               <AlertCircle className="h-4 w-4" />
-              <AlertTitle className="text-xs font-bold uppercase">Setup Required</AlertTitle>
-              <AlertDescription className="text-[10px] leading-tight text-white/80">
+              <AlertTitle className="text-xs font-black uppercase">Setup Required</AlertTitle>
+              <AlertDescription className="text-[10px] leading-tight text-white/90">
                 Google Login ke liye niche diye gaye Domain ko Firebase Console mein add karein.
               </AlertDescription>
             </Alert>
             <div className="bg-blue-500/10 p-4 rounded-2xl flex flex-col gap-2 border border-blue-500/20">
               <div className="flex gap-2 items-center">
                 <Info className="w-4 h-4 text-blue-400 shrink-0" />
-                <span className="text-[10px] font-black text-blue-300">FIREBASE SETUP STEP:</span>
+                <span className="text-[10px] font-black text-blue-300 uppercase tracking-widest">Firebase Step</span>
               </div>
               <p className="text-[10px] text-blue-200 font-medium leading-relaxed">
-                Firebase Console mein Authentication &amp; Settings &amp; Authorized Domains mein jaaiye aur ye domain add karein:
+                Authentication &gt; Settings &gt; Authorized Domains mein ye domain add karein:
               </p>
               <div className="flex gap-2">
                 <code className="flex-1 bg-black/40 p-2 rounded-xl text-[10px] font-black text-white border border-blue-500/20 select-all truncate">
@@ -199,24 +197,24 @@ export default function LoginPage() {
         )}
 
         <Tabs defaultValue="login" className="w-full">
-          <TabsList className="grid w-full grid-cols-2 rounded-2xl h-12 mb-6 bg-black/40 p-1">
-            <TabsTrigger value="login" className="rounded-xl font-bold data-[state=active]:bg-accent data-[state=active]:text-white">Login</TabsTrigger>
-            <TabsTrigger value="signup" className="rounded-xl font-bold data-[state=active]:bg-accent data-[state=active]:text-white">Sign Up</TabsTrigger>
+          <TabsList className="grid w-full grid-cols-2 rounded-2xl h-12 mb-6 bg-white/5 p-1 border border-white/5">
+            <TabsTrigger value="login" className="rounded-xl font-black text-xs uppercase tracking-widest data-[state=active]:bg-white data-[state=active]:text-black">Login</TabsTrigger>
+            <TabsTrigger value="signup" className="rounded-xl font-black text-xs uppercase tracking-widest data-[state=active]:bg-white data-[state=active]:text-black">Sign Up</TabsTrigger>
           </TabsList>
 
           <TabsContent value="login" className="space-y-4">
             <form onSubmit={handleEmailLogin} className="space-y-4">
               <div className="space-y-1">
-                <Label className="text-[10px] font-black uppercase text-muted-foreground ml-1">Email</Label>
-                <Input type="email" value={email} onChange={(e) => setEmail(e.target.value)} className="h-14 rounded-2xl bg-black/40 border-white/5 px-6 text-white" />
+                <Label className="text-[10px] font-black uppercase text-muted-foreground ml-2">Email Address</Label>
+                <Input type="email" value={email} onChange={(e) => setEmail(e.target.value)} className="h-14 rounded-2xl bg-white/5 border-white/10 px-6 text-white" />
               </div>
               <div className="space-y-1">
-                <Label className="text-[10px] font-black uppercase text-muted-foreground ml-1">Password</Label>
-                <Input type="password" value={password} onChange={(e) => setPassword(e.target.value)} className="h-14 rounded-2xl bg-black/40 border-white/5 px-6 text-white" />
+                <Label className="text-[10px] font-black uppercase text-muted-foreground ml-2">Password</Label>
+                <Input type="password" value={password} onChange={(e) => setPassword(e.target.value)} className="h-14 rounded-2xl bg-white/5 border-white/10 px-6 text-white" />
               </div>
-              <Button disabled={loading} className="w-full h-14 rounded-2xl bg-white text-black font-black text-lg shadow-xl shadow-white/5 flex gap-2 active:scale-95 transition-all">
-                {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : <LogIn className="w-5 h-5" />}
-                Login
+              <Button disabled={loading} className="w-full h-14 rounded-2xl bg-white text-black font-black text-lg shadow-xl flex gap-3 active:scale-95 transition-all">
+                {loading ? <Loader2 className="w-6 h-6 animate-spin" /> : <LogIn className="w-6 h-6" />}
+                SIGN IN
               </Button>
             </form>
           </TabsContent>
@@ -224,34 +222,34 @@ export default function LoginPage() {
           <TabsContent value="signup" className="space-y-4">
             <form onSubmit={handleEmailSignup} className="space-y-4">
               <div className="space-y-1">
-                <Label className="text-[10px] font-black uppercase text-muted-foreground ml-1">Full Name</Label>
-                <Input value={displayName} onChange={(e) => setDisplayName(e.target.value)} className="h-14 rounded-2xl bg-black/40 border-white/5 px-6 text-white" />
+                <Label className="text-[10px] font-black uppercase text-muted-foreground ml-2">Full Name</Label>
+                <Input value={displayName} onChange={(e) => setDisplayName(e.target.value)} className="h-14 rounded-2xl bg-white/5 border-white/10 px-6 text-white" />
               </div>
               <div className="space-y-1">
-                <Label className="text-[10px] font-black uppercase text-muted-foreground ml-1">Email</Label>
-                <Input type="email" value={email} onChange={(e) => setEmail(e.target.value)} className="h-14 rounded-2xl bg-black/40 border-white/5 px-6 text-white" />
+                <Label className="text-[10px] font-black uppercase text-muted-foreground ml-2">Email Address</Label>
+                <Input type="email" value={email} onChange={(e) => setEmail(e.target.value)} className="h-14 rounded-2xl bg-white/5 border-white/10 px-6 text-white" />
               </div>
               <div className="space-y-1">
-                <Label className="text-[10px] font-black uppercase text-muted-foreground ml-1">Password</Label>
-                <Input type="password" value={password} onChange={(e) => setPassword(e.target.value)} className="h-14 rounded-2xl bg-black/40 border-white/5 px-6 text-white" />
+                <Label className="text-[10px] font-black uppercase text-muted-foreground ml-2">Password</Label>
+                <Input type="password" value={password} onChange={(e) => setPassword(e.target.value)} className="h-14 rounded-2xl bg-white/5 border-white/10 px-6 text-white" />
               </div>
-              <Button disabled={loading} className="w-full h-14 rounded-2xl bg-accent text-white font-black text-lg shadow-xl shadow-accent/10 active:scale-95 transition-all">
-                {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : "Sign Up"}
+              <Button disabled={loading} className="w-full h-14 rounded-2xl bg-accent text-white font-black text-lg shadow-xl active:scale-95 transition-all">
+                {loading ? <Loader2 className="w-6 h-6 animate-spin" /> : "CREATE ACCOUNT"}
               </Button>
             </form>
           </TabsContent>
         </Tabs>
 
         <div className="relative">
-          <div className="absolute inset-0 flex items-center"><span className="w-full border-t border-white/5" /></div>
-          <div className="relative flex justify-center text-[10px] uppercase"><span className="bg-card px-3 text-muted-foreground font-black">OR</span></div>
+          <div className="absolute inset-0 flex items-center"><span className="w-full border-t border-white/10" /></div>
+          <div className="relative flex justify-center text-[10px] uppercase"><span className="bg-black px-4 text-muted-foreground font-black tracking-widest">Secure Access</span></div>
         </div>
 
         <Button 
           variant="outline"
           onClick={handleGoogleLogin} 
           disabled={loading}
-          className="w-full h-16 border-2 border-white/5 hover:bg-white/5 rounded-[1.5rem] font-bold flex items-center justify-center gap-3 active:scale-95 text-white"
+          className="w-full h-16 border-2 border-white/10 hover:bg-white/5 rounded-[2rem] font-black flex items-center justify-center gap-3 active:scale-95 text-white"
         >
           <svg className="w-6 h-6" viewBox="0 0 24 24">
             <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>

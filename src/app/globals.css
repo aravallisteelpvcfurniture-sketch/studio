@@ -21,8 +21,8 @@
     --accent-foreground: 0 0% 98%;
     --destructive: 0 62.8% 30.6%;
     --destructive-foreground: 0 0% 98%;
-    --border: 0 0% 9%;
-    --input: 0 0% 9%;
+    --border: 0 0% 12%;
+    --input: 0 0% 12%;
     --ring: 15 88% 55%;
     --radius: 1.5rem;
   }
@@ -33,6 +33,6 @@
     @apply border-border;
   }
   body {
-    @apply bg-black text-foreground font-body antialiased;
+    @apply bg-black text-foreground font-body antialiased selection:bg-accent/30;
   }
 }
