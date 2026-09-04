@@ -155,14 +155,14 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="min-h-screen bg-black flex flex-col items-center justify-center p-6 relative font-body">
-      <Card className="w-full max-w-md p-8 border-none shadow-none bg-black flex flex-col space-y-8 animate-in zoom-in duration-500">
+    <div className="min-h-screen bg-black flex flex-col items-center justify-center p-6 relative font-body text-white">
+      <div className="w-full max-w-md p-8 bg-black flex flex-col space-y-8 animate-in zoom-in duration-500">
         <div className="text-center">
-          <div className="w-32 h-32 bg-white/5 rounded-3xl flex items-center justify-center mx-auto shadow-xl p-4 border border-white/5">
+          <div className="w-40 h-40 flex items-center justify-center mx-auto mb-4">
             {logoImg ? (
-              <Image src={logoImg.imageUrl} alt="Logo" width={120} height={120} className="object-contain" />
+              <Image src={logoImg.imageUrl} alt="Aravalli Steel Logo" width={160} height={160} className="object-contain" />
             ) : (
-              <Sparkles className="w-16 h-16 text-accent" />
+              <Sparkles className="w-20 h-20 text-accent" />
             )}
           </div>
         </div>
@@ -198,19 +198,19 @@ export default function LoginPage() {
 
         <Tabs defaultValue="login" className="w-full">
           <TabsList className="grid w-full grid-cols-2 rounded-2xl h-12 mb-6 bg-white/5 p-1 border border-white/5">
-            <TabsTrigger value="login" className="rounded-xl font-black text-xs uppercase tracking-widest data-[state=active]:bg-white data-[state=active]:text-black">Login</TabsTrigger>
-            <TabsTrigger value="signup" className="rounded-xl font-black text-xs uppercase tracking-widest data-[state=active]:bg-white data-[state=active]:text-black">Sign Up</TabsTrigger>
+            <TabsTrigger value="login" className="rounded-xl font-black text-xs uppercase tracking-widest data-[state=active]:bg-white data-[state=active]:text-black transition-all">Login</TabsTrigger>
+            <TabsTrigger value="signup" className="rounded-xl font-black text-xs uppercase tracking-widest data-[state=active]:bg-white data-[state=active]:text-black transition-all">Sign Up</TabsTrigger>
           </TabsList>
 
           <TabsContent value="login" className="space-y-4">
             <form onSubmit={handleEmailLogin} className="space-y-4">
               <div className="space-y-1">
                 <Label className="text-[10px] font-black uppercase text-muted-foreground ml-2">Email Address</Label>
-                <Input type="email" value={email} onChange={(e) => setEmail(e.target.value)} className="h-14 rounded-2xl bg-white/5 border-white/10 px-6 text-white" />
+                <Input type="email" value={email} onChange={(e) => setEmail(e.target.value)} className="h-14 rounded-2xl bg-white/5 border-white/10 px-6 text-white focus:border-accent" />
               </div>
               <div className="space-y-1">
                 <Label className="text-[10px] font-black uppercase text-muted-foreground ml-2">Password</Label>
-                <Input type="password" value={password} onChange={(e) => setPassword(e.target.value)} className="h-14 rounded-2xl bg-white/5 border-white/10 px-6 text-white" />
+                <Input type="password" value={password} onChange={(e) => setPassword(e.target.value)} className="h-14 rounded-2xl bg-white/5 border-white/10 px-6 text-white focus:border-accent" />
               </div>
               <Button disabled={loading} className="w-full h-14 rounded-2xl bg-white text-black font-black text-lg shadow-xl flex gap-3 active:scale-95 transition-all">
                 {loading ? <Loader2 className="w-6 h-6 animate-spin" /> : <LogIn className="w-6 h-6" />}
@@ -223,15 +223,15 @@ export default function LoginPage() {
             <form onSubmit={handleEmailSignup} className="space-y-4">
               <div className="space-y-1">
                 <Label className="text-[10px] font-black uppercase text-muted-foreground ml-2">Full Name</Label>
-                <Input value={displayName} onChange={(e) => setDisplayName(e.target.value)} className="h-14 rounded-2xl bg-white/5 border-white/10 px-6 text-white" />
+                <Input value={displayName} onChange={(e) => setDisplayName(e.target.value)} className="h-14 rounded-2xl bg-white/5 border-white/10 px-6 text-white focus:border-accent" />
               </div>
               <div className="space-y-1">
                 <Label className="text-[10px] font-black uppercase text-muted-foreground ml-2">Email Address</Label>
-                <Input type="email" value={email} onChange={(e) => setEmail(e.target.value)} className="h-14 rounded-2xl bg-white/5 border-white/10 px-6 text-white" />
+                <Input type="email" value={email} onChange={(e) => setEmail(e.target.value)} className="h-14 rounded-2xl bg-white/5 border-white/10 px-6 text-white focus:border-accent" />
               </div>
               <div className="space-y-1">
                 <Label className="text-[10px] font-black uppercase text-muted-foreground ml-2">Password</Label>
-                <Input type="password" value={password} onChange={(e) => setPassword(e.target.value)} className="h-14 rounded-2xl bg-white/5 border-white/10 px-6 text-white" />
+                <Input type="password" value={password} onChange={(e) => setPassword(e.target.value)} className="h-14 rounded-2xl bg-white/5 border-white/10 px-6 text-white focus:border-accent" />
               </div>
               <Button disabled={loading} className="w-full h-14 rounded-2xl bg-accent text-white font-black text-lg shadow-xl active:scale-95 transition-all">
                 {loading ? <Loader2 className="w-6 h-6 animate-spin" /> : "CREATE ACCOUNT"}
@@ -259,7 +259,7 @@ export default function LoginPage() {
           </svg>
           Google Login
         </Button>
-      </Card>
+      </div>
     </div>
   )
 }

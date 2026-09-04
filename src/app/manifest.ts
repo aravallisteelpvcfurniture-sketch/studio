@@ -9,7 +9,7 @@ export default function manifest(): MetadataRoute.Manifest {
     start_url: '/',
     display: 'standalone',
     background_color: '#000000',
-    theme_color: '#f15a24',
+    theme_color: '#000000',
     icons: [
       {
         src: 'https://firebasestorage.googleapis.com/v0/b/studio-4892458321-e617b.appspot.com/o/logo.png?alt=media',

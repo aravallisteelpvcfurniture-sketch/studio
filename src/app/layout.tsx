@@ -26,7 +26,7 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: '#f15a24',
+  themeColor: '#000000',
   width: 'device-width',
   initialScale: 1,
   maximumScale: 1,
@@ -40,7 +40,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className={`${roboto.variable}`}>
-      <body className="font-body antialiased selection:bg-accent/30 overflow-x-hidden bg-background">
+      <body className="font-body antialiased selection:bg-accent/30 overflow-x-hidden bg-black">
         <FirebaseClientProvider>
           <GlobalNotificationListener />
           <div className="flex flex-col min-h-screen pb-24">
