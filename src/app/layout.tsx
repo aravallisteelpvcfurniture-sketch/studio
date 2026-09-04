@@ -39,7 +39,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={`${roboto.variable} bg-black`}>
+    <html lang="en" className={`${roboto.variable} bg-black dark`}>
       <body className="font-body antialiased selection:bg-accent/30 overflow-x-hidden bg-black text-white">
         <FirebaseClientProvider>
           <GlobalNotificationListener />

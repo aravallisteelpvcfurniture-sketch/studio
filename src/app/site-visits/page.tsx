@@ -400,28 +400,6 @@ export default function SiteVisitManager() {
                   </div>
                 </DialogContent>
               </Dialog>
-
-              <Dialog>
-                <DialogTrigger asChild>
-                  <button className="aspect-square bg-purple-500/5 rounded-[2.5rem] flex flex-col items-center justify-center gap-3 border-2 border-purple-500/10 active:scale-95 transition-all shadow-sm">
-                    <div className="w-16 h-16 bg-card rounded-3xl flex items-center justify-center shadow-md">
-                      <Camera className="w-8 h-8 text-purple-400" />
-                    </div>
-                    <span className="font-black text-purple-400 text-[10px] uppercase">Site Photos</span>
-                  </button>
-                </DialogTrigger>
-                <DialogContent className="rounded-[2.5rem] w-[95%] bg-card border-white/10 text-white">
-                  <DialogHeader>
-                    <DialogTitle className="font-black uppercase">Site Photos</DialogTitle>
-                  </DialogHeader>
-                  <div className="py-12 flex flex-col items-center justify-center text-center space-y-4 opacity-50">
-                    <div className="w-20 h-20 bg-muted rounded-full flex items-center justify-center">
-                      <Camera className="w-10 h-10" />
-                    </div>
-                    <p className="text-sm font-bold uppercase tracking-widest">Coming Soon!</p>
-                  </div>
-                </DialogContent>
-              </Dialog>
             </div>
           </ScrollArea>
 

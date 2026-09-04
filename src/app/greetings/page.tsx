@@ -147,7 +147,6 @@ export default function GreetingsTool() {
             </div>
           </div>
 
-          {/* Style Options */}
           <div className="space-y-3">
             <Label className="text-[10px] font-black uppercase text-muted-foreground tracking-widest ml-2 flex items-center gap-2">
               <Layout className="w-3 h-3 text-accent" /> Select Info Box Style
@@ -168,7 +167,6 @@ export default function GreetingsTool() {
             </div>
           </div>
 
-          {/* Template Gallery */}
           <div className="space-y-4">
             <Label className="text-[10px] font-black uppercase text-muted-foreground tracking-widest ml-2">Indian Festival Gallery</Label>
             <div className="grid grid-cols-2 gap-4">
