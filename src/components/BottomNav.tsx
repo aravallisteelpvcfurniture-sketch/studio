@@ -12,7 +12,8 @@ export function BottomNav() {
   const pathname = usePathname()
   const { user } = useUser()
 
-  if (pathname === "/login" || pathname === "/welcome") return null
+  // Remove /welcome check as the page is deleted
+  if (pathname === "/login") return null
 
   const isAdmin = React.useMemo(() => {
     if (!user) return false;
@@ -25,7 +26,6 @@ export function BottomNav() {
     { label: "AI Design", icon: Sparkles, href: "/ai-designer" },
   ]
 
-  // Add Visitor Manager directly to bar if Admin
   if (isAdmin) {
     navItems.push({ label: "Visits", icon: ClipboardList, href: "/site-visits" })
   } else {
@@ -35,7 +35,7 @@ export function BottomNav() {
   navItems.push({ label: "More", icon: MoreHorizontal, href: "/more" })
 
   return (
-    <div className="fixed bottom-0 left-0 right-0 z-50 bg-white/80 backdrop-blur-xl border-t px-6 py-3 flex justify-between items-center pb-8 lg:pb-3">
+    <div className="fixed bottom-0 left-0 right-0 z-50 bg-black border-t border-white/5 px-6 py-3 flex justify-between items-center pb-8 lg:pb-3">
       {navItems.map((item) => {
         const isActive = pathname === item.href
         const Icon = item.icon

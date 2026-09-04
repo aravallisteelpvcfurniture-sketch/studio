@@ -20,7 +20,7 @@ export const metadata: Metadata = {
   manifest: '/manifest.json',
   appleWebApp: {
     capable: true,
-    statusBarStyle: 'default',
+    statusBarStyle: 'black-translucent',
     title: 'Aravalli Steel',
   },
 };
@@ -39,8 +39,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={`${roboto.variable}`}>
-      <body className="font-body antialiased selection:bg-accent/30 overflow-x-hidden bg-black">
+    <html lang="en" className={`${roboto.variable} bg-black`}>
+      <body className="font-body antialiased selection:bg-accent/30 overflow-x-hidden bg-black text-white">
         <FirebaseClientProvider>
           <GlobalNotificationListener />
           <div className="flex flex-col min-h-screen pb-24">
