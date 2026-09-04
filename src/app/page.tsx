@@ -27,12 +27,8 @@ export default function Home() {
   if (!user) return null
 
   return (
-    <div className="min-h-screen bg-black flex flex-col items-center justify-center p-6 text-center">
-      {/* Dashboard saaf kar diya hai. Ab aap naya design bataiye. */}
-      <div className="opacity-20 animate-pulse">
-        <div className="w-20 h-20 bg-white/10 rounded-full mx-auto mb-4" />
-        <p className="text-[10px] font-black uppercase tracking-[0.3em] text-white">Ready for new design</p>
-      </div>
+    <div className="min-h-screen bg-black">
+      {/* Dashboard is now empty and ready for your new design description */}
     </div>
   )
 }
