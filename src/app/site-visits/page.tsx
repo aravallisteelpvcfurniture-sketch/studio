@@ -15,7 +15,6 @@ import {
   Save, 
   Briefcase, 
   Edit3, 
-  Camera,
   CheckCircle2,
   Calendar
 } from "lucide-react"
